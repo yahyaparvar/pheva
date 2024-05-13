@@ -10,9 +10,17 @@ export interface GlobalState {
   loggedIn: boolean;
   theme: string;
 }
+const isUserLoggedIn = () => {
+  const token = storage.read(LocalStorageKeys.LOGGED_IN);
+  if (token) {
+    return true;
+  } else {
+    return false;
+  }
+};
 // The initial state of the LoginPage container
 export const initialState: GlobalState = {
-  loggedIn: false,
+  loggedIn: isUserLoggedIn(),
   theme: storage.read(LocalStorageKeys.THEME) || Themes.LIGHT,
 };
 
@@ -21,6 +29,7 @@ const globalSlice = createSlice({
   initialState,
   reducers: {
     changeTheme(state, action: PayloadAction<string>) {},
+    setLoggedIn(state, action: PayloadAction<string>) {},
     setTheme(state, action: PayloadAction<string>) {
       state.theme = action.payload;
     },

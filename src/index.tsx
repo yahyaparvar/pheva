@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { FontLoadingPage } from "app/components/fontLoading";
 import { Themes } from "app/types";
 import FontFaceObserver from "fontfaceobserver";
@@ -43,14 +44,18 @@ const ConnectedApp = ({ Component }: Props) => {
       setIsFontLoaded(false);
     }
   }, [isFontLoaded]);
+  const clientId =
+    "1084561252653-rp5e7io2uq9gh8e0hkcu2mc9vl67g3r1.apps.googleusercontent.com";
   return (
     <ReduxProvider store={store}>
-      <I18nextProvider i18n={i18n}>
-        <GlobalStyle />
-        <HelmetProvider>
-          {isFontLoaded ? <Component /> : <FontLoadingPage />}
-        </HelmetProvider>
-      </I18nextProvider>
+      <GoogleOAuthProvider clientId={clientId}>
+        <I18nextProvider i18n={i18n}>
+          <GlobalStyle />
+          <HelmetProvider>
+            {isFontLoaded ? <Component /> : <FontLoadingPage />}
+          </HelmetProvider>
+        </I18nextProvider>
+      </GoogleOAuthProvider>
     </ReduxProvider>
   );
 };

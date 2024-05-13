@@ -1,5 +1,5 @@
 export enum LocalStorageKeys {
-  CONNECTED_TO_WALLET_ONCE = "CONNECTED_TO_WALLET_ONCE",
+  LOGGED_IN = "LOGGED_IN",
   THEME = "THEME",
   LANG = "LANG",
 }
