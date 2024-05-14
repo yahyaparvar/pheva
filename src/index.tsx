@@ -8,6 +8,8 @@ import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import { I18nextProvider } from "react-i18next";
 import { Provider as ReduxProvider } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { configureAppStore } from "store/configureStore";
 import { LocalStorageKeys, storage } from "store/storage";
 import GlobalStyle from "styles/globalStyles";
@@ -51,6 +53,7 @@ const ConnectedApp = ({ Component }: Props) => {
       <GoogleOAuthProvider clientId={clientId}>
         <I18nextProvider i18n={i18n}>
           <GlobalStyle />
+          <ToastContainer />
           <HelmetProvider>
             {isFontLoaded ? <Component /> : <FontLoadingPage />}
           </HelmetProvider>

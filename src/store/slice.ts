@@ -29,7 +29,10 @@ const globalSlice = createSlice({
   initialState,
   reducers: {
     changeTheme(state, action: PayloadAction<string>) {},
-    setLoggedIn(state, action: PayloadAction<string>) {},
+    setLoggedIn(state, action: PayloadAction<string>) {
+      state.loggedIn = true;
+      storage.write(LocalStorageKeys.LOGGED_IN, action.payload);
+    },
     setTheme(state, action: PayloadAction<string>) {
       state.theme = action.payload;
     },

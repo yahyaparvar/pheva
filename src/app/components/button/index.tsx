@@ -1,62 +1,40 @@
-import React, { ButtonHTMLAttributes, ReactNode } from "react";
-import styled, { css } from "styled-components";
-import { BUTTON, ROW_CENTER } from "styles/globalStyles";
+// Button.tsx
+import React from "react";
+import styled from "styled-components";
 
-const sizes = {
-  small: css`
-    padding: 4px 8px;
-  `,
-  medium: css`
-    padding: 8px 16px;
-  `,
-  large: css`
-    padding: 12px 32px;
-  `,
-};
+const Button = styled.button`
+  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
+`;
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  primary?: boolean;
-  icon?: ReactNode;
-  iconPosition?: "left" | "right";
-  size?: keyof typeof sizes;
+const PrimaryButton = styled(Button)`
+  @apply bg-blue-500 hover:bg-blue-700;
+`;
+
+const SecondaryButton = styled(Button)`
+  @apply bg-gray-500 hover:bg-gray-700;
+`;
+
+const SuccessButton = styled(Button)`
+  @apply bg-green-500 hover:bg-green-700;
+`;
+
+interface ButtonProps {
+  label: string;
+  onClick: () => void;
 }
 
-const StyledButton = styled.button<ButtonProps>`
-  ${BUTTON}
-  ${ROW_CENTER}
-  direction: ltr !important;
-  font-size: 16px;
-  background-color: var(--button);
-  color: var(--button-text);
-  border-radius: 8px;
-  font-weight: 600;
-  ${(props) => sizes[props.size || "medium"]}
-  &:hover {
-    filter: brightness(1.2);
-  }
-`;
+export const CustomButton: React.FC<ButtonProps> = ({ label, onClick }) => {
+  return <Button onClick={onClick}>{label}</Button>;
+};
 
-const Icon = styled.span<{ position: "left" | "right" }>`
-  margin-right: ${(props) => (props.position === "left" ? "4px" : "0")};
-  margin-left: ${(props) => (props.position === "right" ? "4px" : "0")};
-  svg {
-    fill: var(--button-text);
-    margin-bottom: -4px;
-  }
-`;
+export const Primary: React.FC<ButtonProps> = ({ label, onClick }) => {
+  return <PrimaryButton onClick={onClick}>{label}</PrimaryButton>;
+};
 
-export const Button: React.FC<ButtonProps> = ({
-  children,
-  icon,
-  iconPosition = "left",
-  size = "medium",
-  ...props
-}) => {
-  return (
-    <StyledButton size={size} {...props}>
-      {icon && iconPosition === "left" && <Icon position="left">{icon}</Icon>}
-      {children}
-      {icon && iconPosition === "right" && <Icon position="right">{icon}</Icon>}
-    </StyledButton>
-  );
+export const Secondary: React.FC<ButtonProps> = ({ label, onClick }) => {
+  return <SecondaryButton onClick={onClick}>{label}</SecondaryButton>;
+};
+
+export const Success: React.FC<ButtonProps> = ({ label, onClick }) => {
+  return <SuccessButton onClick={onClick}>{label}</SuccessButton>;
 };
