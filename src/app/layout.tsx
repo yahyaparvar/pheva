@@ -6,12 +6,12 @@ const LayoutContainer = styled.div`
   display: flex;
   width: 100%;
   height: 100vh;
-  overflow: hidden;
 `;
 
 const ContentContainer = styled.div`
   flex-grow: 1;
   padding: 20px;
+  overflow: scroll;
 `;
 
 const MainLayout = () => {
