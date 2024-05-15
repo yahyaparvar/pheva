@@ -1,3 +1,4 @@
+import history from "app/router/history";
 import { ReactNode, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -5,7 +6,7 @@ import { ROW_JUSTIFY_START__ALIGN_CENTER } from "styles/globalStyles";
 
 export interface SidebarItemProps {
   label: string;
-  to: string;
+  to?: string;
   icon?: ReactNode;
   onClick?: () => void;
   subItems?: SidebarSubItemProps[];
@@ -26,7 +27,13 @@ export const SidebarItem: React.FC<SidebarItemProps & { active: boolean }> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleSubItemClick = (to: string) => {
+    history.push(to);
+  };
   const handleItemClick = () => {
+    if (to) {
+      history.push(to);
+    }
     if (subItems) {
       setIsOpen(!isOpen);
     }
@@ -48,7 +55,11 @@ export const SidebarItem: React.FC<SidebarItemProps & { active: boolean }> = ({
       {isOpen &&
         subItems &&
         subItems.map((sub) => (
-          <StyledSubItem key={sub.to} active={location.pathname === sub.to}>
+          <StyledSubItem
+            key={sub.to}
+            onClick={() => handleSubItemClick(sub.to)}
+            active={location.pathname === sub.to}
+          >
             <SideBarItemIcon>{sub.icon}</SideBarItemIcon>
             {sub.label}
           </StyledSubItem>

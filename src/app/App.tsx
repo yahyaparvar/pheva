@@ -6,6 +6,7 @@ import { globalActions, useglobalSlice } from "store/slice";
 import styled from "styled-components";
 import { COLUMN_ALIGN_START__JUSTIFY_START } from "styles/globalStyles";
 import { Home } from "./containers/Home";
+import { Inbox } from "./containers/Inbox/Loadable";
 import { Login } from "./containers/Login";
 import { NotFoundPage } from "./containers/NotFound";
 import MainLayout from "./layout";
@@ -44,6 +45,14 @@ function App() {
               element={
                 <Auth>
                   <Home />
+                </Auth>
+              }
+            />
+            <Route
+              path="/inbox"
+              element={
+                <Auth>
+                  <Inbox />
                 </Auth>
               }
             />
