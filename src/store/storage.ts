@@ -1,5 +1,5 @@
 export enum LocalStorageKeys {
-  LOGGED_IN = "LOGGED_IN",
+  USER_INFO = "USER_INFO",
   THEME = "THEME",
   LANG = "LANG",
 }

@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { GoogleLogin } from "@react-oauth/google";
 import history from "app/router/history";
 import { AppPages } from "app/types";
+import { parseJwt } from "config/parseJwt";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { globalActions } from "store/slice";
 import styled from "styled-components";

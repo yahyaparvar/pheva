@@ -4,6 +4,7 @@ const GlobalStyle = createGlobalStyle`
 
 :root {
   --text: #84868a;
+  --white: #fff;
   --font:"Inter", "Rubik";
   --persian-font:"Rubik";
   --border:#E2E8F0;
