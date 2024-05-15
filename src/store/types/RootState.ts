@@ -1,6 +1,7 @@
 import { AboutMeState } from 'app/containers/AboutMe/types';
 import { LoginState } from 'app/containers/Login/types';
 import { InboxState } from 'app/containers/Inbox/types';
+import { SentState } from 'app/containers/Sent/types';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 
 import { HomeState } from "app/containers/Home/types";
@@ -18,5 +19,6 @@ export interface RootState {
   aboutMe?: AboutMeState;
   login?: LoginState;
   inbox?: InboxState;
+  sent?: SentState;
 // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
 }

@@ -5,6 +5,7 @@ export enum AppPages {
   AboutMe = '/aboutMe',
   Login = '/login',
   Inbox = '/inbox',
+  Sent = '/sent',
   // [INSERT NEW PAGE PATH ABOVE] < Needed for generating containers seamlessly
 }
 export enum Themes {
