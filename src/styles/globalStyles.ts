@@ -13,6 +13,7 @@ const GlobalStyle = createGlobalStyle`
   --button:#007ACC;
   --button-text:#fff;
   --background-color:#fff;
+  --dark-gray: #333;
 }
 .DARK {
     --text: #e5e7eb;

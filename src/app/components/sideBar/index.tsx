@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
   return (
     <Resizable
       defaultSize={{ width: 250, height: "100%" }}
-      minWidth={100}
+      minWidth={150}
       maxWidth={400}
       enable={{ right: true }}
       style={{ boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)" }}
@@ -77,11 +77,12 @@ const ProfileButton = styled.div<{ active: boolean }>`
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
-  background-color: ${(props) => (props.active ? "#333" : "transparent")};
+  background-color: ${(props) =>
+    props.active ? "var(--dark-gray)" : "transparent"};
   transition: background-color 0.3s;
   color: ${(props) => (props.active ? "var(--white)" : "var(--text)")};
   &:hover {
-    background-color: #333;
+    background-color: var(--dark-gray);
   }
 `;
 const ProfileName = styled.div`

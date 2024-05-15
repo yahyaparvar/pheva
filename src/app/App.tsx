@@ -22,7 +22,7 @@ const Auth: React.FC<RequireAuthProps> = ({ children }) => {
   const location = useLocation();
   const isLoggedIn = useSelector(globalSelectors.isLoggedIn);
   if (!isLoggedIn) {
-    history.push("/login");
+    history.push(AppPages.Login);
   }
 
   return children;

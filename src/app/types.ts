@@ -1,11 +1,11 @@
 export enum AppPages {
   RootPage = "/",
   HomePage = "/home",
+  Login = "/login",
+  Inbox = "/emails/inbox",
+  Sent = "/emails/sent",
   NotFoundPage = "*",
-  AboutMe = '/aboutMe',
-  Login = '/login',
-  Inbox = '/inbox',
-  Sent = '/sent',
+  AboutMe = "/aboutMe",
   // [INSERT NEW PAGE PATH ABOVE] < Needed for generating containers seamlessly
 }
 export enum Themes {

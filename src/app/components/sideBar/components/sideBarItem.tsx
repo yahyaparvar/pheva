@@ -78,11 +78,12 @@ const StyledSidebarItem = styled.div<{ active: boolean }>`
   overflow: hidden;
   font-size: 14px;
   cursor: pointer;
-  background-color: ${(props) => (props.active ? "#333" : "transparent")};
+  background-color: ${(props) =>
+    props.active ? "var(--dark-gray)" : "transparent"};
   transition: background-color 0.3s;
   color: ${(props) => (props.active ? "var(--white)" : "var(--text)")};
   &:hover {
-    background-color: #333;
+    background-color: var(--dark-gray);
   }
 `;
 const StyledSubItem = styled(StyledSidebarItem)`

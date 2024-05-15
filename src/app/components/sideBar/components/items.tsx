@@ -1,3 +1,4 @@
+import { AppPages } from "app/types";
 import { SidebarItemProps } from "./sideBarItem";
 const EmailIcon = (
   <svg
@@ -54,19 +55,19 @@ const SentIcon = (
 );
 
 export const items: SidebarItemProps[] = [
-  { label: "Home", to: "/", icon: HomeIcon },
+  { label: "Home", to: AppPages.RootPage, icon: HomeIcon },
   {
     icon: EmailIcon,
     label: "Emails",
     subItems: [
       {
         label: "Inbox",
-        to: "/inbox",
+        to: AppPages.Inbox,
         icon: InboxIcon,
       },
       {
         label: "Sent",
-        to: "/services/seo",
+        to: AppPages.Sent,
         icon: SentIcon,
       },
     ],
