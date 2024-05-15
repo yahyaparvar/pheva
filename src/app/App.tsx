@@ -13,6 +13,7 @@ import MainLayout from "./layout";
 import { CustomRouter } from "./router";
 import history from "./router/history";
 import { AppPages } from "./types";
+import { Sent } from "./containers/Sent/Loadable";
 
 interface RequireAuthProps {
   children: ReactElement;
@@ -49,15 +50,23 @@ function App() {
               }
             />
             <Route
-              path="/inbox"
+              path={AppPages.Inbox}
               element={
                 <Auth>
                   <Inbox />
                 </Auth>
               }
             />
+            <Route
+              path={AppPages.Sent}
+              element={
+                <Auth>
+                  <Sent />
+                </Auth>
+              }
+            />
           </Route>
-          <Route path="/login" element={<Login />}></Route>
+          <Route path={AppPages.Login} element={<Login />}></Route>
           <Route path={AppPages.NotFoundPage} element={<NotFoundPage />} />
         </Routes>
       </CustomRouter>
