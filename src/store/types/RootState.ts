@@ -1,4 +1,5 @@
 import { AboutMeState } from 'app/containers/AboutMe/types';
+import { LoginState } from 'app/containers/Login/types';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 
 import { HomeState } from "app/containers/Home/types";
@@ -14,5 +15,6 @@ export interface RootState {
   global?: GlobalState;
   home?: HomeState;
   aboutMe?: AboutMeState;
+  login?: LoginState;
 // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
 }
