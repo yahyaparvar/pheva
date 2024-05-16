@@ -1,45 +1,28 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import { LocalStorageKeys, storage } from "store/storage";
-import { fetchBatchEmailDetails, fetchEmails } from "./api";
+
+import { Status } from "app/types";
+import { toast } from "react-toastify";
+import axiosInstance from "service/apiClient";
 import { InboxActions } from "./slice";
-import { Email, FetchEmailsResponse } from "./types";
+import { Email } from "./types";
+
+export const fetchEmails = async (): Promise<Email[]> => {
+  const response = await axiosInstance.get(
+    "http://localhost:8000/emails/inbox"
+  );
+  return response.data.messages as Email[];
+};
 
 export function* getEmails() {
   try {
-    // Get access token from local storage
-    const accessToken: string | undefined = storage.read(
-      LocalStorageKeys.USER_INFO
-    )?.access_token;
-    if (!accessToken) {
-      yield put(InboxActions.getEmailsFailure("No access-token Found!"));
-      return;
-    }
-
-    // Fetch emails from Gmail API
-    const { messages }: FetchEmailsResponse = yield call(
-      fetchEmails,
-      accessToken
-    );
-
-    // Extract email IDs from messages
-    const emailIds: string[] = messages.map((message) => message.id);
-
-    // Fetch email details in batch
-    const emailDetails: Email[] = yield call(
-      fetchBatchEmailDetails,
-      accessToken,
-      emailIds
-    );
-    console.log("Email details:", emailDetails);
-
-    if (emailDetails.length === 0) {
-      console.error("No email details found.");
-    }
-
-    yield put(InboxActions.getEmailsSuccess(emailDetails));
+    yield put(InboxActions.setEmailStatus(Status.LOADING));
+    const emails: Email[] = yield call(fetchEmails);
+    yield put(InboxActions.setEmails(emails));
+    yield put(InboxActions.setEmailStatus(Status.SUCCESS));
   } catch (error: any) {
-    console.error("Error fetching emails:", error);
-    yield put(InboxActions.getEmailsFailure(error.message));
+    yield put(InboxActions.setEmailStatus(Status.ERROR));
+    toast.error("Could not fetch emails.");
+  } finally {
   }
 }
 

@@ -18,3 +18,9 @@ export enum Themes {
   MIDNIGHT = "MIDNIGHT",
   LOCA = "LOCA",
 }
+export enum Status {
+  LOADING = "LOADING",
+  INITIAL = "INITIAL",
+  SUCCESS = "SUCCESS",
+  ERROR = "ERROR",
+}

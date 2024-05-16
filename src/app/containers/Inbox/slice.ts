@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { PayloadAction } from "@reduxjs/toolkit";
+import { Status } from "app/types";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { createSlice } from "store/toolkit";
 import { inboxSaga } from "./saga";
@@ -8,25 +9,19 @@ import { ContainerState, Email } from "./types";
 // The initial state of the Inbox container
 export const initialState: ContainerState = {
   emails: [],
-  loading: false,
-  error: null,
+  status: Status.INITIAL,
 };
 
 const inboxSlice = createSlice({
   name: "inbox",
   initialState,
   reducers: {
-    getEmails: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    getEmailsSuccess: (state, action: PayloadAction<Email[]>) => {
+    getEmails(state) {},
+    setEmails(state, action: PayloadAction<Email[]>) {
       state.emails = action.payload;
-      state.loading = false;
     },
-    getEmailsFailure: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
+    setEmailStatus(state, action: PayloadAction<Status>) {
+      state.status = action.payload;
     },
   },
 });
