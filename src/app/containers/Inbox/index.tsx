@@ -6,6 +6,7 @@
 
 import { useDispatch, useSelector } from "react-redux";
 
+import MotionBox from "app/components/animated";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { inboxSaga } from "./saga";
 import { Inboxselectors } from "./selectors";
@@ -22,5 +23,9 @@ export function Inbox(props: Props) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const dispatch = useDispatch();
 
-  return <div>This is Inbox</div>;
+  return (
+    <MotionBox>
+      <div>This is Inbox</div>
+    </MotionBox>
+  );
 }

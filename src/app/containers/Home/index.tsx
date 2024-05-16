@@ -7,6 +7,7 @@
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 
+import MotionBox from "app/components/animated";
 import { useTranslation } from "react-i18next";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { homeSaga } from "./saga";
@@ -26,99 +27,101 @@ export function Home(props: Props) {
   const dispatch = useDispatch();
 
   return (
-    <Wrapper>
-      <Helmet>
-        <title>Home</title>
-        <meta name="description" content="Description of Home" />
-      </Helmet>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-      <div>Home Sweet home</div>
-    </Wrapper>
+    <MotionBox>
+      <Wrapper>
+        <Helmet>
+          <title>Home</title>
+          <meta name="description" content="Description of Home" />
+        </Helmet>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+        <div>Home Sweet home</div>
+      </Wrapper>
+    </MotionBox>
   );
 }

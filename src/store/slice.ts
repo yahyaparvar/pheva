@@ -6,27 +6,31 @@ import { createSlice } from "store/toolkit";
 import { useInjectReducer, useInjectSaga } from "./redux-injectors";
 import { globalSaga } from "./saga";
 import { LocalStorageKeys, storage } from "./storage";
-interface GoogleJWT {
+interface GoogleAuthResponse {
+  access_token: string;
+  at_hash: string;
   aud: string;
   azp: string;
   email: string;
   email_verified: boolean;
   exp: number;
+  expires_in: number;
   family_name: string;
   given_name: string;
   iat: number;
+  id_token: string;
   iss: string;
-  jti: string;
-  key: string;
   name: string;
-  nbf: number;
   picture: string;
+  refresh_token: string;
+  scope: string;
   sub: string;
+  token_type: string;
 }
 export interface GlobalState {
   loggedIn: boolean;
   theme: string;
-  userInfo: GoogleJWT;
+  userInfo: GoogleAuthResponse;
 }
 const isUserLoggedIn = () => {
   const token = storage.read(LocalStorageKeys.USER_INFO);
@@ -48,11 +52,11 @@ const globalSlice = createSlice({
   initialState,
   reducers: {
     changeTheme(state, action: PayloadAction<string>) {},
-    setLoggedIn(state, action: PayloadAction<string>) {
+    setLoggedIn(state, action: PayloadAction<any>) {
       state.loggedIn = true;
       storage.write(LocalStorageKeys.USER_INFO, {
-        ...parseJwt(action.payload),
-        key: action.payload,
+        ...parseJwt(action.payload.id_token),
+        ...action.payload,
       });
       state.userInfo = storage.read(LocalStorageKeys.USER_INFO);
     },

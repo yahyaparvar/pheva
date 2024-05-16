@@ -1,42 +1,56 @@
-/**
- *
- * Login
- *
- */
-
-import { Helmet } from "react-helmet-async";
-import { useDispatch, useSelector } from "react-redux";
-
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
+import MotionBox from "app/components/animated";
 import history from "app/router/history";
 import { AppPages } from "app/types";
-import { parseJwt } from "config/parseJwt";
+
+import { Helmet } from "react-helmet-async";
+import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axiosInstance from "service/apiClient";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { globalActions } from "store/slice";
 import styled from "styled-components";
 import { loginSaga } from "./saga";
-import { Loginselectors } from "./selectors";
 import { LoginReducer, sliceKey } from "./slice";
+
 interface Props {}
 
 export function Login(props: Props) {
   useInjectReducer({ key: sliceKey, reducer: LoginReducer });
   useInjectSaga({ key: sliceKey, saga: loginSaga });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const login = useSelector(Loginselectors.root);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const dispatch = useDispatch();
-  const responseMessage = (response: any) => {
-    dispatch(globalActions.setLoggedIn(response.credential));
-    history.push(AppPages.RootPage);
-  };
-  const errorMessage = () => {
-    alert("Failed");
+
+  const responseMessage = async (response: any) => {
+    try {
+      // Send the authorization code to your backend
+      const result = await axiosInstance.post("auth/google", {
+        code: response.code,
+      });
+
+      const token = result.data;
+      dispatch(globalActions.setLoggedIn(token));
+      history.push(AppPages.RootPage);
+    } catch (error) {
+      console.error("Error during authentication", error);
+      toast.error("Login Failed!");
+    }
   };
 
+  const errorMessage = (error: any) => {
+    console.error("Login failed", error);
+    toast.error("Login Failed!");
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: responseMessage,
+    onError: errorMessage,
+    flow: "auth-code",
+  });
+
   return (
-    <>
+    <MotionBox>
       <Helmet>
         <title>Login</title>
         <meta name="description" content="Description of Login" />
@@ -44,17 +58,14 @@ export function Login(props: Props) {
       <Container>
         <Title>Login</Title>
         <GoogleButtonStyle>
-          <GoogleLogin
-            shape="circle"
-            size="large"
-            onSuccess={responseMessage}
-            onError={errorMessage}
-          />
+          <button onClick={() => googleLogin()}>Login with Google</button>
         </GoogleButtonStyle>
+        <ToastContainer />
       </Container>
-    </>
+    </MotionBox>
   );
 }
+
 const GoogleButtonStyle = styled.div`
   width: 225px;
 `;

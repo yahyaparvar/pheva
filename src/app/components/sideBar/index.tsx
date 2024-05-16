@@ -27,8 +27,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
     >
       <StyledSidebar>
         <ProfileButton active={false}>
-          <ProfileImage src={userInfo.picture}></ProfileImage>
-          <ProfileName>{userInfo.name}</ProfileName>
+          <ProfileImage src={userInfo?.picture}></ProfileImage>
+          <ProfileName>{userInfo?.name}</ProfileName>
           <ChevronBottom viewBox="0 0 24 24" fill="currentColor">
             <path
               fillRule="evenodd"

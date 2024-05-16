@@ -1,36 +1,31 @@
 /**
-*
-* Sent
-*
-*/
+ *
+ * Sent
+ *
+ */
 
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
- 
+import { useDispatch, useSelector } from "react-redux";
 
-import { useInjectReducer, useInjectSaga } from 'store/redux-injectors';
-import { SentReducer, sliceKey } from './slice';
-import { Sentselectors } from './selectors';
-import { sentSaga } from './saga';
+import MotionBox from "app/components/animated";
+import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
+import { sentSaga } from "./saga";
+import { Sentselectors } from "./selectors";
+import { SentReducer, sliceKey } from "./slice";
 
 interface Props {}
 
-
 export function Sent(props: Props) {
-useInjectReducer({ key: sliceKey, reducer: SentReducer });
+  useInjectReducer({ key: sliceKey, reducer: SentReducer });
   useInjectSaga({ key: sliceKey, saga: sentSaga });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const sent = useSelector(Sentselectors.root);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const dispatch = useDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const sent = useSelector(Sentselectors.root);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const dispatch = useDispatch();
 
-
-return (
-<>
-     <div>
-  </div>
-</>
-);
-
-};
+  return (
+    <MotionBox>
+      <div>This is sent!</div>
+    </MotionBox>
+  );
+}
