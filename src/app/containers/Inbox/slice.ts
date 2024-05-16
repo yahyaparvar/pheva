@@ -2,19 +2,32 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { createSlice } from "store/toolkit";
-import { ContainerState } from "./types";
-
 import { inboxSaga } from "./saga";
+import { ContainerState, Email } from "./types";
 
 // The initial state of the Inbox container
-export const initialState: ContainerState = {};
+export const initialState: ContainerState = {
+  emails: [],
+  loading: false,
+  error: null,
+};
 
 const inboxSlice = createSlice({
   name: "inbox",
   initialState,
   reducers: {
-    someAction(state, action: PayloadAction<any>) {},
-    getEmails(state) {},
+    getEmails: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    getEmailsSuccess: (state, action: PayloadAction<Email[]>) => {
+      state.emails = action.payload;
+      state.loading = false;
+    },
+    getEmailsFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 

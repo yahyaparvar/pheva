@@ -7,10 +7,11 @@
 import { useDispatch, useSelector } from "react-redux";
 
 import MotionBox from "app/components/animated";
+import { useEffect } from "react";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { inboxSaga } from "./saga";
 import { Inboxselectors } from "./selectors";
-import { InboxReducer, sliceKey } from "./slice";
+import { InboxActions, InboxReducer, sliceKey } from "./slice";
 
 interface Props {}
 
@@ -22,7 +23,9 @@ export function Inbox(props: Props) {
   const inbox = useSelector(Inboxselectors.root);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const dispatch = useDispatch();
-
+  useEffect(() => {
+    dispatch(InboxActions.getEmails());
+  }, []);
   return (
     <MotionBox>
       <div>This is Inbox</div>
