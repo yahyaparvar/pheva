@@ -12,8 +12,13 @@ export interface Email {
 export interface InboxState {
   emails: Email[];
   status: Status;
+  nextPageToken: undefined | string;
+  lastPageTokens: string[];
 }
-
+export interface EmailResponse {
+  emails: Email[];
+  nextPageToken: string;
+}
 export type ContainerState = InboxState;
 
 export function customDateFormat(dateString: string): string {

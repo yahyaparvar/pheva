@@ -10,6 +10,8 @@ import { ContainerState, Email } from "./types";
 export const initialState: ContainerState = {
   emails: [],
   status: Status.INITIAL,
+  nextPageToken: undefined,
+  lastPageTokens: [],
 };
 
 const inboxSlice = createSlice({
@@ -23,6 +25,14 @@ const inboxSlice = createSlice({
     setEmailStatus(state, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
+    setNextPageToken(state, action: PayloadAction<string>) {
+      state.nextPageToken = action.payload;
+    },
+    appendPrevPageToken(state, action: PayloadAction<string>) {
+      state.lastPageTokens.push(action.payload);
+    },
+    nextEmailPage() {},
+    PreviousEmailPage() {},
   },
 });
 

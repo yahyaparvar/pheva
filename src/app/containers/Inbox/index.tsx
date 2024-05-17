@@ -1,3 +1,5 @@
+import { Status } from "app/types";
+import he from "he";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Column, useTable } from "react-table";
@@ -7,7 +9,6 @@ import { inboxSaga } from "./saga";
 import { Inboxselectors } from "./selectors";
 import { InboxActions, InboxReducer, sliceKey } from "./slice";
 import { Email, customDateFormat } from "./types";
-
 interface Props {}
 
 export function Inbox(props: Props) {
@@ -16,9 +17,12 @@ export function Inbox(props: Props) {
 
   const dispatch = useDispatch();
   const emails = useSelector(Inboxselectors.emails);
+  const emailsStatus = useSelector(Inboxselectors.emailsStatus);
 
   useEffect(() => {
-    dispatch(InboxActions.getEmails());
+    if (emailsStatus !== Status.SUCCESS) {
+      dispatch(InboxActions.getEmails());
+    }
   }, [dispatch]);
 
   const columns: Column<Email>[] = useMemo(
@@ -33,9 +37,9 @@ export function Inbox(props: Props) {
         accessor: (row) => `${row.subject} ${row.snippet}`,
         Cell: ({ row }: any) => (
           <StyledTdSubjectSnippet>
-            <div className="subject">{row.original.subject}</div>
-            <div> - </div>
-            <div className="snippet">{row.original.snippet}</div>
+            <div className="subject">{he.decode(row.original.subject)}</div>
+            <div>{`-`}</div>
+            <div className="snippet">{he.decode(row.original.snippet)}</div>
           </StyledTdSubjectSnippet>
         ),
       },
@@ -43,7 +47,9 @@ export function Inbox(props: Props) {
         Header: "Date",
         accessor: "date",
         Cell: ({ value }) => (
-          <StyledTdDate>{customDateFormat(value)}</StyledTdDate>
+          <StyledTdDate>
+            {customDateFormat(value || new Date().toString())}
+          </StyledTdDate>
         ),
       },
     ],
@@ -59,7 +65,12 @@ export function Inbox(props: Props) {
 
   return (
     <TableContainer>
-      <StyledTable {...getTableProps()}>
+      <div onClick={() => dispatch(InboxActions.nextEmailPage())}>Next</div>
+      <div>Prev</div>
+      <StyledTable
+        style={{ opacity: emailsStatus === Status.LOADING ? "0.4" : "1" }}
+        {...getTableProps()}
+      >
         <tbody {...getTableBodyProps()}>
           {rows.map((row) => {
             prepareRow(row);
@@ -94,15 +105,18 @@ const StyledTable = styled.table`
   th,
   td {
     cursor: pointer;
-
     padding: 1px;
     white-space: nowrap; /* Prevent text from wrapping */
     overflow: hidden; /* Hide overflow */
     text-overflow: ellipsis; /* Display ellipsis on overflow */
     padding: 12px 5px;
   }
+  tr {
+    transition: all 0.2s;
+  }
   tr:hover {
-    opacity: 0.7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: scale(1.007);
   }
 `;
 
@@ -130,6 +144,7 @@ const StyledTdSubjectSnippet = styled.td`
   display: flex;
   flex-direction: row;
   font-size: 14px;
+  gap: 5px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -139,6 +154,7 @@ const StyledTdSubjectSnippet = styled.td`
 
   .snippet {
     font-style: italic;
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
