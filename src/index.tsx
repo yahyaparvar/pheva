@@ -1,4 +1,6 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { FontLoadingPage } from "app/components/fontLoading";
 import { Themes } from "app/types";
 import FontFaceObserver from "fontfaceobserver";
