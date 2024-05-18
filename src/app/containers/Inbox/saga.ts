@@ -61,8 +61,40 @@ export function* nextEmailPage() {
     }
   }
 }
+export function* previousEmailPage() {
+  while (true) {
+    try {
+      yield put(InboxActions.setEmailStatus(Status.LOADING));
+      const lastPageTokens: string[] = yield select(
+        Inboxselectors.lastPageTokens
+      );
+      if (lastPageTokens.length === 0) {
+        yield put(InboxActions.setEmailStatus(Status.SUCCESS));
+        break;
+      }
+      const previousPageToken: string =
+        lastPageTokens[lastPageTokens.length - 2];
+      const { emails, nextPageToken }: EmailResponse = !previousPageToken
+        ? yield call(fetchEmails)
+        : yield call(fetchEmails, previousPageToken);
+      yield put(InboxActions.setEmails(emails));
+      yield put(InboxActions.setNextPageToken(nextPageToken));
+      yield put(InboxActions.removePrevPageToken());
+      yield put(InboxActions.setEmailStatus(Status.SUCCESS));
+      break;
+    } catch (error: any) {
+      if (error.message === "Request failed with status code 500") {
+        yield delay(4000);
+      } else {
+        yield put(InboxActions.setEmailStatus(Status.ERROR));
+        break;
+      }
+    }
+  }
+}
 
 export function* inboxSaga() {
   yield takeLatest(InboxActions.getEmails.type, getEmails);
   yield takeLatest(InboxActions.nextEmailPage.type, nextEmailPage);
+  yield takeLatest(InboxActions.previousEmailPage.type, previousEmailPage);
 }

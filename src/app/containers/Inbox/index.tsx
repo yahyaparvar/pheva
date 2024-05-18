@@ -66,7 +66,7 @@ export function Inbox(props: Props) {
   return (
     <TableContainer>
       <div onClick={() => dispatch(InboxActions.nextEmailPage())}>Next</div>
-      <div>Prev</div>
+      <div onClick={() => dispatch(InboxActions.previousEmailPage())}>Prev</div>
       <StyledTable
         style={{ opacity: emailsStatus === Status.LOADING ? "0.4" : "1" }}
         {...getTableProps()}
@@ -99,6 +99,7 @@ const TableContainer = styled.div`
 // Styled component for the table
 const StyledTable = styled.table`
   border-collapse: collapse;
+  transition: all 0.2s;
   width: 100%;
   table-layout: fixed; /* Ensure table does not overflow its container */
 
@@ -112,7 +113,7 @@ const StyledTable = styled.table`
     padding: 12px 5px;
   }
   tr {
-    transition: all 0.2s;
+    transition: all 0.1s;
   }
   tr:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -127,7 +128,7 @@ const StyledTr = styled.tr<{ isUnread: boolean }>`
 
 // Define fixed width for specific cells
 const StyledTdSender = styled.td`
-  width: 250px;
+  width: 230px;
   font-weight: bold;
   font-size: 14px;
 `;

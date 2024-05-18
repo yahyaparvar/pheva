@@ -31,8 +31,11 @@ const inboxSlice = createSlice({
     appendPrevPageToken(state, action: PayloadAction<string>) {
       state.lastPageTokens.push(action.payload);
     },
+    removePrevPageToken(state) {
+      state.lastPageTokens.pop();
+    },
     nextEmailPage() {},
-    PreviousEmailPage() {},
+    previousEmailPage() {},
   },
 });
 
