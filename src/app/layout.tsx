@@ -10,7 +10,6 @@ const LayoutContainer = styled.div`
 
 const ContentContainer = styled.div`
   flex-grow: 1;
-  padding: 20px;
   overflow: scroll;
 `;
 

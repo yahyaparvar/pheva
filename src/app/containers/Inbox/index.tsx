@@ -4,7 +4,11 @@ import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Column, useTable } from "react-table";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import {
+  ROW_JUSTIFY_END__ALIGN_CENTER,
+  UNSELECTABLE,
+} from "styles/globalStyles";
 import { inboxSaga } from "./saga";
 import { Inboxselectors } from "./selectors";
 import { InboxActions, InboxReducer, sliceKey } from "./slice";
@@ -18,6 +22,7 @@ export function Inbox(props: Props) {
   const dispatch = useDispatch();
   const emails = useSelector(Inboxselectors.emails);
   const emailsStatus = useSelector(Inboxselectors.emailsStatus);
+  const lastPageTokens = useSelector(Inboxselectors.lastPageTokens);
 
   useEffect(() => {
     if (emailsStatus !== Status.SUCCESS) {
@@ -65,8 +70,39 @@ export function Inbox(props: Props) {
 
   return (
     <TableContainer>
-      <div onClick={() => dispatch(InboxActions.nextEmailPage())}>Next</div>
-      <div onClick={() => dispatch(InboxActions.previousEmailPage())}>Prev</div>
+      <FixedTableHeader>
+        <NextPrevButton
+          disabled={lastPageTokens.length === 0 ? "true" : "false"}
+          onClick={() => dispatch(InboxActions.previousEmailPage())}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              fillRule="evenodd"
+              d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </NextPrevButton>
+        <NextPrevButton onClick={() => dispatch(InboxActions.nextEmailPage())}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </NextPrevButton>
+      </FixedTableHeader>
       <StyledTable
         style={{ opacity: emailsStatus === Status.LOADING ? "0.4" : "1" }}
         {...getTableProps()}
@@ -90,12 +126,41 @@ export function Inbox(props: Props) {
 // Styled component for the grid container
 const TableContainer = styled.div`
   height: 100%;
+  padding: 16px;
+  padding-top: 40px;
+  position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
   overflow-x: auto; /* Allow horizontal scrolling if content overflows */
 `;
-
+const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
+  ${UNSELECTABLE}
+  ${({ disabled }) =>
+    disabled === "true" &&
+    css`
+      opacity: 0.5;
+      pointer-events: none;
+    `}
+  width:20px;
+  padding: 5px;
+  box-sizing: initial;
+  cursor: pointer;
+  height: 20px;
+`;
+const FixedTableHeader = styled.th`
+  ${ROW_JUSTIFY_END__ALIGN_CENTER}
+  position: sticky;
+  background-color: var(--table-header);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  z-index: 10;
+  top: -40px; /* Offset the parent's padding */
+  left: 0;
+  width: 100%;
+  padding: 7px;
+  padding-right: 50px;
+`;
 // Styled component for the table
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -103,7 +168,6 @@ const StyledTable = styled.table`
   width: 100%;
   table-layout: fixed; /* Ensure table does not overflow its container */
 
-  th,
   td {
     cursor: pointer;
     padding: 1px;

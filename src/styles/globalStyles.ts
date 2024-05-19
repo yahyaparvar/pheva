@@ -14,6 +14,7 @@ const GlobalStyle = createGlobalStyle`
   --button-text:#fff;
   --background-color:#fff;
   --dark-gray: #333;
+  --table-header:#585858;
 }
 .DARK {
     --text: #e5e7eb;
@@ -96,12 +97,12 @@ html {
 }
 *{
   color: var(--text);
-    &::-webkit-scrollbar {
+/* &::-webkit-scrollbar {
     display: none;
   }
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
- box-sizing:border-box ;
+  -ms-overflow-style: none; 
+  scrollbar-width: none; */
+ box-sizing:border-box;
  font-family : var(--font),sans-serif,system-ui, -apple-system,'Helvetica Neue',"Rubik";
 }
 `;

@@ -1,4 +1,5 @@
 import axios, {
+  AxiosError,
   AxiosInstance,
   AxiosResponse,
   InternalAxiosRequestConfig,
@@ -14,7 +15,45 @@ interface ErrorResponse {
   response?: {
     status: number;
   };
+  config?: InternalAxiosRequestConfig;
 }
+
+interface RefreshTokenResponse {
+  accessToken: string;
+  expiresIn: number;
+}
+
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = (token: string) => {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
+const refreshAccessToken = async (): Promise<string> => {
+  const refreshToken = storage.read(LocalStorageKeys.USER_INFO)?.refresh_token;
+  if (!refreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  const response = await axios.post<RefreshTokenResponse>(
+    `${baseURL}auth/refresh-token`,
+    { code: refreshToken }
+  );
+
+  const { accessToken } = response.data;
+  storage.write(LocalStorageKeys.USER_INFO, {
+    ...storage.read(LocalStorageKeys.USER_INFO),
+    access_token: accessToken,
+  });
+  // window.location.reload();
+  return accessToken;
+};
 
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL,
@@ -39,10 +78,30 @@ axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
-  (error: ErrorResponse) => {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig;
+
     if (error.response && error.response.status === 401) {
-      // Handle 401 Unauthorized error (e.g., redirect to login)
+      if (!isRefreshing) {
+        isRefreshing = true;
+        try {
+          const newToken = await refreshAccessToken();
+          isRefreshing = false;
+          onRefreshed(newToken);
+        } catch (refreshError) {
+          isRefreshing = false;
+          return Promise.reject(refreshError);
+        }
+      }
+
+      return new Promise((resolve) => {
+        subscribeTokenRefresh((token: string) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          resolve(axios(originalRequest));
+        });
+      });
     }
+
     return Promise.reject(error);
   }
 );
