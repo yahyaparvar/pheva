@@ -10,6 +10,10 @@ const domains = {
     state.inbox?.nextPageToken || initialState.nextPageToken,
   lastPageTokens: (state: RootState) =>
     state.inbox?.lastPageTokens || initialState.lastPageTokens,
+  emailsSummaries: (state: RootState) =>
+    state.inbox?.summaries.emails || initialState?.summaries.emails,
+  emailsSummariesStatus: (state: RootState) =>
+    state.inbox?.summaries.status || initialState?.summaries.status,
 };
 export const Inboxselectors = {
   root: createSelector([domains.root], (state) => state),
@@ -17,4 +21,9 @@ export const Inboxselectors = {
   emails: createSelector([domains.emails], (state) => state),
   nextPageToken: createSelector([domains.nextPageToken], (state) => state),
   lastPageTokens: createSelector([domains.lastPageTokens], (state) => state),
+  emailsSummaries: createSelector([domains.emailsSummaries], (state) => state),
+  emailsSummariesStatus: createSelector(
+    [domains.emailsSummariesStatus],
+    (state) => state
+  ),
 };

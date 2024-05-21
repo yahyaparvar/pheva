@@ -45,6 +45,7 @@ const ButtonBase = styled.button<ButtonProps>`
   font-weight: 600;
   border-radius: 0.375rem;
   padding: 0.5rem 1rem;
+  min-width: fit-content;
   display: inline-flex;
   align-items: center;
   justify-content: center;

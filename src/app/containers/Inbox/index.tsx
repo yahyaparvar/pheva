@@ -10,6 +10,7 @@ import {
   ROW_JUSTIFY_END__ALIGN_CENTER,
   UNSELECTABLE,
 } from "styles/globalStyles";
+import RowMouseHover from "./components/rowHover";
 import { inboxSaga } from "./saga";
 import { Inboxselectors } from "./selectors";
 import { InboxActions, InboxReducer, sliceKey } from "./slice";
@@ -86,7 +87,7 @@ export function Inbox(props: Props) {
             </svg>
           }
           onClick={() => {
-            dispatch(InboxActions.fetchEmailSummaries())
+            dispatch(InboxActions.fetchEmailSummaries());
           }}
         >
           Get AI Sumary
@@ -134,6 +135,9 @@ export function Inbox(props: Props) {
             return (
               <StyledTr isUnread={isUnread} {...row.getRowProps()}>
                 {row.cells.map((cell) => cell.render("Cell"))}
+                <StyledTdHover>
+                  <RowMouseHover className={row.id} />
+                </StyledTdHover>
               </StyledTr>
             );
           })}
@@ -201,12 +205,13 @@ const StyledTable = styled.table`
   }
   tr:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    transform: scale(1.007);
+    /* transform: scale(1.007); */
   }
 `;
 
 // Styled component for table row
 const StyledTr = styled.tr<{ isUnread: boolean }>`
+  position: relative;
   opacity: ${({ isUnread }) => (isUnread ? 1 : 0.5)};
 `;
 
@@ -222,6 +227,9 @@ const StyledTdDate = styled.td`
   font-size: 12px;
   font-weight: bold;
   text-align: right;
+`;
+const StyledTdHover = styled.td`
+  width: 1px;
 `;
 
 // Styled component for the subject and snippet
