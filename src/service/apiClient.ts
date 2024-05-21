@@ -57,7 +57,6 @@ const refreshAccessToken = async (): Promise<string> => {
 
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL,
-  timeout: 10000,
 });
 
 axiosInstance.interceptors.request.use(
@@ -107,6 +106,7 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+
 // import axios, {
 //   AxiosError,
 //   AxiosInstance,
@@ -156,8 +156,9 @@ export default axiosInstance;
 //   );
 
 //   const { accessToken } = response.data;
+//   const userInfo = storage.read(LocalStorageKeys.USER_INFO);
 //   storage.write(LocalStorageKeys.USER_INFO, {
-//     ...storage.read(LocalStorageKeys.USER_INFO),
+//     ...userInfo,
 //     access_token: accessToken,
 //   });
 //   return accessToken;
@@ -177,7 +178,7 @@ export default axiosInstance;
 //     }
 //     return config;
 //   },
-//   (error: ErrorResponse) => {
+//   (error: AxiosError) => {
 //     return Promise.reject(error);
 //   }
 // );
@@ -198,7 +199,6 @@ export default axiosInstance;
 //           onRefreshed(newToken);
 //         } catch (refreshError) {
 //           isRefreshing = false;
-//           refreshSubscribers = [];
 //           return Promise.reject(refreshError);
 //         }
 //       }
@@ -206,7 +206,7 @@ export default axiosInstance;
 //       return new Promise((resolve, reject) => {
 //         subscribeTokenRefresh((token: string) => {
 //           originalRequest.headers.Authorization = `Bearer ${token}`;
-//           resolve(axiosInstance(originalRequest));
+//           resolve(axios(originalRequest));
 //         });
 //       });
 //     }

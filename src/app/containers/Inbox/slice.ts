@@ -4,7 +4,7 @@ import { Status } from "app/types";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { createSlice } from "store/toolkit";
 import { inboxSaga } from "./saga";
-import { ContainerState, Email } from "./types";
+import { ContainerState, Email, EmailSummary } from "./types";
 
 // The initial state of the Inbox container
 export const initialState: ContainerState = {
@@ -12,6 +12,7 @@ export const initialState: ContainerState = {
   status: Status.INITIAL,
   nextPageToken: undefined,
   lastPageTokens: [],
+  summaries: { emails: [], status: Status.INITIAL },
 };
 
 const inboxSlice = createSlice({
@@ -36,6 +37,14 @@ const inboxSlice = createSlice({
     },
     nextEmailPage() {},
     previousEmailPage() {},
+    fetchEmailSummaries(state) {},
+    setEmailSummaries(state, action: PayloadAction<EmailSummary[]>) {
+      state.summaries.emails = action.payload;
+      state.summaries.status = Status.SUCCESS;
+    },
+    setEmailSummariesStatus(state, action: PayloadAction<Status>) {
+      state.summaries.status = action.payload;
+    },
   },
 });
 

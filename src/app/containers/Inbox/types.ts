@@ -9,11 +9,19 @@ export interface Email {
   date: string;
   labels: string[];
 }
+export interface EmailSummary {
+  id: string;
+  summary: string;
+}
 export interface InboxState {
   emails: Email[];
   status: Status;
   nextPageToken: undefined | string;
   lastPageTokens: string[];
+  summaries: {
+    status: Status;
+    emails: EmailSummary[];
+  };
 }
 export interface EmailResponse {
   emails: Email[];
@@ -35,7 +43,10 @@ export function customDateFormat(dateString: string): string {
     const formattedHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM/PM
     return `${formattedHours}:${minutes} ${ampm}`;
   } else if (isThisYear) {
-    const options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+    const options: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+    };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   } else {
     const month = (date.getMonth() + 1).toString().padStart(1, "0");

@@ -2,9 +2,10 @@ import { call, delay, put, select, takeLatest } from "redux-saga/effects";
 
 import { Status } from "app/types";
 import axiosInstance from "service/apiClient";
+import { LocalStorageKeys, storage } from "store/storage";
 import { Inboxselectors } from "./selectors";
 import { InboxActions } from "./slice";
-import { EmailResponse } from "./types";
+import { Email, EmailResponse, EmailSummary } from "./types";
 
 export const fetchEmails = async (
   pageToken?: string
@@ -17,7 +18,32 @@ export const fetchEmails = async (
     nextPageToken: response.data.nextPageToken,
   };
 };
+export const getEmailSummaryAPI = async (
+  prompt?: Email[]
+): Promise<EmailResponse> => {
+  const response = await axiosInstance.post(
+    `http://localhost:8000/ai/emails/summary`,
+    { prompt, name: storage.read(LocalStorageKeys.USER_INFO).name }
+  );
+  return JSON.parse(response.data.summaries).emails;
+};
 
+export function* fetchEmailSummaries() {
+  try {
+    const emails: Email[] = yield select(Inboxselectors.emails); // Assuming emails are already fetched
+    const emailSummaries: EmailSummary[] = yield call(
+      getEmailSummaryAPI,
+      emails
+    );
+    console.log(emails);
+
+    yield put(InboxActions.setEmailSummaries(emailSummaries)); // Assuming you have this action to update the state
+  } catch (error: any) {
+    console.log(`error:${JSON.parse(error)}`);
+
+    yield put(InboxActions.setEmailStatus(Status.ERROR)); // Handle the error
+  }
+}
 export function* getEmails() {
   while (true) {
     try {
@@ -97,4 +123,5 @@ export function* inboxSaga() {
   yield takeLatest(InboxActions.getEmails.type, getEmails);
   yield takeLatest(InboxActions.nextEmailPage.type, nextEmailPage);
   yield takeLatest(InboxActions.previousEmailPage.type, previousEmailPage);
+  yield takeLatest(InboxActions.fetchEmailSummaries.type, fetchEmailSummaries);
 }
