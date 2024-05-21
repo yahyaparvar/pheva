@@ -25,7 +25,7 @@ export const getEmailSummaryAPI = async (
     `http://localhost:8000/ai/emails/summary`,
     { prompt, name: storage.read(LocalStorageKeys.USER_INFO).name }
   );
-  return JSON.parse(response.data.summaries).emails;
+  return response.data.emails;
 };
 
 export function* fetchEmailSummaries() {
