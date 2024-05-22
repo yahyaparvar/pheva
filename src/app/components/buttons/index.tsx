@@ -1,6 +1,6 @@
 // Button.tsx
 import React from "react";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { UNSELECTABLE } from "styles/globalStyles";
 
 const buttonStyles = {
@@ -37,8 +37,9 @@ const buttonStyles = {
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "danger" | "outline";
-  leftIcon?: React.ReactNode; // Accepts any React node as a left icon
-  rightIcon?: React.ReactNode; // Accepts any React node as a right icon
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  loading?: boolean; // Add loading prop
 }
 
 const ButtonBase = styled.button<ButtonProps>`
@@ -52,6 +53,7 @@ const ButtonBase = styled.button<ButtonProps>`
   border: none;
   transition: background-color 0.2s;
   cursor: pointer;
+  ${({ loading }) => loading && "cursor: not-allowed;"}
   ${UNSELECTABLE}
   ${({ variant }) => buttonStyles[variant || "primary"]}
 `;
@@ -65,18 +67,46 @@ const IconWrapper = styled.span<{ position: "left" | "right" }>`
   margin-left: ${({ position }) => (position === "right" ? "0.5rem" : "0")};
 `;
 
+const spinnerAnimation = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const Spinner = styled.div`
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: ${spinnerAnimation} 0.7s linear infinite;
+`;
+
 export const Button: React.FC<ButtonProps> = ({
   variant = "primary",
   leftIcon,
   rightIcon,
+  loading = false,
   children,
   ...props
 }) => {
   return (
-    <ButtonBase variant={variant} {...props}>
-      {leftIcon && <IconWrapper position="left">{leftIcon}</IconWrapper>}
+    <ButtonBase
+      variant={variant}
+      disabled={loading}
+      loading={loading}
+      {...props}
+    >
+      {leftIcon && (
+        <IconWrapper position="left">
+          {loading ? <Spinner /> : leftIcon}
+        </IconWrapper>
+      )}
       {children}
-      {rightIcon && <IconWrapper position="right">{rightIcon}</IconWrapper>}
+      {rightIcon && (
+        <IconWrapper position="right">
+          {loading ? <Spinner /> : rightIcon}
+        </IconWrapper>
+      )}
     </ButtonBase>
   );
 };

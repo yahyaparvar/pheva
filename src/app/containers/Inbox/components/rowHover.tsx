@@ -1,16 +1,21 @@
 import { gsap } from "gsap";
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import styled from "styled-components";
 
 const Ball = styled.div`
-  background-color: #f59e0b;
-  width: 1rem;
-  height: 1rem;
+  background-color: #68645d;
   position: absolute;
   top: 0;
   left: 0;
-  border-radius: 50%;
+  width: 300px;
+  padding: 20px;
+  pointer-events: none;
+  color: white !important ;
+  border-radius: 12px;
   opacity: 0; /* Initially invisible */
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
 `;
 
 const Container = styled.div`
@@ -19,10 +24,12 @@ const Container = styled.div`
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 1; /* Ensure it is above other elements */
+  z-index: 100; /* Ensure it is above other elements */
 `;
 
-const RowMouseHover: React.FC<{ className: string }> = (props) => {
+const RowMouseHover: React.FC<{ className: string; children?: ReactNode }> = (
+  props
+) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLDivElement>(null);
 
@@ -36,8 +43,8 @@ const RowMouseHover: React.FC<{ className: string }> = (props) => {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         gsap.set(ball, {
-          x: x,
-          y: y - 10, // Adjust y to position ball above cursor
+          x: x - ball.offsetWidth - 34, // Offset x to place cursor at top left
+          y: y - ball.offsetHeight / 2, // Offset y to place cursor at top left
           opacity: 1, // Make ball visible on mouse enter
         });
       };
@@ -48,8 +55,8 @@ const RowMouseHover: React.FC<{ className: string }> = (props) => {
         const y = Math.max(rect.top, Math.min(e.clientY, rect.bottom));
         gsap.to(ball, {
           duration: 0.2,
-          x: x - rect.left,
-          y: y - rect.top - 10, // Adjust y to position ball above cursor
+          x: x - rect.left - ball.offsetWidth - 34, // Offset x to place cursor at top left
+          y: y - rect.top - ball.offsetHeight / 2, // Offset y to place cursor at top left
           ease: "power1.out",
           overwrite: "auto",
         });
@@ -76,7 +83,9 @@ const RowMouseHover: React.FC<{ className: string }> = (props) => {
 
   return (
     <Container ref={containerRef}>
-      <Ball className={props.className} ref={ballRef} />
+      <Ball className={props.className} ref={ballRef}>
+        {props.children}
+      </Ball>
     </Container>
   );
 };

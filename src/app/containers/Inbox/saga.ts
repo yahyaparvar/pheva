@@ -30,14 +30,14 @@ export const getEmailSummaryAPI = async (
 
 export function* fetchEmailSummaries() {
   try {
+    yield put(InboxActions.setEmailSummariesStatus(Status.LOADING)); // Handle
     const emails: Email[] = yield select(Inboxselectors.emails); // Assuming emails are already fetched
     const emailSummaries: EmailSummary[] = yield call(
       getEmailSummaryAPI,
       emails
     );
-    console.log(emails);
-
     yield put(InboxActions.setEmailSummaries(emailSummaries)); // Assuming you have this action to update the state
+    yield put(InboxActions.setEmailSummariesStatus(Status.SUCCESS));
   } catch (error: any) {
     console.log(`error:${JSON.parse(error)}`);
 
@@ -64,6 +64,7 @@ export function* getEmails() {
   }
 }
 export function* nextEmailPage() {
+  yield put(InboxActions.setEmailSummariesStatus(Status.INITIAL));
   while (true) {
     try {
       yield put(InboxActions.setEmailStatus(Status.LOADING));
@@ -88,6 +89,7 @@ export function* nextEmailPage() {
   }
 }
 export function* previousEmailPage() {
+  yield put(InboxActions.setEmailSummariesStatus(Status.INITIAL));
   while (true) {
     try {
       yield put(InboxActions.setEmailStatus(Status.LOADING));

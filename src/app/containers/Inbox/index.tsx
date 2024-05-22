@@ -1,7 +1,9 @@
 import { Button } from "app/components/buttons";
 import { Status } from "app/types";
+import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
 import he from "he";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Column, useTable } from "react-table";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
@@ -15,8 +17,15 @@ import { inboxSaga } from "./saga";
 import { Inboxselectors } from "./selectors";
 import { InboxActions, InboxReducer, sliceKey } from "./slice";
 import { Email, customDateFormat } from "./types";
-interface Props {}
 
+interface Props {}
+const triggerConfetti = () => {
+  confetti({
+    particleCount: 100,
+    spread: 100,
+    origin: { y: 0.7, x: 0.6 },
+  });
+};
 export function Inbox(props: Props) {
   useInjectReducer({ key: sliceKey, reducer: InboxReducer });
   useInjectSaga({ key: sliceKey, saga: inboxSaga });
@@ -24,13 +33,28 @@ export function Inbox(props: Props) {
   const dispatch = useDispatch();
   const emails = useSelector(Inboxselectors.emails);
   const emailsStatus = useSelector(Inboxselectors.emailsStatus);
+  const emailsSummariesStatus = useSelector(
+    Inboxselectors.emailsSummariesStatus
+  );
+  const emailsSummaries = useSelector(Inboxselectors.emailsSummaries);
   const lastPageTokens = useSelector(Inboxselectors.lastPageTokens);
+  const [isAIApplied, setIsAIApplied] = useState(false);
 
   useEffect(() => {
     if (emailsStatus !== Status.SUCCESS) {
       dispatch(InboxActions.getEmails());
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    if (emailsSummariesStatus === Status.SUCCESS) {
+      setIsAIApplied(true);
+      triggerConfetti();
+      setTimeout(() => {
+        setIsAIApplied(false);
+      }, 500);
+    }
+  }, [emailsSummariesStatus]);
 
   const columns: Column<Email>[] = useMemo(
     () => [
@@ -69,9 +93,25 @@ export function Inbox(props: Props) {
   });
 
   return (
-    <TableContainer>
+    <TableContainer
+      initial={{ opacity: 0, y: 0, rotate: 0 }} // Initial rotation
+      animate={{
+        opacity: 1,
+        y: 0,
+        scale: isAIApplied ? 1.1 : 1,
+        rotate: isAIApplied ? [0, 10, -10, 10, -10, 0] : 0, // Rotate effect
+        transition: {
+          duration: 0.5,
+          type: "spring",
+          stiffness: 100,
+          rotate: { duration: 0.5 }, // Adjust duration and ease for rotate effect
+        },
+      }}
+      exit={{ opacity: 0, y: 20, rotate: 0 }} // Exit rotation
+    >
       <FixedTableHeader>
         <Button
+          loading={emailsSummariesStatus === Status.LOADING}
           rightIcon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +130,7 @@ export function Inbox(props: Props) {
             dispatch(InboxActions.fetchEmailSummaries());
           }}
         >
-          Get AI Sumary
+          Get AI Summary
         </Button>
         <NextPrevButton
           disabled={lastPageTokens.length === 0 ? "true" : "false"}
@@ -125,7 +165,10 @@ export function Inbox(props: Props) {
         </NextPrevButton>
       </FixedTableHeader>
       <StyledTable
-        style={{ opacity: emailsStatus === Status.LOADING ? "0.4" : "1" }}
+        style={{
+          opacity: emailsStatus === Status.LOADING ? "0.4" : "1",
+          pointerEvents: emailsStatus === Status.LOADING ? "none" : "all",
+        }}
         {...getTableProps()}
       >
         <tbody {...getTableBodyProps()}>
@@ -134,9 +177,20 @@ export function Inbox(props: Props) {
             const isUnread = row.original.labels.includes("UNREAD");
             return (
               <StyledTr isUnread={isUnread} {...row.getRowProps()}>
+                <StyledTdHover />
                 {row.cells.map((cell) => cell.render("Cell"))}
                 <StyledTdHover>
-                  <RowMouseHover className={row.id} />
+                  {emailsSummariesStatus === Status.SUCCESS ? (
+                    <RowMouseHover className={row.id}>
+                      {
+                        emailsSummaries.find((emailSummary) => {
+                          return emailSummary.id === row.original.id;
+                        })?.summary
+                      }
+                    </RowMouseHover>
+                  ) : (
+                    <></>
+                  )}
                 </StyledTdHover>
               </StyledTr>
             );
@@ -148,16 +202,18 @@ export function Inbox(props: Props) {
 }
 
 // Styled component for the grid container
-const TableContainer = styled.div`
+const TableContainer = styled(motion.div)`
   height: 100%;
   padding: 16px;
   padding-top: 40px;
+  padding-bottom: 50px;
   position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
   overflow-x: auto; /* Allow horizontal scrolling if content overflows */
 `;
+
 const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
   ${UNSELECTABLE}
   ${({ disabled }) =>
@@ -166,25 +222,27 @@ const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
       opacity: 0.5;
       pointer-events: none;
     `}
-  width:20px;
+  width: 20px;
   padding: 5px;
   box-sizing: initial;
   cursor: pointer;
   height: 20px;
 `;
+
 const FixedTableHeader = styled.th`
   ${ROW_JUSTIFY_END__ALIGN_CENTER}
   position: sticky;
   background-color: var(--table-header);
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  z-index: 10;
+  z-index: 1;
   top: -40px; /* Offset the parent's padding */
   left: 0;
   width: 100%;
   padding: 7px;
   padding-right: 50px;
 `;
+
 // Styled component for the table
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -204,15 +262,18 @@ const StyledTable = styled.table`
     transition: all 0.1s;
   }
   tr:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    /* transform: scale(1.007); */
+    box-shadow: 0 4px 8px rgba(105, 105, 105, 0.566);
   }
 `;
 
 // Styled component for table row
 const StyledTr = styled.tr<{ isUnread: boolean }>`
   position: relative;
-  opacity: ${({ isUnread }) => (isUnread ? 1 : 0.5)};
+  background-color: rgba(0, 0, 0, 0.5);
+  td,
+  div {
+    color: ${({ isUnread }) => (isUnread ? `white` : `grey`)};
+  }
 `;
 
 // Define fixed width for specific cells
@@ -228,8 +289,9 @@ const StyledTdDate = styled.td`
   font-weight: bold;
   text-align: right;
 `;
+
 const StyledTdHover = styled.td`
-  width: 1px;
+  width: 0px;
 `;
 
 // Styled component for the subject and snippet
