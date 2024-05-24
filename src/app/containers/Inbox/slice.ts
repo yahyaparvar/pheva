@@ -13,6 +13,7 @@ export const initialState: ContainerState = {
   nextPageToken: undefined,
   lastPageTokens: [],
   summaries: { emails: [], status: Status.INITIAL },
+  showAiAnimation: undefined,
 };
 
 const inboxSlice = createSlice({
@@ -20,6 +21,9 @@ const inboxSlice = createSlice({
   initialState,
   reducers: {
     getEmails(state) {},
+    setShowAiAnimation(state, action: PayloadAction<boolean | undefined>) {
+      state.showAiAnimation = action.payload;
+    },
     setEmails(state, action: PayloadAction<Email[]>) {
       state.emails = action.payload;
     },

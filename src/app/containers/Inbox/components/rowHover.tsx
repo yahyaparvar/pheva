@@ -24,7 +24,7 @@ const Container = styled.div`
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 100; /* Ensure it is above other elements */
+  /* Ensure it is above other elements */
 `;
 
 const RowMouseHover: React.FC<{ className: string; children?: ReactNode }> = (
@@ -46,6 +46,7 @@ const RowMouseHover: React.FC<{ className: string; children?: ReactNode }> = (
           x: x - ball.offsetWidth - 34, // Offset x to place cursor at top left
           y: y - ball.offsetHeight / 2, // Offset y to place cursor at top left
           opacity: 1, // Make ball visible on mouse enter
+          zIndex: 100,
         });
       };
 

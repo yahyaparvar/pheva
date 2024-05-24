@@ -3,7 +3,7 @@ import { Status } from "app/types";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import he from "he";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Column, useTable } from "react-table";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
@@ -38,7 +38,7 @@ export function Inbox(props: Props) {
   );
   const emailsSummaries = useSelector(Inboxselectors.emailsSummaries);
   const lastPageTokens = useSelector(Inboxselectors.lastPageTokens);
-  const [isAIApplied, setIsAIApplied] = useState(false);
+  const isShowAiAnimation = useSelector(Inboxselectors.showAiAnimation);
 
   useEffect(() => {
     if (emailsStatus !== Status.SUCCESS) {
@@ -47,14 +47,13 @@ export function Inbox(props: Props) {
   }, [dispatch]);
 
   useEffect(() => {
-    if (emailsSummariesStatus === Status.SUCCESS) {
-      setIsAIApplied(true);
+    if (isShowAiAnimation) {
       triggerConfetti();
       setTimeout(() => {
-        setIsAIApplied(false);
+        dispatch(InboxActions.setShowAiAnimation(false));
       }, 500);
     }
-  }, [emailsSummariesStatus]);
+  }, [isShowAiAnimation]);
 
   const columns: Column<Email>[] = useMemo(
     () => [
@@ -93,111 +92,119 @@ export function Inbox(props: Props) {
   });
 
   return (
-    <TableContainer
-      initial={{ opacity: 0, y: 0, rotate: 0 }} // Initial rotation
-      animate={{
-        opacity: 1,
-        y: 0,
-        scale: isAIApplied ? 1.1 : 1,
-        rotate: isAIApplied ? [0, 10, -10, 10, -10, 0] : 0, // Rotate effect
-        transition: {
-          duration: 0.5,
-          type: "spring",
-          stiffness: 100,
-          rotate: { duration: 0.5 }, // Adjust duration and ease for rotate effect
-        },
-      }}
-      exit={{ opacity: 0, y: 20, rotate: 0 }} // Exit rotation
-    >
-      <FixedTableHeader>
-        <Button
-          loading={emailsSummariesStatus === Status.LOADING}
-          rightIcon={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          }
-          onClick={() => {
-            dispatch(InboxActions.fetchEmailSummaries());
-          }}
-        >
-          Get AI Summary
-        </Button>
-        <NextPrevButton
-          disabled={lastPageTokens.length === 0 ? "true" : "false"}
-          onClick={() => dispatch(InboxActions.previousEmailPage())}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              fillRule="evenodd"
-              d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </NextPrevButton>
-        <NextPrevButton onClick={() => dispatch(InboxActions.nextEmailPage())}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              fillRule="evenodd"
-              d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </NextPrevButton>
-      </FixedTableHeader>
-      <StyledTable
-        style={{
-          opacity: emailsStatus === Status.LOADING ? "0.4" : "1",
-          pointerEvents: emailsStatus === Status.LOADING ? "none" : "all",
+    <>
+      <TableContainer
+        initial={{ opacity: 0, y: 0, rotate: 0 }} // Initial rotation
+        animate={{
+          opacity: 1,
+          y: 0,
+          scale: isShowAiAnimation ? 1.1 : 1,
+          // rotate: isShowAiAnimation ? [0, 10, -10, 10, -10, 0] : 0, // Rotate effect
+          transition: {
+            duration: 0.5,
+            type: "spring",
+            stiffness: 100,
+            // rotate: { duration: 0.5 }, // Adjust duration and ease for rotate effect
+          },
         }}
-        {...getTableProps()}
+        exit={{ opacity: 0, y: 20, rotate: 0 }} // Exit rotation
       >
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            const isUnread = row.original.labels.includes("UNREAD");
-            return (
-              <StyledTr isUnread={isUnread} {...row.getRowProps()}>
-                <StyledTdHover />
-                {row.cells.map((cell) => cell.render("Cell"))}
-                <StyledTdHover>
-                  {emailsSummariesStatus === Status.SUCCESS ? (
-                    <RowMouseHover className={row.id}>
-                      {
-                        emailsSummaries.find((emailSummary) => {
-                          return emailSummary.id === row.original.id;
-                        })?.summary
-                      }
-                    </RowMouseHover>
-                  ) : (
-                    <></>
-                  )}
-                </StyledTdHover>
-              </StyledTr>
-            );
-          })}
-        </tbody>
-      </StyledTable>
-    </TableContainer>
+        {emailsStatus === Status.INITIAL ? (
+          <></>
+        ) : (
+          <FixedTableHeader>
+            <Button
+              loading={emailsSummariesStatus === Status.LOADING}
+              rightIcon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              }
+              onClick={() => {
+                dispatch(InboxActions.fetchEmailSummaries());
+              }}
+            >
+              Get AI Summary
+            </Button>
+            <NextPrevButton
+              disabled={lastPageTokens.length === 0 ? "true" : "false"}
+              onClick={() => dispatch(InboxActions.previousEmailPage())}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </NextPrevButton>
+            <NextPrevButton
+              onClick={() => dispatch(InboxActions.nextEmailPage())}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </NextPrevButton>
+          </FixedTableHeader>
+        )}
+        <StyledTable
+          style={{
+            opacity: emailsStatus === Status.LOADING ? "0.4" : "1",
+            pointerEvents: emailsStatus === Status.LOADING ? "none" : "all",
+          }}
+          {...getTableProps()}
+        >
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row) => {
+              prepareRow(row);
+              const isUnread = row.original.labels.includes("UNREAD");
+              return (
+                <StyledTr isUnread={isUnread} {...row.getRowProps()}>
+                  <StyledTdHover />
+                  {row.cells.map((cell) => cell.render("Cell"))}
+                  <StyledTdHover>
+                    {emailsSummariesStatus === Status.SUCCESS ? (
+                      <RowMouseHover className={row.id}>
+                        {
+                          emailsSummaries.find((emailSummary) => {
+                            return emailSummary.id === row.original.id;
+                          })?.summary
+                        }
+                      </RowMouseHover>
+                    ) : (
+                      <></>
+                    )}
+                  </StyledTdHover>
+                </StyledTr>
+              );
+            })}
+          </tbody>
+        </StyledTable>
+      </TableContainer>
+    </>
   );
 }
 

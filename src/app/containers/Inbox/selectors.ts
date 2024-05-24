@@ -14,6 +14,8 @@ const domains = {
     state.inbox?.summaries.emails || initialState?.summaries.emails,
   emailsSummariesStatus: (state: RootState) =>
     state.inbox?.summaries.status || initialState?.summaries.status,
+  showAiAnimation: (state: RootState) =>
+    state.inbox?.showAiAnimation || initialState?.showAiAnimation,
 };
 export const Inboxselectors = {
   root: createSelector([domains.root], (state) => state),
@@ -22,6 +24,7 @@ export const Inboxselectors = {
   nextPageToken: createSelector([domains.nextPageToken], (state) => state),
   lastPageTokens: createSelector([domains.lastPageTokens], (state) => state),
   emailsSummaries: createSelector([domains.emailsSummaries], (state) => state),
+  showAiAnimation: createSelector([domains.showAiAnimation], (state) => state),
   emailsSummariesStatus: createSelector(
     [domains.emailsSummariesStatus],
     (state) => state

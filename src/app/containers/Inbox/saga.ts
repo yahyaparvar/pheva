@@ -38,6 +38,7 @@ export function* fetchEmailSummaries() {
     );
     yield put(InboxActions.setEmailSummaries(emailSummaries)); // Assuming you have this action to update the state
     yield put(InboxActions.setEmailSummariesStatus(Status.SUCCESS));
+    yield put(InboxActions.setShowAiAnimation(true));
   } catch (error: any) {
     console.log(`error:${JSON.parse(error)}`);
 

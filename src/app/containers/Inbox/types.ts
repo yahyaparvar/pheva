@@ -14,6 +14,7 @@ export interface EmailSummary {
   summary: string;
 }
 export interface InboxState {
+  showAiAnimation: boolean | undefined;
   emails: Email[];
   status: Status;
   nextPageToken: undefined | string;
