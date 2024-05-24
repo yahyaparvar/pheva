@@ -14,6 +14,7 @@ import { CustomRouter } from "./router";
 import history from "./router/history";
 import { AppPages } from "./types";
 import { Sent } from "./containers/Sent/Loadable";
+import { Calendar } from "./containers/Calendar/Loadable";
 
 interface RequireAuthProps {
   children: ReactElement;
@@ -62,6 +63,14 @@ function App() {
               element={
                 <Auth>
                   <Sent />
+                </Auth>
+              }
+            />
+            <Route
+              path={AppPages.Calendar}
+              element={
+                <Auth>
+                  <Calendar />
                 </Auth>
               }
             />
