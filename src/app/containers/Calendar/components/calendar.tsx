@@ -8,7 +8,7 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 
@@ -88,7 +88,9 @@ const CalendarEx: React.FC = () => {
   const dispatch = useDispatch();
   const selectedDate = useSelector(Calendarselectors.selectedDate);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-
+  useEffect(() => {
+    setCurrentMonth(selectedDate);
+  }, [selectedDate]);
   const handleDayClick = (day: Date) => {
     const normalizedDay = new Date(
       day.getFullYear(),

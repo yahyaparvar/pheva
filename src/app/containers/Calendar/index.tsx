@@ -7,6 +7,8 @@
 import { useDispatch, useSelector } from "react-redux";
 
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
+import styled from "styled-components";
+import { ROW_CENTER } from "styles/globalStyles";
 import CalendarView from "./components/EventCalendar/calendar";
 import CalendarEx from "./components/calendar";
 import { calendarSaga } from "./saga";
@@ -25,11 +27,13 @@ export function Calendar(props: Props) {
   const dispatch = useDispatch();
 
   return (
-    <>
-      <div>
-        <CalendarEx />
-        <CalendarView />
-      </div>
-    </>
+    <Wrapper>
+      <CalendarEx />
+      <CalendarView />
+    </Wrapper>
   );
 }
+const Wrapper = styled.div`
+  ${ROW_CENTER}
+  width:100%;
+`;

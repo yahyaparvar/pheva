@@ -11,9 +11,8 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axiosInstance from "service/apiClient";
 import styled from "styled-components";
 import { Calendarselectors } from "../../selectors";
 import { calendarActions } from "../../slice";
@@ -89,30 +88,11 @@ const EventItem = styled.div`
 const Calendar: React.FC = () => {
   const dispatch = useDispatch();
   const selectedDate = useSelector(Calendarselectors.selectedDate);
-  const [events, setEvents] = useState<Event[]>([]);
-  const [error, setError] = useState<string>("");
-
-  const currentMonth = selectedDate ? new Date(selectedDate) : new Date();
-
+  const events = useSelector(Calendarselectors.eventsList);
+  const currentMonth = new Date(selectedDate);
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const startDate = startOfMonth(subMonths(currentMonth, 3)); // start from three months back
-        const endDate = endOfMonth(addMonths(currentMonth, 3)); // end three months ahead
-
-        const response = await axiosInstance.post("calendar/events", {
-          startDate,
-          endDate,
-        });
-
-        setEvents(response.data);
-      } catch (error) {
-        setError("Failed to fetch events");
-      }
-    };
-
-    fetchEvents();
-  }, [currentMonth]);
+    dispatch(calendarActions.getEvents());
+  }, [dispatch]);
 
   const renderCells = () => {
     const monthStart = startOfMonth(currentMonth);
@@ -163,11 +143,11 @@ const Calendar: React.FC = () => {
   };
 
   const nextMonth = () => {
-    dispatch(calendarActions.setDate(addMonths(currentMonth, 1)));
+    dispatch(calendarActions.setDate(startOfMonth(addMonths(currentMonth, 1))));
   };
 
   const prevMonth = () => {
-    dispatch(calendarActions.setDate(subMonths(currentMonth, 1)));
+    dispatch(calendarActions.setDate(startOfMonth(subMonths(currentMonth, 1))));
   };
 
   return (
@@ -183,7 +163,6 @@ const Calendar: React.FC = () => {
         ))}
         {renderCells()}
       </CalendarGrid>
-      {error && <div>{error}</div>}
     </CalendarContainer>
   );
 };

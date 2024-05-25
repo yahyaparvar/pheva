@@ -4,11 +4,12 @@ import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { createSlice } from "store/toolkit";
 import { ContainerState } from "./types";
 
+import { Status } from "app/types";
 import { calendarSaga } from "./saga";
 
 // The initial state of the Calendar container
 export const initialState: ContainerState = {
-  events: [],
+  events: { list: [], status: Status.INITIAL },
   selectedDate: new Date(),
 };
 
@@ -20,6 +21,13 @@ const calendarSlice = createSlice({
     setDate(state, action: PayloadAction<Date>) {
       state.selectedDate = action.payload;
     },
+    setEvents(state, action: PayloadAction<any[]>) {
+      state.events.list = action.payload;
+    },
+    setEventStatus(state, action: PayloadAction<Status>) {
+      state.events.status = action.payload;
+    },
+    getEvents(state) {},
   },
 });
 
