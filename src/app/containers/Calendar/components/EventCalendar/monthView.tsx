@@ -1,4 +1,3 @@
-// src/components/Calendar.tsx
 import {
   addDays,
   addMonths,
@@ -13,8 +12,11 @@ import {
   subMonths,
 } from "date-fns";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "service/apiClient";
 import styled from "styled-components";
+import { Calendarselectors } from "../../selectors";
+import { calendarActions } from "../../slice";
 
 interface Event {
   id: string;
@@ -85,15 +87,18 @@ const EventItem = styled.div`
 `;
 
 const Calendar: React.FC = () => {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const dispatch = useDispatch();
+  const selectedDate = useSelector(Calendarselectors.selectedDate);
   const [events, setEvents] = useState<Event[]>([]);
   const [error, setError] = useState<string>("");
+
+  const currentMonth = selectedDate ? new Date(selectedDate) : new Date();
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const startDate = startOfMonth(subMonths(currentMonth, 3)); // start from the previous month
-        const endDate = endOfMonth(addMonths(currentMonth, 3)); // end at two months ahead
+        const startDate = startOfMonth(subMonths(currentMonth, 3)); // start from three months back
+        const endDate = endOfMonth(addMonths(currentMonth, 3)); // end three months ahead
 
         const response = await axiosInstance.post("calendar/events", {
           startDate,
@@ -158,11 +163,11 @@ const Calendar: React.FC = () => {
   };
 
   const nextMonth = () => {
-    setCurrentMonth(addMonths(currentMonth, 1));
+    dispatch(calendarActions.setDate(addMonths(currentMonth, 1)));
   };
 
   const prevMonth = () => {
-    setCurrentMonth(subMonths(currentMonth, 1));
+    dispatch(calendarActions.setDate(subMonths(currentMonth, 1)));
   };
 
   return (

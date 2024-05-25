@@ -9,8 +9,12 @@ import {
   subMonths,
 } from "date-fns";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
+
 import { COLUMN_CENTER, ROW_CENTER, UNSELECTABLE } from "styles/globalStyles";
+import { Calendarselectors } from "../selectors";
+import { calendarActions } from "../slice";
 
 const CalendarExWrapper = styled.div`
   display: flex;
@@ -81,19 +85,24 @@ const WeekdayHeader = styled.div`
 const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
 
 const CalendarEx: React.FC = () => {
+  const dispatch = useDispatch();
+  const selectedDate = useSelector(Calendarselectors.selectedDate);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const handleDayClick = (day: Date) => {
-    if (!isSameMonth(day, currentMonth)) {
-      if (day < currentMonth) {
+    const normalizedDay = new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate()
+    );
+    if (!isSameMonth(normalizedDay, currentMonth)) {
+      if (normalizedDay < currentMonth) {
         setCurrentMonth(subMonths(currentMonth, 1));
       } else {
         setCurrentMonth(addMonths(currentMonth, 1));
       }
     }
-    setSelectedDate(day);
-    console.log(day);
+    dispatch(calendarActions.setDate(normalizedDay));
   };
 
   const renderDays = (): JSX.Element => {
