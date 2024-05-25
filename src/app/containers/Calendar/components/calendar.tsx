@@ -25,7 +25,7 @@ const Header = styled.div`
   justify-content: space-between;
   width: 100%;
   align-items: center;
-  padding: 16px;
+  padding: 16px 6px;
 `;
 
 const DaysWrapper = styled.div`
@@ -74,8 +74,8 @@ const DayContent = styled.div<DayProps>`
   `}
 `;
 const WeekdayHeader = styled.div`
-  font-weight: bold;
   text-align: center;
+  font-size: 11px;
 `;
 
 const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
@@ -150,7 +150,6 @@ const CalendarEx: React.FC = () => {
         <Title>{format(currentMonth, "MMMM yyyy")}</Title>
         <PrevNextButtonWrapper>
           <NextPrevButton onClick={prevMonth}>
-            {" "}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -188,6 +187,7 @@ const CalendarEx: React.FC = () => {
 
 const Title = styled.div`
   font-weight: 700;
+  font-size: 14px;
 `;
 const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
   ${UNSELECTABLE}

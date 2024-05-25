@@ -7,6 +7,7 @@
 import { useDispatch, useSelector } from "react-redux";
 
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
+import CalendarView from "./components/EventCalendar/calendar";
 import CalendarEx from "./components/calendar";
 import { calendarSaga } from "./saga";
 import { Calendarselectors } from "./selectors";
@@ -27,6 +28,7 @@ export function Calendar(props: Props) {
     <>
       <div>
         <CalendarEx />
+        <CalendarView />
       </div>
     </>
   );
