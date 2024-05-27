@@ -11,16 +11,26 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { RRule } from "rrule";
 import styled from "styled-components";
 import { Calendarselectors } from "../../selectors";
 import { calendarActions } from "../../slice";
 
-interface Event {
+export interface Event {
   id: string;
   summary: string;
-  start?: { dateTime?: string };
+  start: {
+    dateTime: string;
+    timeZone?: string;
+  };
+  end: {
+    dateTime: string;
+    timeZone?: string;
+  };
+  recurrence?: string[];
+  [key: string]: any; // For any other additional properties
 }
 
 const CalendarContainer = styled.div`
@@ -62,7 +72,12 @@ const DayHeader = styled.div`
   border-bottom: 1px solid #ddd;
 `;
 
-const CalendarCell = styled.div<{ isCurrentMonth: boolean; isToday: boolean }>`
+interface CalendarCellProps {
+  isCurrentMonth: boolean;
+  isToday: boolean;
+}
+
+const CalendarCell = styled.div<CalendarCellProps>`
   border: 1px solid #ddd;
   padding: 10px;
   height: 120px;
@@ -88,29 +103,63 @@ const EventItem = styled.div`
 const Calendar: React.FC = () => {
   const dispatch = useDispatch();
   const selectedDate = useSelector(Calendarselectors.selectedDate);
-  const events = useSelector(Calendarselectors.eventsList);
-  const currentMonth = new Date(selectedDate);
+  const events = useSelector(Calendarselectors.eventsList) as Event[];
+  const currentMonth = useMemo(() => new Date(selectedDate), [selectedDate]);
+
+  const [expandedEvents, setExpandedEvents] = useState<Event[]>([]);
+
   useEffect(() => {
     dispatch(calendarActions.getEvents());
   }, [dispatch]);
 
-  const renderCells = () => {
+  useEffect(() => {
+    const expandRecurringEvents = () => {
+      const expanded: Event[] = [];
+      const monthStart = startOfMonth(currentMonth);
+      const monthEnd = endOfMonth(monthStart);
+      const startDate = startOfWeek(monthStart);
+      const endDate = endOfWeek(monthEnd);
+
+      events.forEach((event) => {
+        if (event.recurrence) {
+          const eventStart = parseISO(event.start.dateTime);
+          event.recurrence.forEach((rule) => {
+            const rruleSet = RRule.fromString(rule);
+            const dates = rruleSet.between(startDate, endDate);
+            dates.forEach((date) => {
+              expanded.push({
+                ...event,
+                start: { dateTime: date.toISOString() },
+              });
+            });
+          });
+        } else {
+          expanded.push(event);
+        }
+      });
+      setExpandedEvents(expanded);
+    };
+
+    expandRecurringEvents();
+  }, [events, currentMonth]);
+
+  const renderCells = useCallback(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(monthStart);
-    const startDate = startOfWeek(monthStart, { weekStartsOn: 0 });
-    const endDate = endOfWeek(monthEnd, { weekStartsOn: 0 });
+    const startDate = startOfWeek(monthStart);
+    const endDate = endOfWeek(monthEnd);
 
     const dateFormat = "d";
-    const rows = [];
-    let days = [];
+    const rows: JSX.Element[] = [];
+    let days: JSX.Element[] = [];
     let day = startDate;
-    let formattedDate = "";
 
     while (day <= endDate) {
+      const weekDays: JSX.Element[] = [];
       for (let i = 0; i < 7; i++) {
-        formattedDate = format(day, dateFormat);
+        const formattedDate = format(day, dateFormat);
         const cloneDay = day;
-        days.push(
+        weekDays.push(
           <CalendarCell
             key={day.toString()}
             isCurrentMonth={isSameMonth(day, monthStart)}
@@ -118,7 +167,7 @@ const Calendar: React.FC = () => {
           >
             <DateNumber>{formattedDate}</DateNumber>
             <div>
-              {events
+              {expandedEvents
                 .filter((event) =>
                   event.start?.dateTime
                     ? isSameDay(parseISO(event.start.dateTime), cloneDay)
@@ -133,14 +182,13 @@ const Calendar: React.FC = () => {
         day = addDays(day, 1);
       }
       rows.push(
-        <div style={{ display: "contents" }} key={day.toString()}>
-          {days}
+        <div style={{ display: "contents" }} key={weekDays[0].key}>
+          {weekDays}
         </div>
       );
-      days = [];
     }
     return rows;
-  };
+  }, [currentMonth, expandedEvents]);
 
   const nextMonth = () => {
     dispatch(calendarActions.setDate(startOfMonth(addMonths(currentMonth, 1))));
