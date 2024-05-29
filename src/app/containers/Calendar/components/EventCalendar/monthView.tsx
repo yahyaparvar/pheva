@@ -1,218 +1,87 @@
-import {
-  addDays,
-  addMonths,
-  endOfMonth,
-  endOfWeek,
-  format,
-  isSameDay,
-  isSameMonth,
-  parseISO,
-  startOfMonth,
-  startOfWeek,
-  subMonths,
-} from "date-fns";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+// src/CalendarComponent.tsx
+
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import FullCalendar from "@fullcalendar/react";
+import rrulePlugin from "@fullcalendar/rrule";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RRule } from "rrule";
+import { Options, RRule } from "rrule";
 import styled from "styled-components";
 import { Calendarselectors } from "../../selectors";
 import { calendarActions } from "../../slice";
+import { EventResponse } from "../../types";
 
-export interface Event {
-  id: string;
-  summary: string;
-  start: {
-    dateTime: string;
-    timeZone?: string;
-  };
-  end: {
-    dateTime: string;
-    timeZone?: string;
-  };
-  recurrence?: string[];
-  [key: string]: any; // For any other additional properties
-}
+const CalendarWrapper = styled.div`
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 10px;
+`;
 
-const CalendarContainer = styled.div`
+const Header = styled.header`
+  background-color: #282c34;
+  min-height: 20vh;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-`;
-
-const CalendarHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 `;
 
-const HeaderButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 1.2em;
-  cursor: pointer;
-`;
-
-const CalendarGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  background-color: #eee;
-`;
-
-const DayHeader = styled.div`
-  background-color: #f5f5f5;
-  padding: 10px 0;
+const AppContainer = styled.div`
   text-align: center;
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
 `;
 
-interface CalendarCellProps {
-  isCurrentMonth: boolean;
-  isToday: boolean;
-}
-
-const CalendarCell = styled.div<CalendarCellProps>`
-  border: 1px solid #ddd;
-  padding: 10px;
-  height: 120px;
-  background-color: ${({ isCurrentMonth }) =>
-    isCurrentMonth ? "#fff" : "#f5f5f5"};
-  color: ${({ isToday }) => (isToday ? "red" : "inherit")};
-  overflow-y: auto;
-`;
-
-const DateNumber = styled.div`
-  font-weight: bold;
-`;
-
-const EventItem = styled.div`
-  background-color: #4285f4;
-  color: #fff;
-  padding: 2px;
-  border-radius: 2px;
-  margin-top: 5px;
-  font-size: 12px;
-`;
-
-const Calendar: React.FC = () => {
+const CalendarComponent: React.FC = () => {
+  const events = useSelector(Calendarselectors.eventsList);
   const dispatch = useDispatch();
-  const selectedDate = useSelector(Calendarselectors.selectedDate);
-  const events = useSelector(Calendarselectors.eventsList) as Event[];
-  const currentMonth = useMemo(() => new Date(selectedDate), [selectedDate]);
-
-  const [expandedEvents, setExpandedEvents] = useState<Event[]>([]);
-
   useEffect(() => {
     dispatch(calendarActions.getEvents());
   }, [dispatch]);
 
-  useEffect(() => {
-    const expandRecurringEvents = () => {
-      const expanded: Event[] = [];
-      const monthStart = startOfMonth(currentMonth);
-      const monthEnd = endOfMonth(monthStart);
-      const startDate = startOfWeek(monthStart);
-      const endDate = endOfWeek(monthEnd);
+  const parseEvent = (event: EventResponse) => {
+    const start = new Date(event?.start?.dateTime || event?.start?.date!);
+    const end = new Date(event?.end?.dateTime || event?.end?.date!);
+    if (event.recurrence) {
+      const rruleString = event.recurrence[0];
+      const rruleOptions: Partial<Options> = RRule.parseString(rruleString);
+      rruleOptions.dtstart = start;
 
-      events.forEach((event) => {
-        if (event.recurrence) {
-          const eventStart = parseISO(event.start.dateTime);
-          event.recurrence.forEach((rule) => {
-            const rruleSet = RRule.fromString(rule);
-            const dates = rruleSet.between(startDate, endDate);
-            dates.forEach((date) => {
-              expanded.push({
-                ...event,
-                start: { dateTime: date.toISOString() },
-              });
-            });
-          });
-        } else {
-          expanded.push(event);
-        }
-      });
-      setExpandedEvents(expanded);
-    };
-
-    expandRecurringEvents();
-  }, [events, currentMonth]);
-
-  const renderCells = useCallback(() => {
-    const monthStart = startOfMonth(currentMonth);
-    const monthEnd = endOfMonth(monthStart);
-    const startDate = startOfWeek(monthStart);
-    const endDate = endOfWeek(monthEnd);
-
-    const dateFormat = "d";
-    const rows: JSX.Element[] = [];
-    let days: JSX.Element[] = [];
-    let day = startDate;
-
-    while (day <= endDate) {
-      const weekDays: JSX.Element[] = [];
-      for (let i = 0; i < 7; i++) {
-        const formattedDate = format(day, dateFormat);
-        const cloneDay = day;
-        weekDays.push(
-          <CalendarCell
-            key={day.toString()}
-            isCurrentMonth={isSameMonth(day, monthStart)}
-            isToday={isSameDay(day, new Date())}
-          >
-            <DateNumber>{formattedDate}</DateNumber>
-            <div>
-              {expandedEvents
-                .filter((event) =>
-                  event.start?.dateTime
-                    ? isSameDay(parseISO(event.start.dateTime), cloneDay)
-                    : false
-                )
-                .map((event) => (
-                  <EventItem key={event.id}>{event.summary}</EventItem>
-                ))}
-            </div>
-          </CalendarCell>
-        );
-        day = addDays(day, 1);
-      }
-      rows.push(
-        <div style={{ display: "contents" }} key={weekDays[0].key}>
-          {weekDays}
-        </div>
-      );
+      return {
+        title: event.summary,
+        rrule: rruleOptions,
+        allDay: event.start.date ? true : false,
+      };
+    } else {
+      return {
+        title: event.summary,
+        start,
+        end,
+      };
     }
-    return rows;
-  }, [currentMonth, expandedEvents]);
-
-  const nextMonth = () => {
-    dispatch(calendarActions.setDate(startOfMonth(addMonths(currentMonth, 1))));
   };
 
-  const prevMonth = () => {
-    dispatch(calendarActions.setDate(startOfMonth(subMonths(currentMonth, 1))));
-  };
+  const calendarEvents = events.map(parseEvent);
 
   return (
-    <CalendarContainer>
-      <CalendarHeader>
-        <HeaderButton onClick={prevMonth}>{"<"}</HeaderButton>
-        <h2>{format(currentMonth, "MMMM yyyy")}</h2>
-        <HeaderButton onClick={nextMonth}>{">"}</HeaderButton>
-      </CalendarHeader>
-      <CalendarGrid>
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <DayHeader key={day}>{day}</DayHeader>
-        ))}
-        {renderCells()}
-      </CalendarGrid>
-    </CalendarContainer>
+    <AppContainer>
+      <Header>
+        <h1>FullCalendar with Repeating Events</h1>
+      </Header>
+      <CalendarWrapper>
+        <FullCalendar
+          fixedWeekCount={false}
+          dayMaxEvents={3}
+          height="auto"
+          aspectRatio={1.4}
+          plugins={[dayGridPlugin, rrulePlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          events={calendarEvents}
+        />
+      </CalendarWrapper>
+    </AppContainer>
   );
 };
 
-export default Calendar;
+export default CalendarComponent;
