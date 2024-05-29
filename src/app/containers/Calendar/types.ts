@@ -4,7 +4,7 @@ import { Status } from "app/types";
 export interface CalendarState {
   selectedDate: Date;
   events: {
-    list: any[];
+    list: EventResponse[];
     status: Status;
   };
 }
