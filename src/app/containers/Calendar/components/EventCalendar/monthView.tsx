@@ -4,6 +4,7 @@ import listPlugin from "@fullcalendar/list";
 import FullCalendar from "@fullcalendar/react";
 import rrulePlugin from "@fullcalendar/rrule";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import moment from "moment-timezone";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Options, RRule } from "rrule";
@@ -25,6 +26,7 @@ const AppContainer = styled.div`
 const CalendarComponent: React.FC = () => {
   const events = useSelector(Calendarselectors.eventsList);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(calendarActions.getEvents());
   }, [dispatch]);
@@ -32,12 +34,8 @@ const CalendarComponent: React.FC = () => {
   const parseEvent = (event: EventResponse) => {
     const hasTimeComponent = (dateTimeString: string | undefined): boolean => {
       if (!dateTimeString) return false;
-      const date = new Date(dateTimeString);
-      return (
-        date.getHours() !== 0 ||
-        date.getMinutes() !== 0 ||
-        date.getSeconds() !== 0
-      );
+      const date = moment(dateTimeString);
+      return date.hours() !== 0 || date.minutes() !== 0 || date.seconds() !== 0;
     };
 
     const isAllDayEvent =
@@ -54,6 +52,8 @@ const CalendarComponent: React.FC = () => {
       return {
         title: event.summary,
         rrule: rruleOptions,
+        start,
+        end,
         allDay: Boolean(allDay),
       };
     } else {
@@ -65,6 +65,7 @@ const CalendarComponent: React.FC = () => {
       };
     }
   };
+
   const calendarEvents = events.map(parseEvent);
 
   return (
@@ -89,6 +90,7 @@ const CalendarComponent: React.FC = () => {
             right: "dayGridMonth,timeGridDay",
           }}
           events={calendarEvents}
+          timeZone="local"
           eventTimeFormat={{
             hour: "numeric",
             minute: "2-digit",
