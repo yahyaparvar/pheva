@@ -4,10 +4,8 @@ import listPlugin from "@fullcalendar/list";
 import FullCalendar from "@fullcalendar/react";
 import rrulePlugin from "@fullcalendar/rrule";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import moment from "moment-timezone";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Options, RRule } from "rrule";
 import styled from "styled-components";
 import { Calendarselectors } from "../../selectors";
 import { calendarActions } from "../../slice";
@@ -24,7 +22,85 @@ const AppContainer = styled.div`
 `;
 
 const CalendarComponent: React.FC = () => {
-  const events = useSelector(Calendarselectors.eventsList);
+  const APIEvents = useSelector(Calendarselectors.eventsList);
+  const events: EventResponse[] = [
+    {
+      kind: "calendar#event",
+      etag: '"3344552064018000"',
+      id: "54pmjbe268o5bhpat11eveopa0",
+      status: "confirmed",
+      htmlLink:
+        "https://www.google.com/calendar/event?eid=NTRwbWpiZTI2OG81YmhwYXQxMWV2ZW9wYTBfMjAyMjEyMjRUMjAzMDAwWiB5YWh5YXBhcnZhcjFAbQ",
+      created: "2022-12-29T01:06:36.000Z",
+      updated: "2022-12-29T01:07:12.009Z",
+      summary: "Free as a Bird 🦅 ",
+      colorId: "9",
+      creator: {
+        email: "yahyaparvar1@gmail.com",
+        self: true,
+      },
+      organizer: {
+        email: "yahyaparvar1@gmail.com",
+        self: true,
+      },
+      start: {
+        dateTime: "2022-12-25T00:00:00+03:30",
+        timeZone: "Asia/Tehran",
+      },
+      end: {
+        dateTime: "2022-12-26T00:00:00+03:30",
+        timeZone: "Asia/Tehran",
+      },
+      recurrence: ["RRULE:FREQ=WEEKLY;WKST=SU;BYDAY=SU"],
+      iCalUID: "54pmjbe268o5bhpat11eveopa0@google.com",
+      sequence: 0,
+      reminders: {
+        useDefault: true,
+      },
+      eventType: "default",
+    },
+    {
+      kind: "calendar#event",
+      etag: '"3387711619126000"',
+      id: "5eesi5t28jpi7vhfqhn9inei94",
+      status: "confirmed",
+      htmlLink:
+        "https://www.google.com/calendar/event?eid=NWVlc2k1dDI4anBpN3ZoZnFobjlpbmVpOTRfMjAyMjEyMjlUMjIwMDAwWiB5YWh5YXBhcnZhcjFAbQ",
+      created: "2022-12-29T01:03:05.000Z",
+      updated: "2024-05-11T13:55:58.781Z",
+      summary: "Read",
+      colorId: "5",
+      creator: {
+        email: "yahyaparvar1@gmail.com",
+        self: true,
+      },
+      organizer: {
+        email: "yahyaparvar1@gmail.com",
+        self: true,
+      },
+      start: {
+        dateTime: "2022-12-30T01:30:00+03:30",
+        timeZone: "Asia/Tehran",
+      },
+      end: {
+        dateTime: "2022-12-30T02:00:00+03:30",
+        timeZone: "Asia/Tehran",
+      },
+      recurrence: ["RRULE:FREQ=WEEKLY;BYDAY=FR,MO,TH,TU,WE"],
+      iCalUID: "5eesi5t28jpi7vhfqhn9inei94@google.com",
+      sequence: 1,
+      reminders: {
+        useDefault: false,
+        overrides: [
+          {
+            method: "popup",
+            minutes: 30,
+          },
+        ],
+      },
+      eventType: "default",
+    },
+  ];
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,38 +108,20 @@ const CalendarComponent: React.FC = () => {
   }, [dispatch]);
 
   const parseEvent = (event: EventResponse) => {
-    const hasTimeComponent = (dateTimeString: string | undefined): boolean => {
-      if (!dateTimeString) return false;
-      const date = moment(dateTimeString);
-      return date.hours() !== 0 || date.minutes() !== 0 || date.seconds() !== 0;
+    const recurrenceRule = event.recurrence ? event.recurrence[0] : null;
+    const start = new Date(event.start.dateTime || event.start.date!);
+    const end = new Date(event.end.dateTime || event.end.date!);
+    const duration = end.getTime() - start.getTime();
+    return {
+      id: event.id,
+      title: event.summary,
+      start: event.start.dateTime,
+      end: event.end.dateTime,
+      rrule: recurrenceRule,
+      backgroundColor: event.colorId,
+      url: event.htmlLink,
+      duration: duration,
     };
-
-    const isAllDayEvent =
-      event?.start?.date || !hasTimeComponent(event?.start?.dateTime);
-    const start = new Date(event?.start?.dateTime || event?.start?.date!);
-    const end = new Date(event?.end?.dateTime || event?.end?.date!);
-    const allDay = isAllDayEvent;
-
-    if (event.recurrence) {
-      const rruleString = event.recurrence[0];
-      const rruleOptions: Partial<Options> = RRule.parseString(rruleString);
-      rruleOptions.dtstart = start;
-
-      return {
-        title: event.summary,
-        rrule: rruleOptions,
-        start,
-        end,
-        allDay: Boolean(allDay),
-      };
-    } else {
-      return {
-        title: event.summary,
-        start,
-        end,
-        allDay: Boolean(allDay),
-      };
-    }
   };
 
   const calendarEvents = events.map(parseEvent);
@@ -89,12 +147,11 @@ const CalendarComponent: React.FC = () => {
             center: "title",
             right: "dayGridMonth,timeGridDay",
           }}
+          //@ts-ignore
           events={calendarEvents}
-          timeZone="local"
           eventTimeFormat={{
             hour: "numeric",
             minute: "2-digit",
-            meridiem: "short",
           }}
         />
       </CalendarWrapper>
