@@ -44,11 +44,11 @@ const CalendarComponent: React.FC = () => {
         self: true,
       },
       start: {
-        dateTime: "2022-12-25T00:00:00+03:30",
+        date: "2022-12-25",
         timeZone: "Asia/Tehran",
       },
       end: {
-        dateTime: "2022-12-26T00:00:00+03:30",
+        date: "2022-12-26",
         timeZone: "Asia/Tehran",
       },
       recurrence: ["RRULE:FREQ=WEEKLY;WKST=SU;BYDAY=SU"],
@@ -109,22 +109,39 @@ const CalendarComponent: React.FC = () => {
 
   const parseEvent = (event: EventResponse) => {
     const recurrenceRule = event.recurrence ? event.recurrence[0] : null;
-    const start = new Date(event.start.dateTime || event.start.date!);
-    const end = new Date(event.end.dateTime || event.end.date!);
-    const duration = end.getTime() - start.getTime();
+    const isAllDay = event?.start?.date !== undefined;
+    const start = new Date(event?.start?.dateTime || event?.start?.date!);
+    const end = new Date(event?.end?.dateTime || event?.end?.date!);
+
+    let durationText = "All day";
+    if (!isAllDay) {
+      const durationMillis = end.getTime() - start.getTime();
+      const durationMinutes = Math.floor((durationMillis / (1000 * 60)) % 60);
+      const durationHours = Math.floor(
+        (durationMillis / (1000 * 60 * 60)) % 24
+      );
+      const durationDays = Math.floor(durationMillis / (1000 * 60 * 60 * 24));
+
+      durationText = `${durationMinutes} minutes`;
+      if (durationHours > 0)
+        durationText = `${durationHours} hours ${durationText}`;
+      if (durationDays > 0)
+        durationText = `${durationDays} days ${durationText}`;
+    }
+
     return {
       id: event.id,
-      title: event.summary,
-      start: event.start.dateTime,
-      end: event.end.dateTime,
+      title: `${event.summary} (${durationText})`,
+      start,
+      end,
+      allDay: isAllDay,
       rrule: recurrenceRule,
       backgroundColor: event.colorId,
       url: event.htmlLink,
-      duration: duration,
     };
   };
 
-  const calendarEvents = events.map(parseEvent);
+  const calendarEvents = APIEvents.map(parseEvent);
 
   return (
     <AppContainer>
