@@ -9,6 +9,7 @@
     "@fullcalendar/daygrid": "^6.1.13",
     "@fullcalendar/interaction": "^6.1.13",
     "@fullcalendar/list": "^6.1.13",
+    "@fullcalendar/moment-timezone": "^6.1.13",
     "@fullcalendar/react": "^6.1.13",
     "@fullcalendar/rrule": "^6.1.13",
     "@fullcalendar/timegrid": "^6.1.13",

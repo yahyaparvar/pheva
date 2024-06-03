@@ -6,10 +6,11 @@ import rrulePlugin from "@fullcalendar/rrule";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { RRule } from "rrule";
 import styled from "styled-components";
 import { Calendarselectors } from "../../selectors";
 import { calendarActions } from "../../slice";
-import { EventResponse } from "../../types";
+import { EventResponse, GoogleColorMap } from "../../types";
 
 const CalendarWrapper = styled.div`
   max-width: 900px;
@@ -22,126 +23,65 @@ const AppContainer = styled.div`
 `;
 
 const CalendarComponent: React.FC = () => {
-  const APIEvents = useSelector(Calendarselectors.eventsList);
-  const events: EventResponse[] = [
-    {
-      kind: "calendar#event",
-      etag: '"3344552064018000"',
-      id: "54pmjbe268o5bhpat11eveopa0",
-      status: "confirmed",
-      htmlLink:
-        "https://www.google.com/calendar/event?eid=NTRwbWpiZTI2OG81YmhwYXQxMWV2ZW9wYTBfMjAyMjEyMjRUMjAzMDAwWiB5YWh5YXBhcnZhcjFAbQ",
-      created: "2022-12-29T01:06:36.000Z",
-      updated: "2022-12-29T01:07:12.009Z",
-      summary: "Free as a Bird 🦅 ",
-      colorId: "9",
-      creator: {
-        email: "yahyaparvar1@gmail.com",
-        self: true,
-      },
-      organizer: {
-        email: "yahyaparvar1@gmail.com",
-        self: true,
-      },
-      start: {
-        date: "2022-12-25",
-        timeZone: "Asia/Tehran",
-      },
-      end: {
-        date: "2022-12-26",
-        timeZone: "Asia/Tehran",
-      },
-      recurrence: ["RRULE:FREQ=WEEKLY;WKST=SU;BYDAY=SU"],
-      iCalUID: "54pmjbe268o5bhpat11eveopa0@google.com",
-      sequence: 0,
-      reminders: {
-        useDefault: true,
-      },
-      eventType: "default",
-    },
-    {
-      kind: "calendar#event",
-      etag: '"3387711619126000"',
-      id: "5eesi5t28jpi7vhfqhn9inei94",
-      status: "confirmed",
-      htmlLink:
-        "https://www.google.com/calendar/event?eid=NWVlc2k1dDI4anBpN3ZoZnFobjlpbmVpOTRfMjAyMjEyMjlUMjIwMDAwWiB5YWh5YXBhcnZhcjFAbQ",
-      created: "2022-12-29T01:03:05.000Z",
-      updated: "2024-05-11T13:55:58.781Z",
-      summary: "Read",
-      colorId: "5",
-      creator: {
-        email: "yahyaparvar1@gmail.com",
-        self: true,
-      },
-      organizer: {
-        email: "yahyaparvar1@gmail.com",
-        self: true,
-      },
-      start: {
-        dateTime: "2022-12-30T01:30:00+03:30",
-        timeZone: "Asia/Tehran",
-      },
-      end: {
-        dateTime: "2022-12-30T02:00:00+03:30",
-        timeZone: "Asia/Tehran",
-      },
-      recurrence: ["RRULE:FREQ=WEEKLY;BYDAY=FR,MO,TH,TU,WE"],
-      iCalUID: "5eesi5t28jpi7vhfqhn9inei94@google.com",
-      sequence: 1,
-      reminders: {
-        useDefault: false,
-        overrides: [
-          {
-            method: "popup",
-            minutes: 30,
-          },
-        ],
-      },
-      eventType: "default",
-    },
-  ];
+  const events = useSelector(Calendarselectors.eventsList);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(calendarActions.getEvents());
   }, [dispatch]);
 
+  const calculateDuration = (start: string, end: string): string => {
+    const startTime = new Date(start);
+    const endTime = new Date(end);
+    const durationMs = endTime.getTime() - startTime.getTime();
+    const durationHours = Math.floor(durationMs / 3600000);
+    const durationMinutes = Math.floor((durationMs % 3600000) / 60000);
+    return `${durationHours}:${durationMinutes.toString().padStart(2, "0")}`;
+  };
+
+  const isMidnightToMidnight = (start: string, end: string): boolean => {
+    const startTime = new Date(start);
+    const endTime = new Date(end);
+    return (
+      startTime.getHours() === 0 &&
+      startTime.getMinutes() === 0 &&
+      startTime.getSeconds() === 0 &&
+      endTime.getHours() === 0 &&
+      endTime.getMinutes() === 0 &&
+      endTime.getSeconds() === 0 &&
+      endTime.getDate() === startTime.getDate() + 1
+    );
+  };
+
   const parseEvent = (event: EventResponse) => {
-    const recurrenceRule = event.recurrence ? event.recurrence[0] : null;
-    const isAllDay = event?.start?.date !== undefined;
-    const start = new Date(event?.start?.dateTime || event?.start?.date!);
-    const end = new Date(event?.end?.dateTime || event?.end?.date!);
-
-    let durationText = "All day";
-    if (!isAllDay) {
-      const durationMillis = end.getTime() - start.getTime();
-      const durationMinutes = Math.floor((durationMillis / (1000 * 60)) % 60);
-      const durationHours = Math.floor(
-        (durationMillis / (1000 * 60 * 60)) % 24
-      );
-      const durationDays = Math.floor(durationMillis / (1000 * 60 * 60 * 24));
-
-      durationText = `${durationMinutes} minutes`;
-      if (durationHours > 0)
-        durationText = `${durationHours} hours ${durationText}`;
-      if (durationDays > 0)
-        durationText = `${durationDays} days ${durationText}`;
-    }
+    const start = event?.start?.dateTime || event?.start?.date!;
+    const end = event?.end?.dateTime || event?.end?.date!;
+    const recurrenceRule = event.recurrence
+      ? new RRule({
+          ...RRule.parseString(event.recurrence[0]),
+          dtstart: new Date(start),
+        }).toString()
+      : null;
+    const isAllDay =
+      event?.start?.date !== undefined || isMidnightToMidnight(start, end);
 
     return {
       id: event.id,
-      title: `${event.summary} (${durationText})`,
-      start,
-      end,
-      allDay: isAllDay,
+      title: event.summary || "(No Title)",
+      start: start,
+      end: end,
       rrule: recurrenceRule,
-      backgroundColor: event.colorId,
-      url: event.htmlLink,
+      backgroundColor: GoogleColorMap[event.colorId!],
+      allDay: isAllDay,
+      duration: calculateDuration(
+        event?.start?.dateTime || event?.start?.date!,
+        event?.end?.dateTime || event?.end?.date!
+      ),
     };
   };
 
-  const calendarEvents = APIEvents.map(parseEvent);
+  const calendarEvents = events.map(parseEvent);
 
   return (
     <AppContainer>
@@ -177,3 +117,143 @@ const CalendarComponent: React.FC = () => {
 };
 
 export default CalendarComponent;
+
+// import dayGridPlugin from "@fullcalendar/daygrid";
+// import FullCalendar from "@fullcalendar/react";
+// import rrulePlugin from "@fullcalendar/rrule";
+// import timeGridPlugin from "@fullcalendar/timegrid";
+// import React from "react";
+
+// interface EventInput {
+//   id: string;
+//   title: string;
+//   startRecur: string;
+//   endRecur: string;
+//   rrule: {
+//     freq: string;
+//     byweekday?: string;
+//     bymonthday?: number;
+//     dtstart: string;
+//   };
+//   duration: string;
+// }
+
+// // Helper function to calculate duration
+// const calculateDuration = (start: string, end: string): string => {
+//   const startTime = new Date(start);
+//   const endTime = new Date(end);
+//   const durationMs = endTime.getTime() - startTime.getTime(); // duration in milliseconds
+//   const durationHours = Math.floor(durationMs / 3600000); // convert to hours
+//   const durationMinutes = Math.floor((durationMs % 3600000) / 60000); // remaining minutes
+//   return `${durationHours}:${durationMinutes.toString().padStart(2, "0")}`; // format as HH:mm
+// };
+
+// const events: EventInput[] = [
+//   {
+//     id: "1",
+//     title: "Weekly Meeting",
+//     startRecur: "2024-06-03T03:00:00",
+//     endRecur: "2024-12-31T11:00:00",
+//     rrule: {
+//       freq: "weekly",
+//       byweekday: "mo",
+//       dtstart: "2024-06-03T03:00:00",
+//     },
+//     duration: calculateDuration("2024-06-03T03:00:00", "2024-06-03T11:00:00"),
+//   },
+//   {
+//     id: "2",
+//     title: "Monthly Check-in",
+//     startRecur: "2024-06-15T09:00:00",
+//     endRecur: "2024-12-31T10:00:00",
+//     rrule: {
+//       freq: "monthly",
+//       bymonthday: 15,
+//       dtstart: "2024-06-15T09:00:00",
+//     },
+//     duration: calculateDuration("2024-06-15T09:00:00", "2024-06-15T10:00:00"),
+//   },
+// ];
+
+// const MyCalendar: React.FC = () => {
+//   return (
+//     <div style={{ height: "100vh" }}>
+//       <FullCalendar
+//         plugins={[dayGridPlugin, timeGridPlugin, rrulePlugin]}
+//         initialView="dayGridMonth"
+//         headerToolbar={{
+//           left: "prev,next today",
+//           center: "title",
+//           right: "dayGridMonth,timeGridDay",
+//         }}
+//         events={events}
+//         height="auto"
+//       />
+//     </div>
+//   );
+// };
+
+// export default MyCalendar;
+
+// import dayGridPlugin from "@fullcalendar/daygrid";
+// import FullCalendar from "@fullcalendar/react";
+// import rrulePlugin from "@fullcalendar/rrule";
+// import timeGridPlugin from "@fullcalendar/timegrid"; // Import timeGridPlugin for day view
+
+// const events = [
+//   {
+//     id: "1",
+//     title: "Weekly Meeting",
+//     start: "2024-06-03T03:00:00",
+//     end: "2024-06-03T11:00:00",
+//     rrule: "DTSTART:20240603T030000\nRRULE:FREQ=WEEKLY;BYDAY=MO", // Using RRule string
+//     recurStart: "2024-06-03T03:00:00",
+//     recurEnd: "2024-06-03T11:00:00",
+//   },
+//   {
+//     id: "2",
+//     title: "Monthly Check-in",
+//     start: "2024-06-15T09:00:00",
+//     end: "2024-06-15T10:00:00",
+//     rrule: "DTSTART:20240615T090000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=15", // Using RRule string
+//     recurStart: "2024-06-15T09:00:00",
+//     recurEnd: "2024-06-15T10:00:00",
+//   },
+// ];
+
+// // Calculate the duration of an event
+// const calculateDuration = (start: string, end: string): string => {
+//   const startTime = new Date(start);
+//   const endTime = new Date(end);
+//   const durationMs = endTime.getTime() - startTime.getTime(); // duration in milliseconds
+//   const durationHours = Math.floor(durationMs / 3600000); // convert to hours
+//   const durationMinutes = Math.floor((durationMs % 3600000) / 60000); // remaining minutes
+//   return `${durationHours}:${durationMinutes.toString().padStart(2, "0")}`; // format as HH:mm
+// };
+
+// // Add duration to each event
+// const formattedEvents = events.map((event) => ({
+//   ...event,
+//   title: `${event.title} (${calculateDuration(event.recurStart, event.recurEnd)})`,
+//   duration: calculateDuration(event.recurStart, event.recurEnd),
+// }));
+
+// const MyCalendar = () => {
+//   return (
+//     <div style={{ height: "100vh" }}>
+//       <FullCalendar
+//         plugins={[dayGridPlugin, timeGridPlugin, rrulePlugin]} // Add timeGridPlugin here
+//         initialView="dayGridMonth"
+//         headerToolbar={{
+//           left: "prev,next today",
+//           center: "title",
+//           right: "dayGridMonth,timeGridDay", // Add timeGridDay to switch views
+//         }}
+//         events={formattedEvents}
+//         height="auto"
+//       />
+//     </div>
+//   );
+// };
+
+// export default MyCalendar;
