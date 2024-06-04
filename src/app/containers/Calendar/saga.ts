@@ -11,6 +11,7 @@ export function* getEvents() {
   try {
     yield put(calendarActions.setEventStatus(Status.LOADING));
     const response: AxiosResponse = yield axiosInstance.post("calendar/events");
+    
     yield put(calendarActions.setEvents(response.data));
     yield put(calendarActions.setEventStatus(Status.SUCCESS));
   } catch (error) {

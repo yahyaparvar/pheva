@@ -91,6 +91,7 @@ const CalendarComponent: React.FC = () => {
           dayMaxEvents={3}
           height="auto"
           aspectRatio={1.4}
+          editable
           plugins={[
             dayGridPlugin,
             timeGridPlugin,
@@ -100,7 +101,7 @@ const CalendarComponent: React.FC = () => {
           ]}
           initialView="dayGridMonth"
           headerToolbar={{
-            left: "prev,next today",
+            left: "today prev,next",
             center: "title",
             right: "dayGridMonth,timeGridDay",
           }}
@@ -117,143 +118,3 @@ const CalendarComponent: React.FC = () => {
 };
 
 export default CalendarComponent;
-
-// import dayGridPlugin from "@fullcalendar/daygrid";
-// import FullCalendar from "@fullcalendar/react";
-// import rrulePlugin from "@fullcalendar/rrule";
-// import timeGridPlugin from "@fullcalendar/timegrid";
-// import React from "react";
-
-// interface EventInput {
-//   id: string;
-//   title: string;
-//   startRecur: string;
-//   endRecur: string;
-//   rrule: {
-//     freq: string;
-//     byweekday?: string;
-//     bymonthday?: number;
-//     dtstart: string;
-//   };
-//   duration: string;
-// }
-
-// // Helper function to calculate duration
-// const calculateDuration = (start: string, end: string): string => {
-//   const startTime = new Date(start);
-//   const endTime = new Date(end);
-//   const durationMs = endTime.getTime() - startTime.getTime(); // duration in milliseconds
-//   const durationHours = Math.floor(durationMs / 3600000); // convert to hours
-//   const durationMinutes = Math.floor((durationMs % 3600000) / 60000); // remaining minutes
-//   return `${durationHours}:${durationMinutes.toString().padStart(2, "0")}`; // format as HH:mm
-// };
-
-// const events: EventInput[] = [
-//   {
-//     id: "1",
-//     title: "Weekly Meeting",
-//     startRecur: "2024-06-03T03:00:00",
-//     endRecur: "2024-12-31T11:00:00",
-//     rrule: {
-//       freq: "weekly",
-//       byweekday: "mo",
-//       dtstart: "2024-06-03T03:00:00",
-//     },
-//     duration: calculateDuration("2024-06-03T03:00:00", "2024-06-03T11:00:00"),
-//   },
-//   {
-//     id: "2",
-//     title: "Monthly Check-in",
-//     startRecur: "2024-06-15T09:00:00",
-//     endRecur: "2024-12-31T10:00:00",
-//     rrule: {
-//       freq: "monthly",
-//       bymonthday: 15,
-//       dtstart: "2024-06-15T09:00:00",
-//     },
-//     duration: calculateDuration("2024-06-15T09:00:00", "2024-06-15T10:00:00"),
-//   },
-// ];
-
-// const MyCalendar: React.FC = () => {
-//   return (
-//     <div style={{ height: "100vh" }}>
-//       <FullCalendar
-//         plugins={[dayGridPlugin, timeGridPlugin, rrulePlugin]}
-//         initialView="dayGridMonth"
-//         headerToolbar={{
-//           left: "prev,next today",
-//           center: "title",
-//           right: "dayGridMonth,timeGridDay",
-//         }}
-//         events={events}
-//         height="auto"
-//       />
-//     </div>
-//   );
-// };
-
-// export default MyCalendar;
-
-// import dayGridPlugin from "@fullcalendar/daygrid";
-// import FullCalendar from "@fullcalendar/react";
-// import rrulePlugin from "@fullcalendar/rrule";
-// import timeGridPlugin from "@fullcalendar/timegrid"; // Import timeGridPlugin for day view
-
-// const events = [
-//   {
-//     id: "1",
-//     title: "Weekly Meeting",
-//     start: "2024-06-03T03:00:00",
-//     end: "2024-06-03T11:00:00",
-//     rrule: "DTSTART:20240603T030000\nRRULE:FREQ=WEEKLY;BYDAY=MO", // Using RRule string
-//     recurStart: "2024-06-03T03:00:00",
-//     recurEnd: "2024-06-03T11:00:00",
-//   },
-//   {
-//     id: "2",
-//     title: "Monthly Check-in",
-//     start: "2024-06-15T09:00:00",
-//     end: "2024-06-15T10:00:00",
-//     rrule: "DTSTART:20240615T090000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=15", // Using RRule string
-//     recurStart: "2024-06-15T09:00:00",
-//     recurEnd: "2024-06-15T10:00:00",
-//   },
-// ];
-
-// // Calculate the duration of an event
-// const calculateDuration = (start: string, end: string): string => {
-//   const startTime = new Date(start);
-//   const endTime = new Date(end);
-//   const durationMs = endTime.getTime() - startTime.getTime(); // duration in milliseconds
-//   const durationHours = Math.floor(durationMs / 3600000); // convert to hours
-//   const durationMinutes = Math.floor((durationMs % 3600000) / 60000); // remaining minutes
-//   return `${durationHours}:${durationMinutes.toString().padStart(2, "0")}`; // format as HH:mm
-// };
-
-// // Add duration to each event
-// const formattedEvents = events.map((event) => ({
-//   ...event,
-//   title: `${event.title} (${calculateDuration(event.recurStart, event.recurEnd)})`,
-//   duration: calculateDuration(event.recurStart, event.recurEnd),
-// }));
-
-// const MyCalendar = () => {
-//   return (
-//     <div style={{ height: "100vh" }}>
-//       <FullCalendar
-//         plugins={[dayGridPlugin, timeGridPlugin, rrulePlugin]} // Add timeGridPlugin here
-//         initialView="dayGridMonth"
-//         headerToolbar={{
-//           left: "prev,next today",
-//           center: "title",
-//           right: "dayGridMonth,timeGridDay", // Add timeGridDay to switch views
-//         }}
-//         events={formattedEvents}
-//         height="auto"
-//       />
-//     </div>
-//   );
-// };
-
-// export default MyCalendar;
