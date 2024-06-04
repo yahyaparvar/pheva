@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import styled from "styled-components";
 import { ROW_CENTER } from "styles/globalStyles";
-import CalendarView from "./components/EventCalendar/calendar";
+import EventCalendar from "./components/EventCalendar/eventCalendar";
 import CalendarEx from "./components/calendar";
 import { calendarSaga } from "./saga";
 import { Calendarselectors } from "./selectors";
@@ -29,7 +29,7 @@ export function Calendar(props: Props) {
   return (
     <Wrapper>
       <CalendarEx />
-      <CalendarView />
+      <EventCalendar />
     </Wrapper>
   );
 }

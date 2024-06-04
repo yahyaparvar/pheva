@@ -4,7 +4,7 @@ import listPlugin from "@fullcalendar/list";
 import FullCalendar from "@fullcalendar/react";
 import rrulePlugin from "@fullcalendar/rrule";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RRule } from "rrule";
 import styled from "styled-components";
@@ -22,14 +22,30 @@ const AppContainer = styled.div`
   text-align: center;
 `;
 
-const CalendarComponent: React.FC = () => {
-  const events = useSelector(Calendarselectors.eventsList);
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
 
+const EventCalendar: React.FC = () => {
+  const events = useSelector(Calendarselectors.eventsList);
+  const selectedDate = useSelector(Calendarselectors.selectedDate);
   const dispatch = useDispatch();
+  const calendarRef = useRef<any>(null);
+  const [currentView, setCurrentView] = useState("dayGridMonth");
 
   useEffect(() => {
     dispatch(calendarActions.getEvents());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (calendarRef.current) {
+      const calendarApi = calendarRef.current.getApi();
+      calendarApi.gotoDate(selectedDate);
+    }
+  }, [selectedDate]);
 
   const calculateDuration = (start: string, end: string): string => {
     const startTime = new Date(start);
@@ -83,15 +99,61 @@ const CalendarComponent: React.FC = () => {
 
   const calendarEvents = events.map(parseEvent);
 
+  const handleViewChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const calendarApi = calendarRef.current.getApi();
+    const newView = event.target.value;
+    calendarApi.changeView(newView);
+    setCurrentView(newView);
+  };
+
+  const handleNext = () => {
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.next();
+    const newDate = calendarApi.getDate();
+    dispatch(calendarActions.setDate(newDate.toISOString()));
+  };
+
+  const handlePrev = () => {
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.prev();
+    const newDate = calendarApi.getDate();
+    dispatch(calendarActions.setDate(newDate.toISOString()));
+  };
+
+  const formatDate = (date: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day:
+        currentView === "dayGridMonth" ||
+        currentView === "timeGridWeek" ||
+        currentView === "listWeek"
+          ? undefined
+          : "numeric",
+    };
+    return new Date(date).toLocaleDateString(undefined, options);
+  };
+
   return (
     <AppContainer>
       <CalendarWrapper>
+        <Header>
+          <button onClick={handlePrev}>Previous</button>
+          <div>{formatDate(selectedDate?.toString())}</div>
+          <button onClick={handleNext}>Next</button>
+          <select onChange={handleViewChange}>
+            <option value="dayGridMonth">Month</option>
+            <option value="timeGridWeek">Week</option>
+            <option value="timeGridDay">Day</option>
+            <option value="listWeek">List</option>
+          </select>
+        </Header>
         <FullCalendar
+          ref={calendarRef}
           fixedWeekCount={false}
           dayMaxEvents={3}
           height="auto"
           aspectRatio={1.4}
-          editable
           plugins={[
             dayGridPlugin,
             timeGridPlugin,
@@ -101,9 +163,9 @@ const CalendarComponent: React.FC = () => {
           ]}
           initialView="dayGridMonth"
           headerToolbar={{
-            left: "today prev,next",
-            center: "title",
-            right: "dayGridMonth,timeGridDay",
+            left: "",
+            center: "",
+            right: "",
           }}
           //@ts-ignore
           events={calendarEvents}
@@ -117,4 +179,4 @@ const CalendarComponent: React.FC = () => {
   );
 };
 
-export default CalendarComponent;
+export default EventCalendar;
