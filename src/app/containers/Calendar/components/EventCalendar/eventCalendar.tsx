@@ -4,9 +4,11 @@ import listPlugin from "@fullcalendar/list";
 import FullCalendar from "@fullcalendar/react";
 import rrulePlugin from "@fullcalendar/rrule";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import Dropdown from "app/components/dropdown";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { ROW_CENTER, UNSELECTABLE } from "styles/globalStyles";
 import { Calendarselectors } from "../../selectors";
 import { calendarActions } from "../../slice";
 import { parseEvents } from "./functions";
@@ -48,9 +50,9 @@ const EventCalendar: React.FC = () => {
 
   const calendarEvents = events.map(parseEvents);
 
-  const handleViewChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleViewChange = (value: string) => {
     const calendarApi = calendarRef.current.getApi();
-    const newView = event.target.value;
+    const newView = value;
     calendarApi.changeView(newView);
     setCurrentView(newView);
   };
@@ -87,20 +89,54 @@ const EventCalendar: React.FC = () => {
     <AppContainer>
       <CalendarWrapper>
         <Header>
-          <button onClick={handlePrev}>Previous</button>
-          <div>{formatDate(selectedDate?.toString())}</div>
-          <button onClick={handleNext}>Next</button>
-          <select onChange={handleViewChange}>
-            <option value="dayGridMonth">Month</option>
-            <option value="timeGridWeek">Week</option>
-            <option value="timeGridDay">Day</option>
-            <option value="listWeek">List</option>
-          </select>
+          <PrevNextButtonWrapper>
+            <NextPrevButton onClick={handlePrev}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </NextPrevButton>
+            <NextPrevButton onClick={handleNext}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </NextPrevButton>
+            <FormattedDate>
+              {formatDate(selectedDate?.toString())}
+            </FormattedDate>
+          </PrevNextButtonWrapper>
+          <Dropdown
+            onChange={handleViewChange}
+            items={[
+              { label: "Month", value: "dayGridMonth" },
+              { label: "Week", value: "timeGridWeek" },
+              { label: "Day", value: "timeGridDay" },
+              { label: "List", value: "listWeek" },
+            ]}
+          ></Dropdown>
         </Header>
         <FullCalendar
           ref={calendarRef}
+          nextDayThreshold={"01:00:00"}
           fixedWeekCount={false}
-          dayMaxEvents={3}
+          dayMaxEvents={2}
           height="auto"
           aspectRatio={1.4}
           plugins={[
@@ -129,3 +165,23 @@ const EventCalendar: React.FC = () => {
 };
 
 export default EventCalendar;
+const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
+  ${UNSELECTABLE}
+  ${({ disabled }) =>
+    disabled === "true" &&
+    css`
+      opacity: 0.5;
+      pointer-events: none;
+    `}
+  padding: 5px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+`;
+const PrevNextButtonWrapper = styled.div`
+  ${ROW_CENTER}
+`;
+const FormattedDate = styled.div`
+  font-size: 22px;
+  font-weight: 500;
+`;
