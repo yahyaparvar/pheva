@@ -5,16 +5,18 @@ const GlobalStyle = createGlobalStyle`
 :root {
   --text: #84868a;
   --white: #fff;
-  --font:"Inter", "Rubik";
-  --persian-font:"Rubik";
-  --border:#E2E8F0;
-  --title:#0E172A;
-  --background-secondary:rgb(248 250 252/1);
-  --button:#007ACC;
-  --button-text:#fff;
-  --background-color:#fff;
+  --font: "Inter", "Rubik";
+  --persian-font: "Rubik";
+  --border: #E2E8F0;
+  --title: #0E172A;
+  --background-secondary: rgb(248 250 252/1);
+  --button: #007ACC;
+  --button-text: #fff;
+  --background-color: #fff;
   --dark-gray: #333;
-  --table-header:#585858;
+  --table-header: #585858;
+  --black: #000;
+  --light-gray: #f1f1f1;
 }
 .DARK {
     --text: #e5e7eb;

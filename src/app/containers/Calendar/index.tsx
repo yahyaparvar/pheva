@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import styled from "styled-components";
-import { ROW_CENTER } from "styles/globalStyles";
+import { ROW_ALIGN_START__JUSTIFY_CENTER } from "styles/globalStyles";
 import EventCalendar from "./components/EventCalendar/eventCalendar";
 import CalendarEx from "./components/calendar";
 import { calendarSaga } from "./saga";
@@ -34,6 +34,7 @@ export function Calendar(props: Props) {
   );
 }
 const Wrapper = styled.div`
-  ${ROW_CENTER}
+  ${ROW_ALIGN_START__JUSTIFY_CENTER}
   width:100%;
+  padding: 24px;
 `;

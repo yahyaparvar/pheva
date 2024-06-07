@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useOnClickOutside } from "usehooks-ts";
 
@@ -10,8 +10,7 @@ const DropdownContainer = styled.div`
 `;
 
 const DropdownButton = styled.button`
-  background-color: #4caf50;
-  color: white;
+  color: var(--text);
   padding: 10px 20px;
   font-size: 16px;
   border: none;
@@ -23,26 +22,27 @@ const DropdownMenu = styled(motion.div)`
   display: flex;
   flex-direction: column;
   position: absolute;
-  background-color: white;
+  background-color: var(--white);
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 4px;
+  right: 0;
   overflow: hidden;
 `;
 
 const DropdownItem = styled.button`
-  color: black;
+  color: var(--black);
   padding: 12px 16px;
   text-align: left;
   text-decoration: none;
   display: block;
-  background-color: white;
+  background-color: var(--white);
   border: none;
   width: 100%;
   cursor: pointer;
   &:hover {
-    background-color: #f1f1f1;
+    background-color: var(--light-gray);
   }
 `;
 
@@ -65,21 +65,45 @@ const DropdownComponent: React.FC<DropdownProps> = ({ items, onChange }) => {
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
-  const handleItemSelect = (itemValue: string) => {
-    setSelectedValue(itemValue);
-    setIsOpen(false);
-    onChange(itemValue);
+  const handleItemSelect = (itemValue: DropdownItemType) => {
+    if (itemValue.label === selectedValue) {
+      setIsOpen(false);
+      return;
+    } else setIsOpen(false);
+    setSelectedValue(itemValue.label);
+    onChange(itemValue.value);
   };
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "m" || event.key === "M") {
+        setSelectedValue("Month");
+      }
+      if (event.key === "w" || event.key === "W") {
+        setSelectedValue("Week");
+      }
+      if (event.key === "s" || event.key === "S") {
+        setSelectedValue("Schedule");
+      }
+      if (event.key === "d" || event.key === "D") {
+        setSelectedValue("Day");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <DropdownContainer ref={dropdownRef}>
       <DropdownButton onClick={toggleDropdown}>
-        {selectedValue || "Select an item"}
+        {selectedValue || items[0].label}
       </DropdownButton>
       <AnimatePresence>
         {isOpen && (
           <DropdownMenu
-            initial={{ opacity: 0, y: -10, x: -10, scale: 0.9 }}
+            initial={{ opacity: 0, y: -10, x: 10, scale: 0.9 }}
             animate={{
               opacity: 1,
               y: 0,
@@ -92,8 +116,8 @@ const DropdownComponent: React.FC<DropdownProps> = ({ items, onChange }) => {
             }}
             exit={{
               opacity: 0,
-              y: -10,
-              x: -10,
+              y: 10,
+              x: 10,
               scale: 0.9,
               transition: {
                 duration: 0.05,
@@ -104,7 +128,7 @@ const DropdownComponent: React.FC<DropdownProps> = ({ items, onChange }) => {
             {items.map((item) => (
               <DropdownItem
                 key={item.value}
-                onClick={() => handleItemSelect(item.value)}
+                onClick={() => handleItemSelect(item)}
               >
                 {item.label}
               </DropdownItem>

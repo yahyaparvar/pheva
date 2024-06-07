@@ -4,7 +4,8 @@ import listPlugin from "@fullcalendar/list";
 import FullCalendar from "@fullcalendar/react";
 import rrulePlugin from "@fullcalendar/rrule";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import Dropdown from "app/components/dropdown";
+import Dropdown from "app/containers/Calendar/components/dropdown";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
@@ -14,20 +15,21 @@ import { calendarActions } from "../../slice";
 import { parseEvents } from "./functions";
 
 const CalendarWrapper = styled.div`
-  max-width: 900px;
+  width: 100%;
+
   margin: 40px auto;
   padding: 0 10px;
 `;
 
 const AppContainer = styled.div`
   text-align: center;
+  width: 100%;
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
 `;
 
 const EventCalendar: React.FC = () => {
@@ -36,6 +38,7 @@ const EventCalendar: React.FC = () => {
   const dispatch = useDispatch();
   const calendarRef = useRef<any>(null);
   const [currentView, setCurrentView] = useState("dayGridMonth");
+  const [animateKey, setAnimateKey] = useState(0);
 
   useEffect(() => {
     dispatch(calendarActions.getEvents());
@@ -48,27 +51,57 @@ const EventCalendar: React.FC = () => {
     }
   }, [selectedDate]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "m" || event.key === "M") {
+        handleViewChange("dayGridMonth");
+      }
+      if (event.key === "w" || event.key === "W") {
+        handleViewChange("timeGridWeek");
+      }
+      if (event.key === "s" || event.key === "S") {
+        handleViewChange("listWeek");
+      }
+      if (event.key === "d" || event.key === "D") {
+        handleViewChange("timeGridDay");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const calendarEvents = events.map(parseEvents);
 
   const handleViewChange = (value: string) => {
-    const calendarApi = calendarRef.current.getApi();
-    const newView = value;
-    calendarApi.changeView(newView);
-    setCurrentView(newView);
+    setAnimateKey((prevKey) => prevKey + 1); // Update the key to trigger animation
+    setTimeout(() => {
+      const calendarApi = calendarRef.current.getApi();
+      calendarApi.changeView(value);
+      setCurrentView(value);
+    }, 200);
   };
 
   const handleNext = () => {
-    const calendarApi = calendarRef.current.getApi();
-    calendarApi.next();
-    const newDate = calendarApi.getDate();
-    dispatch(calendarActions.setDate(newDate.toISOString()));
+    setAnimateKey((prevKey) => prevKey + 1); // Update the key to trigger animation
+    setTimeout(() => {
+      const calendarApi = calendarRef.current.getApi();
+      calendarApi.next();
+      const newDate = calendarApi.getDate();
+      dispatch(calendarActions.setDate(newDate.toISOString()));
+    }, 200);
   };
 
   const handlePrev = () => {
-    const calendarApi = calendarRef.current.getApi();
-    calendarApi.prev();
-    const newDate = calendarApi.getDate();
-    dispatch(calendarActions.setDate(newDate.toISOString()));
+    setAnimateKey((prevKey) => prevKey + 1); // Update the key to trigger animation
+    setTimeout(() => {
+      const calendarApi = calendarRef.current.getApi();
+      calendarApi.prev();
+      const newDate = calendarApi.getDate();
+      dispatch(calendarActions.setDate(newDate.toISOString()));
+    }, 200);
   };
 
   const formatDate = (date: string) => {
@@ -128,43 +161,56 @@ const EventCalendar: React.FC = () => {
               { label: "Month", value: "dayGridMonth" },
               { label: "Week", value: "timeGridWeek" },
               { label: "Day", value: "timeGridDay" },
-              { label: "List", value: "listWeek" },
+              { label: "Schedule", value: "listWeek" },
             ]}
           ></Dropdown>
         </Header>
-        <FullCalendar
-          ref={calendarRef}
-          nextDayThreshold={"01:00:00"}
-          fixedWeekCount={false}
-          dayMaxEvents={2}
-          height="auto"
-          aspectRatio={1.4}
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            listPlugin,
-            rrulePlugin,
-            interactionPlugin,
-          ]}
-          initialView="dayGridMonth"
-          headerToolbar={{
-            left: "",
-            center: "",
-            right: "",
-          }}
-          //@ts-ignore
-          events={calendarEvents}
-          eventTimeFormat={{
-            hour: "numeric",
-            minute: "2-digit",
-          }}
-        />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={animateKey}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeIn" }}
+          >
+            <FullCalendar
+              ref={calendarRef}
+              nextDayThreshold={"01:00:00"}
+              fixedWeekCount={false}
+              dayMaxEvents={2}
+              height="auto"
+              aspectRatio={1.4}
+              plugins={[
+                dayGridPlugin,
+                timeGridPlugin,
+                listPlugin,
+                rrulePlugin,
+                interactionPlugin,
+              ]}
+              initialView={currentView}
+              headerToolbar={{
+                left: "",
+                center: "",
+                right: "",
+              }}
+              viewDidMount={({ view }) => setCurrentView(view.type)}
+              viewWillUnmount={() => setCurrentView(currentView)}
+              //@ts-ignore
+              events={calendarEvents}
+              eventTimeFormat={{
+                hour: "numeric",
+                minute: "2-digit",
+              }}
+            />
+          </motion.div>
+        </AnimatePresence>
       </CalendarWrapper>
     </AppContainer>
   );
 };
 
 export default EventCalendar;
+
 const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
   ${UNSELECTABLE}
   ${({ disabled }) =>
