@@ -20,6 +20,7 @@ const calendarSlice = createSlice({
     someAction(state, action: PayloadAction<any>) {},
     setDate(state, action: PayloadAction<string>) {
       state.selectedDate = new Date(action.payload);
+      state.animationKey += 1;
     },
     setEvents(state, action: PayloadAction<any[]>) {
       state.events.list = action.payload;

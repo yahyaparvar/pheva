@@ -19,6 +19,53 @@ const CalendarWrapper = styled.div`
   width: 100%;
   margin: 40px auto;
   padding: 0 10px;
+  margin-top: 0;
+  .fc-col-header-cell {
+    color: #333; /* Change text color */
+    font-weight: 500; /* Make text bold */
+    text-align: center; /* Center-align text */
+    border: 1px solid transparent; /* Add border */
+    padding-top: 8px;
+    font-size: 12px;
+    border-right: 1px solid #fff; /* Add border */
+    text-transform: uppercase;
+  }
+  .fc-daygrid-day-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+  }
+  /* Customize the font size of each event */
+  .fc-event {
+    font-size: 12px; /* Change this value to your desired font size */
+  }
+  .fc-daygrid-day-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Highlight today's date */
+  .fc-day-today {
+    background-color: unset !important; /* Reset the cell background color */
+  }
+
+  .fc-day-today .fc-daygrid-day-number {
+    color: #ffffff; /* Change the day number color to white */
+    background-color: red; /* Change the background color to red */
+    border-radius: 50%; /* Make it a circle */
+    width: 18px; /* Adjust the width for better appearance */
+    height: 18px; /* Adjust the height for better appearance */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 4px auto; /* Center it within the cell */
+  }
 `;
 
 const AppContainer = styled.div`
@@ -65,6 +112,24 @@ const EventCalendar: React.FC = () => {
   useEffect(() => {
     dispatch(calendarActions.getEvents());
   }, [dispatch]);
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "m" || event.key === "M") {
+        dispatch(calendarActions.setView("dayGridMonth"));
+      }
+      if (event.key === "w" || event.key === "W") {
+        dispatch(calendarActions.setView("timeGridWeek"));
+      }
+      if (event.key === "d" || event.key === "D") {
+        dispatch(calendarActions.setView("timeGridDay"));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const handleViewChange = (value: string) => {
     dispatch(calendarActions.setView(value as CalendarViews));
@@ -144,9 +209,11 @@ const EventCalendar: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeIn" }}
+            transition={{ duration: 0.14, ease: "easeIn" }}
           >
             <FullCalendar
+              editable
+              height={"90vh"}
               plugins={[
                 dayGridPlugin,
                 timeGridPlugin,

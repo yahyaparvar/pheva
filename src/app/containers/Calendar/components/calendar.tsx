@@ -30,6 +30,7 @@ const Header = styled.div`
   width: 100%;
   align-items: center;
   padding: 16px 6px;
+  padding-top: 55px;
 `;
 
 const DaysWrapper = styled.div`
@@ -38,6 +39,7 @@ const DaysWrapper = styled.div`
   width: 100%;
   grid-template-columns: repeat(7, 1fr);
 `;
+
 const WeekDaysWrapper = styled.div`
   display: grid;
   cursor: pointer;
@@ -58,6 +60,7 @@ const Day = styled.div`
   font-size: 11px;
   padding: 3px;
 `;
+
 const DayContent = styled.div<DayProps>`
   width: 100%;
   ${COLUMN_CENTER}
@@ -74,9 +77,16 @@ const DayContent = styled.div<DayProps>`
     !props.isSelected &&
     isToday(props.date) &&
     `
-    background: blue;
+    background: #560808;
   `}
+  transition: ${(props) =>
+    props.isCurrentMonth ? "background-color 0.2s" : "none"};
+
+  &:hover {
+    background-color: ${(props) => !props.isSelected && "#313131"};
+  }
 `;
+
 const WeekdayHeader = styled.div`
   text-align: center;
   font-size: 11px;
@@ -88,9 +98,11 @@ const CalendarEx: React.FC = () => {
   const dispatch = useDispatch();
   const selectedDate = useSelector(Calendarselectors.selectedDate);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+
   useEffect(() => {
     setCurrentMonth(selectedDate);
   }, [selectedDate]);
+
   const handleDayClick = (day: Date) => {
     const normalizedDay = new Date(
       day.getFullYear(),
@@ -123,6 +135,7 @@ const CalendarEx: React.FC = () => {
           onClick={() => handleDayClick(currentDay)}
         >
           <DayContent
+            key={`${currentDay.toISOString()}-${isSameMonth(currentDay, currentMonth)}`}
             isCurrentMonth={isSameMonth(currentDay, currentMonth)}
             date={currentDay}
             isSelected={
@@ -200,6 +213,7 @@ const Title = styled.div`
   font-weight: 700;
   font-size: 14px;
 `;
+
 const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
   ${UNSELECTABLE}
   ${({ disabled }) =>
@@ -214,7 +228,9 @@ const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
   cursor: pointer;
   height: 20px;
 `;
+
 const PrevNextButtonWrapper = styled.div`
   ${ROW_CENTER}
 `;
+
 export default CalendarEx;
