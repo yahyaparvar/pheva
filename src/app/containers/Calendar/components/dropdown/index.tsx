@@ -1,6 +1,8 @@
+import { ChevronDownIcon } from "@heroicons/react/solid";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { ROW_ALIGN_CENTER__SPACE_B } from "styles/globalStyles";
 import { useOnClickOutside } from "usehooks-ts";
 
 const DropdownContainer = styled.div`
@@ -13,36 +15,48 @@ const DropdownButton = styled.button`
   color: var(--text);
   padding: 10px 20px;
   font-size: 16px;
-  border: none;
+  border: 1px solid #4a5568;
+  background-color: #1a202c;
+  color: #e2e8f0;
   cursor: pointer;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const IconWrapper = styled.div`
+  width: 1rem; // Equivalent to w-4 in Tailwind CSS
+  height: 1rem; // Equivalent to h-4 in Tailwind CSS
+  margin-left: 0.5rem; // Equivalent to ml-2 in Tailwind CSS
 `;
 
 const DropdownMenu = styled(motion.div)`
   display: flex;
   flex-direction: column;
   position: absolute;
-  background-color: var(--white);
+  background-color: #2d3748;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 4px;
   right: 0;
   overflow: hidden;
+  border: 1px solid #4a5568;
 `;
 
 const DropdownItem = styled.button`
-  color: var(--black);
+  ${ROW_ALIGN_CENTER__SPACE_B}
+  color: #e2e8f0;
   padding: 12px 16px;
   text-align: left;
   text-decoration: none;
-  display: block;
-  background-color: var(--white);
+  background-color: #2d3748;
   border: none;
   width: 100%;
   cursor: pointer;
   &:hover {
-    background-color: var(--light-gray);
+    background-color: #4a5568;
   }
 `;
 
@@ -73,6 +87,7 @@ const DropdownComponent: React.FC<DropdownProps> = ({ items, onChange }) => {
     setSelectedValue(itemValue.label);
     onChange(itemValue.value);
   };
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "m" || event.key === "M") {
@@ -96,6 +111,9 @@ const DropdownComponent: React.FC<DropdownProps> = ({ items, onChange }) => {
     <DropdownContainer ref={dropdownRef}>
       <DropdownButton onClick={toggleDropdown}>
         {selectedValue || items[0].label}
+        <IconWrapper>
+          <ChevronDownIcon />
+        </IconWrapper>
       </DropdownButton>
       <AnimatePresence>
         {isOpen && (
@@ -127,7 +145,8 @@ const DropdownComponent: React.FC<DropdownProps> = ({ items, onChange }) => {
                 key={item.value}
                 onClick={() => handleItemSelect(item)}
               >
-                {item.label}
+                <div>{item.label}</div>
+                <div>{item.label.charAt(0).toUpperCase()}</div>
               </DropdownItem>
             ))}
           </DropdownMenu>
