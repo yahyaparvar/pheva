@@ -9,101 +9,16 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Dropdown from "app/containers/Calendar/components/dropdown";
 import { Status } from "app/types";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styled, { css } from "styled-components";
-import { ROW_CENTER, UNSELECTABLE } from "styles/globalStyles";
+
 import { Calendarselectors } from "../../selectors";
 import { calendarActions } from "../../slice";
 import { CalendarViews } from "../../types";
 import { parseEvents } from "./functions";
+import { EditModal } from "../dateModal";
+import { AppContainer, CalendarWrapper, Header, PrevNextButtonWrapper, NextPrevButton, FormattedDate } from "./calender.styles";
 
-const CalendarWrapper = styled.div`
-  width: 100%;
-  margin: 40px auto;
-  padding: 0 10px;
-  margin-top: 0;
-  .fc-col-header-cell {
-    color: #333; /* Change text color */
-    font-weight: 500; /* Make text bold */
-    text-align: center; /* Center-align text */
-    padding-top: 8px;
-    font-size: 12px;
-    border: 1px solid transparent; /* Add border */
-    border-right: 1px solid #fff; /* Add border */
-    text-transform: uppercase;
-  }
-  .fc-daygrid-day-number {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    font-size: 12px;
-  }
-  /* Customize the font size of each event */
-  .fc-event {
-    font-size: 12px; /* Change this value to your desired font size */
-  }
-  .fc-daygrid-day-number {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Highlight today's date */
-  .fc-day-today {
-    background-color: unset !important; /* Reset the cell background color */
-  }
-
-  .fc-day-today .fc-daygrid-day-number {
-    color: #ffffff; /* Change the day number color to white */
-    background-color: red; /* Change the background color to red */
-    border-radius: 50%; /* Make it a circle */
-    width: 18px; /* Adjust the width for better appearance */
-    height: 18px; /* Adjust the height for better appearance */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 4px auto; /* Center it within the cell */
-  }
-`;
-
-const AppContainer = styled.div`
-  text-align: center;
-  width: 100%;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
-  ${UNSELECTABLE}
-  ${({ disabled }) =>
-    disabled === "true" &&
-    css`
-      opacity: 0.5;
-      pointer-events: none;
-    `}
-  padding: 5px;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-`;
-
-const PrevNextButtonWrapper = styled.div`
-  ${ROW_CENTER}
-`;
-
-const FormattedDate = styled.div`
-  font-size: 22px;
-  font-weight: 500;
-`;
 
 const EventCalendar: React.FC = () => {
   const events = useSelector(Calendarselectors.eventsList);
@@ -112,12 +27,20 @@ const EventCalendar: React.FC = () => {
   const animationKey = useSelector(Calendarselectors.animationKey);
   const currentView = useSelector(Calendarselectors.currentView);
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [selectedRange, setSelectedRange] = useState<{
+    start: Date;
+    end: Date;
+  } | null>(null);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     if (eventsStatus !== Status.SUCCESS) {
       dispatch(calendarActions.getEvents());
     }
-  }, [dispatch]);
+  }, [dispatch, eventsStatus]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -136,7 +59,7 @@ const EventCalendar: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [dispatch]);
 
   const handleViewChange = (value: string) => {
     dispatch(calendarActions.setView(value as CalendarViews));
@@ -163,6 +86,12 @@ const EventCalendar: React.FC = () => {
   };
 
   const calendarEvents = events.map(parseEvents);
+
+  const handleDateSelect = (selectInfo: any) => {
+    const { start, end } = selectInfo;
+    setSelectedRange({ start, end });
+    handleOpen();
+  };
 
   return (
     <AppContainer>
@@ -225,6 +154,9 @@ const EventCalendar: React.FC = () => {
           >
             <FullCalendar
               editable
+              selectable
+              selectMirror
+              select={handleDateSelect}
               height={"90vh"}
               plugins={[
                 dayGridPlugin,
@@ -257,6 +189,11 @@ const EventCalendar: React.FC = () => {
           </motion.div>
         </AnimatePresence>
       </CalendarWrapper>
+      <EditModal
+        open={open}
+        handleClose={handleClose}
+        selectedRange={selectedRange}
+      />
     </AppContainer>
   );
 };
