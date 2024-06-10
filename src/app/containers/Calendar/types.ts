@@ -1,5 +1,6 @@
 import { Status } from "app/types";
 
+export type CalendarViews = "dayGridMonth" | "timeGridWeek" | "timeGridDay";
 /* --- STATE --- */
 export interface CalendarState {
   selectedDate: Date;
@@ -7,7 +8,10 @@ export interface CalendarState {
     list: EventResponse[];
     status: Status;
   };
+  currentView: CalendarViews;
+  animationKey: 0;
 }
+
 export interface EventResponse {
   kind: string; // "calendar#event"
   etag: string;

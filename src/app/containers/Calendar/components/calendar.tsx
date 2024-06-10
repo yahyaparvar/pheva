@@ -104,7 +104,7 @@ const CalendarEx: React.FC = () => {
         setCurrentMonth(addMonths(currentMonth, 1));
       }
     }
-    dispatch(calendarActions.setDate(normalizedDay));
+    dispatch(calendarActions.setDate(normalizedDay.toISOString()));
   };
 
   const renderDays = (): JSX.Element => {

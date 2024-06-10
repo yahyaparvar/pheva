@@ -6,17 +6,17 @@ import rrulePlugin from "@fullcalendar/rrule";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import Dropdown from "app/containers/Calendar/components/dropdown";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { ROW_CENTER, UNSELECTABLE } from "styles/globalStyles";
 import { Calendarselectors } from "../../selectors";
 import { calendarActions } from "../../slice";
+import { CalendarViews } from "../../types";
 import { parseEvents } from "./functions";
 
 const CalendarWrapper = styled.div`
   width: 100%;
-
   margin: 40px auto;
   padding: 0 10px;
 `;
@@ -32,76 +32,50 @@ const Header = styled.div`
   align-items: center;
 `;
 
+const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
+  ${UNSELECTABLE}
+  ${({ disabled }) =>
+    disabled === "true" &&
+    css`
+      opacity: 0.5;
+      pointer-events: none;
+    `}
+  padding: 5px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+`;
+
+const PrevNextButtonWrapper = styled.div`
+  ${ROW_CENTER}
+`;
+
+const FormattedDate = styled.div`
+  font-size: 22px;
+  font-weight: 500;
+`;
+
 const EventCalendar: React.FC = () => {
   const events = useSelector(Calendarselectors.eventsList);
   const selectedDate = useSelector(Calendarselectors.selectedDate);
+  const animationKey = useSelector(Calendarselectors.animationKey);
+  const currentView = useSelector(Calendarselectors.currentView);
   const dispatch = useDispatch();
-  const calendarRef = useRef<any>(null);
-  const [currentView, setCurrentView] = useState("dayGridMonth");
-  const [animateKey, setAnimateKey] = useState(0);
 
   useEffect(() => {
     dispatch(calendarActions.getEvents());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (calendarRef.current) {
-      const calendarApi = calendarRef.current.getApi();
-      calendarApi.gotoDate(selectedDate);
-    }
-  }, [selectedDate]);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "m" || event.key === "M") {
-        handleViewChange("dayGridMonth");
-      }
-      if (event.key === "w" || event.key === "W") {
-        handleViewChange("timeGridWeek");
-      }
-      if (event.key === "s" || event.key === "S") {
-        handleViewChange("listWeek");
-      }
-      if (event.key === "d" || event.key === "D") {
-        handleViewChange("timeGridDay");
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
-  const calendarEvents = events.map(parseEvents);
-
   const handleViewChange = (value: string) => {
-    setAnimateKey((prevKey) => prevKey + 1); // Update the key to trigger animation
-    setTimeout(() => {
-      const calendarApi = calendarRef.current.getApi();
-      calendarApi.changeView(value);
-      setCurrentView(value);
-    }, 200);
+    dispatch(calendarActions.setView(value as CalendarViews));
   };
 
   const handleNext = () => {
-    setAnimateKey((prevKey) => prevKey + 1); // Update the key to trigger animation
-    setTimeout(() => {
-      const calendarApi = calendarRef.current.getApi();
-      calendarApi.next();
-      const newDate = calendarApi.getDate();
-      dispatch(calendarActions.setDate(newDate.toISOString()));
-    }, 200);
+    dispatch(calendarActions.moveNext());
   };
 
   const handlePrev = () => {
-    setAnimateKey((prevKey) => prevKey + 1); // Update the key to trigger animation
-    setTimeout(() => {
-      const calendarApi = calendarRef.current.getApi();
-      calendarApi.prev();
-      const newDate = calendarApi.getDate();
-      dispatch(calendarActions.setDate(newDate.toISOString()));
-    }, 200);
+    dispatch(calendarActions.movePrev());
   };
 
   const formatDate = (date: string) => {
@@ -109,14 +83,14 @@ const EventCalendar: React.FC = () => {
       year: "numeric",
       month: "long",
       day:
-        currentView === "dayGridMonth" ||
-        currentView === "timeGridWeek" ||
-        currentView === "listWeek"
+        currentView === "dayGridMonth" || currentView === "timeGridWeek"
           ? undefined
           : "numeric",
     };
     return new Date(date).toLocaleDateString(undefined, options);
   };
+
+  const calendarEvents = events.map(parseEvents);
 
   return (
     <AppContainer>
@@ -161,25 +135,18 @@ const EventCalendar: React.FC = () => {
               { label: "Month", value: "dayGridMonth" },
               { label: "Week", value: "timeGridWeek" },
               { label: "Day", value: "timeGridDay" },
-              { label: "Schedule", value: "listWeek" },
             ]}
-          ></Dropdown>
+          />
         </Header>
         <AnimatePresence mode="wait">
           <motion.div
-            key={animateKey}
+            key={animationKey}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeIn" }}
           >
             <FullCalendar
-              ref={calendarRef}
-              nextDayThreshold={"01:00:00"}
-              fixedWeekCount={false}
-              dayMaxEvents={2}
-              height="auto"
-              aspectRatio={1.4}
               plugins={[
                 dayGridPlugin,
                 timeGridPlugin,
@@ -188,15 +155,16 @@ const EventCalendar: React.FC = () => {
                 interactionPlugin,
               ]}
               initialView={currentView}
+              initialDate={selectedDate}
               headerToolbar={{
                 left: "",
                 center: "",
                 right: "",
               }}
-              viewDidMount={({ view }) => setCurrentView(view.type)}
-              viewWillUnmount={() => setCurrentView(currentView)}
               //@ts-ignore
               events={calendarEvents}
+              nextDayThreshold={"01:00:00"}
+              dayMaxEvents={3}
               eventTimeFormat={{
                 hour: "numeric",
                 minute: "2-digit",
@@ -210,24 +178,3 @@ const EventCalendar: React.FC = () => {
 };
 
 export default EventCalendar;
-
-const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
-  ${UNSELECTABLE}
-  ${({ disabled }) =>
-    disabled === "true" &&
-    css`
-      opacity: 0.5;
-      pointer-events: none;
-    `}
-  padding: 5px;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-`;
-const PrevNextButtonWrapper = styled.div`
-  ${ROW_CENTER}
-`;
-const FormattedDate = styled.div`
-  font-size: 22px;
-  font-weight: 500;
-`;

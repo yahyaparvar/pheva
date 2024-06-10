@@ -81,9 +81,6 @@ const DropdownComponent: React.FC<DropdownProps> = ({ items, onChange }) => {
       if (event.key === "w" || event.key === "W") {
         setSelectedValue("Week");
       }
-      if (event.key === "s" || event.key === "S") {
-        setSelectedValue("Schedule");
-      }
       if (event.key === "d" || event.key === "D") {
         setSelectedValue("Day");
       }
