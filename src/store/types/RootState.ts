@@ -3,6 +3,7 @@ import { LoginState } from 'app/containers/Login/types';
 import { InboxState } from 'app/containers/Inbox/types';
 import { SentState } from 'app/containers/Sent/types';
 import { CalendarState } from 'app/containers/Calendar/types';
+import { EmailDetailState } from 'app/containers/EmailDetail/types';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 
 import { HomeState } from "app/containers/Home/types";
@@ -22,5 +23,6 @@ export interface RootState {
   inbox?: InboxState;
   sent?: SentState;
   calendar?: CalendarState;
+  emailDetail?: EmailDetailState;
 // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
 }
