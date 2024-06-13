@@ -1,36 +1,22 @@
-/**
-*
-* EmailDetail
-*
-*/
-
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
- 
-
-import { useInjectReducer, useInjectSaga } from 'store/redux-injectors';
-import { emailDetailReducer, sliceKey } from './slice';
-import { EmailDetailselectors } from './selectors';
-import { emailDetailSaga } from './saga';
+// EmailDetail.tsx
+import { useEffect } from "react";
+import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
+import Editor from "./editor";
+import { emailDetailSaga } from "./saga";
+import { emailDetailReducer, sliceKey } from "./slice";
 
 interface Props {}
 
-
 export function EmailDetail(props: Props) {
-useInjectReducer({ key: sliceKey, reducer: emailDetailReducer });
+  useInjectReducer({ key: sliceKey, reducer: emailDetailReducer });
   useInjectSaga({ key: sliceKey, saga: emailDetailSaga });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const emailDetail = useSelector(EmailDetailselectors.root);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const dispatch = useDispatch();
+  useEffect(() => {}, []);
 
-
-return (
-<>
-     <div>
-  </div>
-</>
-);
-
-};
+  return (
+    <div>
+      <h2>Email Detail</h2>
+      <Editor></Editor>
+    </div>
+  );
+}

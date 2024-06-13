@@ -1,10 +1,13 @@
 /**
-*
-* Asynchronously loads the component for EmailDetail
-*
-*/
-import React from 'react';
-import { lazyLoad } from 'common/loadable';
-import { PageLoading } from 'app/components/pageLoading';
+ *
+ * Asynchronously loads the component for EmailDetail
+ *
+ */
+import { PageLoading } from "app/components/pageLoading";
+import { lazyLoad } from "common/loadable";
 
-export const EmailDetail = lazyLoad(() => import('./index'), module => module.EmailDetail, {fallback: <PageLoading />,},);
+export const EmailDetail = lazyLoad(
+  () => import("./index"),
+  (module) => module.EmailDetail,
+  { fallback: <PageLoading /> }
+);

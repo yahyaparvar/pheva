@@ -5,16 +5,17 @@ import { globalSelectors } from "store/selector";
 import { globalActions, useglobalSlice } from "store/slice";
 import styled from "styled-components";
 import { COLUMN_ALIGN_START__JUSTIFY_START } from "styles/globalStyles";
+import { Calendar } from "./containers/Calendar/Loadable";
+import { EmailDetail } from "./containers/EmailDetail/Loadable";
 import { Home } from "./containers/Home";
 import { Inbox } from "./containers/Inbox/Loadable";
 import { Login } from "./containers/Login";
 import { NotFoundPage } from "./containers/NotFound";
+import { Sent } from "./containers/Sent/Loadable";
 import MainLayout from "./layout";
 import { CustomRouter } from "./router";
 import history from "./router/history";
 import { AppPages } from "./types";
-import { Sent } from "./containers/Sent/Loadable";
-import { Calendar } from "./containers/Calendar/Loadable";
 
 interface RequireAuthProps {
   children: ReactElement;
@@ -71,6 +72,14 @@ function App() {
               element={
                 <Auth>
                   <Calendar />
+                </Auth>
+              }
+            />
+            <Route
+              path={`${AppPages.EmailDetail}/:id`}
+              element={
+                <Auth>
+                  <EmailDetail />
                 </Auth>
               }
             />

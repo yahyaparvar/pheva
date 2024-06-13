@@ -1,5 +1,6 @@
 import { Button } from "app/components/buttons";
-import { Status } from "app/types";
+import history from "app/router/history";
+import { AppPages, Status } from "app/types";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import he from "he";
@@ -182,7 +183,13 @@ export function Inbox(props: Props) {
               prepareRow(row);
               const isUnread = row.original.labels.includes("UNREAD");
               return (
-                <StyledTr isUnread={isUnread} {...row.getRowProps()}>
+                <StyledTr
+                  isUnread={isUnread}
+                  onClick={() => {
+                    history.push(AppPages.EmailDetail + `/${row.original.id}`);
+                  }}
+                  {...row.getRowProps()}
+                >
                   <StyledTdHover />
                   {row.cells.map((cell) => cell.render("Cell"))}
                   <StyledTdHover>
