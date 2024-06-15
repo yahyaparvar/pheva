@@ -134,7 +134,7 @@ export function Inbox(props: Props) {
                 dispatch(InboxActions.fetchEmailSummaries());
               }}
             >
-              Get AI Summary
+              Summarize with AI
             </Button>
             <NextPrevButton
               disabled={lastPageTokens.length === 0 ? "true" : "false"}

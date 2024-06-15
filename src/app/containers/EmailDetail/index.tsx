@@ -154,7 +154,10 @@ export function EmailDetail(props: Props) {
     <Container>
       <Header>Email Detail</Header>
       <EmailInfo>
-        {profileImage && <ProfileImage src={profileImage} alt="Profile" />}
+        <ProfileImage
+          src={"https://lh3.googleusercontent.com/a/default-user=s80-p"}
+          alt="Profile"
+        />
         <div>
           <EmailTitle>
             Subject:{" "}
