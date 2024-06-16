@@ -81,13 +81,18 @@ export function EmailDetail(props: Props) {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const email = useSelector(EmailDetailselectors.emailDetail);
+  const emailDetailStatus = useSelector(EmailDetailselectors.status);
 
   useEffect(() => {
     if (id) {
       dispatch(emailDetailActions.getEmailData(id));
-      dispatch(emailDetailActions.markAsRead(id));
     }
   }, [id, dispatch]);
+  useEffect(() => {
+    if (id) {
+      dispatch(emailDetailActions.markAsRead(id));
+    }
+  }, [id, dispatch, emailDetailStatus]);
 
   const decodeBase64 = (str: string | undefined): string => {
     if (!str) return "";

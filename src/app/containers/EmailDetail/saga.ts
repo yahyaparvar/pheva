@@ -7,6 +7,8 @@ import { Inboxselectors } from "../Inbox/selectors";
 import { InboxActions } from "../Inbox/slice";
 import { Email } from "../Inbox/types";
 import { emailDetailActions } from "./slice";
+import { EmailDetailselectors } from "./selectors";
+import { EmailDetails } from "./types";
 
 export function* getEmailData(action: PayloadAction<string>) {
   try {
@@ -21,29 +23,38 @@ export function* getEmailData(action: PayloadAction<string>) {
   }
 }
 export function* markAsRead(action: PayloadAction<string>) {
-  const emailId = action.payload;
-  const emails: Email[] = yield select(Inboxselectors.emails);
+  const emailDetailStatus: Status = yield select(EmailDetailselectors.status);
+  const emailDetail: EmailDetails = yield select(
+    EmailDetailselectors.emailDetail
+  );
 
-  try {
-    const response: AxiosResponse = yield call(
-      axiosInstance.get,
-      `/emails/email/${emailId}/read`
-    );
+  if (emailDetailStatus === Status.SUCCESS) {
+    if (emailDetail.labelIds.includes("UNREAD")) {
+      const emailId = action.payload;
+      const emails: Email[] = yield select(Inboxselectors.emails);
 
-    if (response.status === 200) {
-      const updatedEmails = emails.map((email) =>
-        email.id === emailId
-          ? {
-              ...email,
-              labels: email.labels.filter((label) => label !== "UNREAD"),
-            }
-          : email
-      );
+      try {
+        const response: AxiosResponse = yield call(
+          axiosInstance.get,
+          `/emails/email/${emailId}/read`
+        );
 
-      yield put(InboxActions.setEmails(updatedEmails));
+        if (response.status === 200) {
+          const updatedEmails = emails.map((email) =>
+            email.id === emailId
+              ? {
+                  ...email,
+                  labels: email.labels.filter((label) => label !== "UNREAD"),
+                }
+              : email
+          );
+
+          yield put(InboxActions.setEmails(updatedEmails));
+        }
+      } catch (error) {
+        console.error("Failed to mark email as read", error);
+      }
     }
-  } catch (error) {
-    console.error("Failed to mark email as read", error);
   }
 }
 
