@@ -150,7 +150,6 @@ export function EmailDetail(props: Props) {
         />
         <div>
           <EmailTitle>
-            Subject:{" "}
             {
               email.payload.headers.find(
                 (header: EmailHeader) => header.name === "Subject"
@@ -181,7 +180,6 @@ export function EmailDetail(props: Props) {
               )?.value
             }
           </EmailField>
-          <EmailSnippet>Snippet: {email.snippet}</EmailSnippet>
         </div>
       </EmailInfo>
       <EmailContent>
