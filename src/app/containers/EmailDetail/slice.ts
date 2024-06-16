@@ -25,6 +25,9 @@ const emailDetailSlice = createSlice({
     setStatus(state, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
+    markAsRead(state,action:PayloadAction<string>){
+      
+    }
   },
 });
 

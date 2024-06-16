@@ -1,12 +1,12 @@
 import DOMPurify from "dompurify";
-import gravatar from "gravatar";
 import parse from "html-react-parser";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import styled from "styled-components";
 import { COLUMN_CENTER } from "styles/globalStyles";
+import { useInboxSlice } from "../Inbox/slice";
 import Editor from "./editor";
 import { emailDetailSaga } from "./saga";
 import { EmailDetailselectors } from "./selectors";
@@ -75,16 +75,17 @@ const ProfileImage = styled.img`
 `;
 
 export function EmailDetail(props: Props) {
+  useInboxSlice();
   useInjectReducer({ key: sliceKey, reducer: emailDetailReducer });
   useInjectSaga({ key: sliceKey, saga: emailDetailSaga });
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const email = useSelector(EmailDetailselectors.emailDetail);
-  const [profileImage, setProfileImage] = useState<string>("");
 
   useEffect(() => {
     if (id) {
       dispatch(emailDetailActions.getEmailData(id));
+      dispatch(emailDetailActions.markAsRead(id));
     }
   }, [id, dispatch]);
 
@@ -99,22 +100,6 @@ export function EmailDetail(props: Props) {
       return "";
     }
   };
-
-  useEffect(() => {
-    if (email) {
-      const fromHeader = email.payload.headers.find(
-        (header: EmailHeader) => header.name === "From"
-      )?.value;
-      const fromEmail = fromHeader?.match(/<(.+)>/)?.[1];
-      if (fromEmail) {
-        const gravatarUrl = gravatar.url(fromEmail, {
-          s: "100",
-          d: "identicon",
-        });
-        setProfileImage(gravatarUrl);
-      }
-    }
-  }, [email]);
 
   if (!email) {
     return <div>Loading...</div>;

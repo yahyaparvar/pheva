@@ -1,8 +1,11 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "app/types";
 import { AxiosResponse } from "axios";
-import { put, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeLatest } from "redux-saga/effects";
 import axiosInstance from "service/apiClient";
+import { Inboxselectors } from "../Inbox/selectors";
+import { InboxActions } from "../Inbox/slice";
+import { Email } from "../Inbox/types";
 import { emailDetailActions } from "./slice";
 
 export function* getEmailData(action: PayloadAction<string>) {
@@ -17,7 +20,34 @@ export function* getEmailData(action: PayloadAction<string>) {
     yield put(emailDetailActions.setStatus(Status.ERROR));
   }
 }
+export function* markAsRead(action: PayloadAction<string>) {
+  const emailId = action.payload;
+  const emails: Email[] = yield select(Inboxselectors.emails);
+
+  try {
+    const response: AxiosResponse = yield call(
+      axiosInstance.get,
+      `/emails/email/${emailId}/read`
+    );
+
+    if (response.status === 200) {
+      const updatedEmails = emails.map((email) =>
+        email.id === emailId
+          ? {
+              ...email,
+              labels: email.labels.filter((label) => label !== "UNREAD"),
+            }
+          : email
+      );
+
+      yield put(InboxActions.setEmails(updatedEmails));
+    }
+  } catch (error) {
+    console.error("Failed to mark email as read", error);
+  }
+}
 
 export function* emailDetailSaga() {
   yield takeLatest(emailDetailActions.getEmailData.type, getEmailData);
+  yield takeLatest(emailDetailActions.markAsRead.type, markAsRead);
 }
