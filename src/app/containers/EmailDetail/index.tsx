@@ -1,17 +1,26 @@
+import { Status } from "app/types";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import { useEffect } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
+import { LocalStorageKeys, storage } from "store/storage";
 import styled from "styled-components";
-import { COLUMN_CENTER } from "styles/globalStyles";
+import {
+  COLUMN_CENTER,
+  ROW_ALIGN_CENTER__SPACE_B,
+  ROW_JUSTIFY_START__ALIGN_CENTER,
+} from "styles/globalStyles";
 import { useInboxSlice } from "../Inbox/slice";
+import { customDateFormat } from "../Inbox/types";
 import Editor from "./editor";
 import { emailDetailSaga } from "./saga";
 import { EmailDetailselectors } from "./selectors";
 import { emailDetailActions, emailDetailReducer, sliceKey } from "./slice";
-import { EmailHeader } from "./types";
+import { EmailHeader, timeDifference } from "./types";
 
 interface Props {}
 
@@ -34,17 +43,24 @@ const EmailInfo = styled.div`
 
 const EmailTitle = styled.h3`
   font-size: 20px;
-  color: #555;
+  color: #2a2a2a;
+  font-weight: 600;
+  margin: 10px 0;
+  margin-left: 63px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 700px;
 `;
 
 const EmailField = styled.p`
   font-size: 16px;
+  margin: 4px 0;
   color: #666;
-`;
-
-const EmailSnippet = styled.p`
-  font-size: 14px;
-  color: #999;
+  strong {
+    color: #666;
+    margin-right: 12px;
+  }
 `;
 
 const EmailContent = styled.div`
@@ -72,6 +88,12 @@ const ProfileImage = styled.img`
   margin-right: 15px;
   width: 50px;
   height: 50px;
+`;
+const SendToAndDate = styled.div`
+  ${ROW_ALIGN_CENTER__SPACE_B}
+`;
+const AvatarAndInfo = styled.div`
+  ${ROW_JUSTIFY_START__ALIGN_CENTER}
 `;
 
 export function EmailDetail(props: Props) {
@@ -105,6 +127,38 @@ export function EmailDetail(props: Props) {
       return "";
     }
   };
+
+  if (emailDetailStatus === Status.LOADING) {
+    return (
+      <Container>
+        <Skeleton height={40} width={700} style={{ marginBottom: 10 }} />
+        <EmailInfo>
+          <Skeleton
+            circle={true}
+            height={50}
+            width={50}
+            style={{ marginRight: 15 }}
+          />
+          <div style={{ width: "100%" }}>
+            <EmailField>
+              <Skeleton height={20} width={150} />
+            </EmailField>
+            <SendToAndDate>
+              <EmailField>
+                <Skeleton height={20} width={300} />
+              </EmailField>
+              <EmailField>
+                <Skeleton height={20} width={200} />
+              </EmailField>
+            </SendToAndDate>
+          </div>
+        </EmailInfo>
+        <EmailContent>
+          <Skeleton height={500} width={"100%"} style={{ marginBottom: 10 }} />
+        </EmailContent>
+      </Container>
+    );
+  }
 
   if (!email) {
     return <div>Loading...</div>;
@@ -142,50 +196,59 @@ export function EmailDetail(props: Props) {
 
   return (
     <Container>
-      <Header>Email Detail</Header>
+      <EmailTitle>
+        {
+          email.payload.headers.find(
+            (header: EmailHeader) => header.name === "Subject"
+          )?.value
+        }
+      </EmailTitle>
       <EmailInfo>
         <ProfileImage
           src={"https://lh3.googleusercontent.com/a/default-user=s80-p"}
           alt="Profile"
         />
-        <div>
-          <EmailTitle>
-            {
-              email.payload.headers.find(
-                (header: EmailHeader) => header.name === "Subject"
-              )?.value
-            }
-          </EmailTitle>
+        <div style={{ width: "100%" }}>
           <EmailField>
-            From:{" "}
+            <strong>
+              {
+                email.payload.headers
+                  .find((header: EmailHeader) => header.name === "From")
+                  ?.value.split(/<(.+)>/)[0]
+              }
+            </strong>
+            {`<`}
             {
-              email.payload.headers.find(
-                (header: EmailHeader) => header.name === "From"
-              )?.value
+              email.payload.headers
+                .find((header: EmailHeader) => header.name === "From")
+                ?.value.split(/<(.+)>/)[1]
             }
+            {`>`}
           </EmailField>
-          <EmailField>
-            To:{" "}
-            {
-              email.payload.headers.find(
-                (header: EmailHeader) => header.name === "To"
-              )?.value
-            }
-          </EmailField>
-          <EmailField>
-            Date:{" "}
-            {
-              email.payload.headers.find(
-                (header: EmailHeader) => header.name === "Date"
-              )?.value
-            }
-          </EmailField>
+          <SendToAndDate>
+            <EmailField>
+              To {"<"}
+              {storage.read(LocalStorageKeys.USER_INFO)?.email}
+              {">"}
+            </EmailField>
+            <EmailField>
+              {customDateFormat(
+                email.payload.headers.find(
+                  (header: EmailHeader) => header.name === "Date"
+                )?.value as string
+              )}{" "}
+              {"("}
+              {timeDifference(
+                email.payload.headers.find(
+                  (header: EmailHeader) => header.name === "Date"
+                )?.value as string
+              )}
+              {")"}
+            </EmailField>
+          </SendToAndDate>
         </div>
       </EmailInfo>
-      <EmailContent>
-        <EmailTitle>Email Content</EmailTitle>
-        {renderEmailContent()}
-      </EmailContent>
+      <EmailContent>{renderEmailContent()}</EmailContent>
       <Editor />
     </Container>
   );
