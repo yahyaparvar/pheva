@@ -73,6 +73,7 @@ const formats = [
 ];
 
 const RichTextEditorContainer = styled.div`
+  width: 100%;
   .ql-toolbar {
     background-color: #f3f3f3;
     border: 1px solid #ddd;

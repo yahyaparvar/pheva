@@ -98,7 +98,7 @@ html {
   overflow: hidden;
 }
 *{
-  color: var(--text);
+  /* color: var(--text); */
 /* &::-webkit-scrollbar {
     display: none;
   }
