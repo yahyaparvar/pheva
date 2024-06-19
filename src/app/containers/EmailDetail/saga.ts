@@ -58,18 +58,23 @@ export function* markAsRead(action: PayloadAction<string>) {
   }
 }
 
-export function* getSummary(action: PayloadAction<string>) {
+function* getSummary(action: PayloadAction<string>) {
+  const status: Status = yield select(EmailDetailselectors.summaryStatus);
   try {
-    yield put(emailDetailActions.setSummaryStatus(Status.LOADING));
     yield put(emailDetailActions.clearSummaryResponse());
+    yield put(emailDetailActions.setSummaryStatus(Status.LOADING));
 
-    const responseStream: Response = yield call(fetch, "http://localhost:8000/ai/emailsDetails/summary", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prompt: action.payload }),
-    });
+    const responseStream: Response = yield call(
+      fetch,
+      "http://localhost:8000/ai/emailsDetails/summary",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: action.payload }),
+      }
+    );
 
     const reader = responseStream?.body?.getReader();
     const decoder = new TextDecoder();

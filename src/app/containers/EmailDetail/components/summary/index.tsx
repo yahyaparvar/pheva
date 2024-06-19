@@ -1,7 +1,12 @@
 import { Button } from "app/components/buttons";
+import { Status } from "app/types";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { useOnClickOutside } from "usehooks-ts";
+import { EmailDetailselectors } from "../../selectors";
+import { emailDetailActions, useemailDetailSlice } from "../../slice";
 
 const Container = styled.div`
   padding: 20px;
@@ -32,62 +37,54 @@ const Popup = styled(motion.div)`
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1002;
+  z-index: 1000;
   overflow-y: auto;
 `;
 
-const App: React.FC = () => {
-  const [prompt, setPrompt] = useState<string>("");
-  const [response, setResponse] = useState<string[]>([]);
+const EmailDetailSummary: React.FC = () => {
+  useemailDetailSlice();
+  const summaryStreamText = useSelector(EmailDetailselectors.summaryStreamText);
+  const summaryStatus = useSelector(EmailDetailselectors.summaryStatus);
+  const dispatch = useDispatch();
+
+  const popupRef = useRef(null);
 
   const handleSendPrompt = async () => {
-    setResponse([]);
-
-    const responseStream = await fetch(
-      "http://localhost:8000/ai/emailsDetails/summary",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-      }
-    );
-
-    const reader = responseStream?.body?.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-
-    while (!done) {
-      const { value, done: readerDone } = await reader?.read()!;
-      if (readerDone) {
-        done = true;
-        break;
-      }
-      const chunk = decoder.decode(value, { stream: true });
-      if (chunk.includes("##END##")) {
-        setResponse((prev) => [...prev, chunk.replace("##END##", "")]);
-        done = true;
-      } else {
-        setResponse((prev) => [...prev, chunk]);
-      }
-    }
+    dispatch(emailDetailActions.getSummary());
   };
+
+  const handleClosePopup = () => {
+    dispatch(emailDetailActions.clearSummaryResponse());
+  };
+
+  useOnClickOutside(popupRef, handleClosePopup);
 
   return (
     <Container>
       <SummaryAndButtonWrapper>
-        <Button onClick={handleSendPrompt}>Summarize</Button>
-
-        <AnimatePresence>
-          {response.length > 0 && (
+        <Button
+          loading={summaryStatus === Status.LOADING}
+          disabled={summaryStatus === Status.LOADING}
+          onClick={
+            summaryStatus === Status.INITIAL || summaryStatus === Status.SUCCESS
+              ? handleSendPrompt
+              : () => {
+                  dispatch(emailDetailActions.clearSummaryResponse());
+                }
+          }
+        >
+          Summarize
+        </Button>
+        {summaryStatus !== Status.INITIAL && (
+          <AnimatePresence>
             <Popup
+              ref={popupRef}
               key="popup"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
             >
-              {response.map((chunk, index) => (
+              {summaryStreamText.map((chunk, index) => (
                 <ResponseChunk
                   key={index}
                   initial={{ opacity: 0 }}
@@ -98,55 +95,11 @@ const App: React.FC = () => {
                 </ResponseChunk>
               ))}
             </Popup>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
       </SummaryAndButtonWrapper>
     </Container>
   );
 };
 
-export default App;
-
-//
-//
-//
-//
-//
-// key={index}
-// initial={{ opacity: 0, filter: "blur(10px)" }}
-// animate={{ opacity: 1, filter: "blur(0px)" }}
-// transition={{ duration: 0.5, delay: index * 0.1 }}
-// style={{
-//  display: "inline-block"
-// display: "inline-block",
-// hyphens: "auto",
-// overflowWrap: "break-word",
-// whiteSpace: "pre-wrap",
-// wordBreak: "break-word",
-// }}
-//
-//
-//
-//
-//
-//
-//
-//
-//
-// key={index}
-// initial={{ opacity: 0, scale: 0.5 }}
-// animate={{ opacity: 1, scale: 1 }}
-// transition={{
-//   type: "spring",
-//   stiffness: 300,
-//   damping: 20,
-//   delay: index * 0.1,
-// }}
-// style={{
-//  display: "inline-block"
-// display: "inline-block",
-// hyphens: "auto",
-// overflowWrap: "break-word",
-// whiteSpace: "pre-wrap",
-// wordBreak: "break-word",
-// }}
+export default EmailDetailSummary;

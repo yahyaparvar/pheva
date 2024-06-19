@@ -53,7 +53,6 @@ const ButtonBase = styled.button<ButtonProps>`
   border: none;
   transition: background-color 0.2s;
   cursor: pointer;
-  ${({ loading }) => loading && "cursor: not-allowed;"}
   ${UNSELECTABLE}
   ${({ variant }) => buttonStyles[variant || "primary"]}
 `;

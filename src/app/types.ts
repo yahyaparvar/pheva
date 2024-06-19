@@ -6,8 +6,8 @@ export enum AppPages {
   Sent = "/emails/sent",
   NotFoundPage = "*",
   AboutMe = "/aboutMe",
-  Calendar = '/calendar',
-  EmailDetail = '/emailDetail',
+  Calendar = "/calendar",
+  EmailDetail = "/emailDetail",
   // [INSERT NEW PAGE PATH ABOVE] < Needed for generating containers seamlessly
 }
 export enum Themes {
@@ -25,4 +25,5 @@ export enum Status {
   INITIAL = "INITIAL",
   SUCCESS = "SUCCESS",
   ERROR = "ERROR",
+  CANCELLED = "CANCELLED",
 }

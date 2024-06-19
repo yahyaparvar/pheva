@@ -40,7 +40,7 @@ const emailDetailSlice = createSlice({
       state.status = action.payload;
     },
     markAsRead(state, action: PayloadAction<string>) {},
-    getSummary(state, action: PayloadAction<string>) {},
+    getSummary() {},
     setSummary(state, action: PayloadAction<string>) {
       state.summary.streamText = [...state.summary.streamText, action.payload];
     },
@@ -49,6 +49,7 @@ const emailDetailSlice = createSlice({
     },
     clearSummaryResponse(state) {
       state.summary.streamText = [];
+      state.summary.status = Status.INITIAL;
     },
   },
 });
