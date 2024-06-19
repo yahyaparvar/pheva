@@ -1,5 +1,6 @@
 import { Status } from "app/types";
 import DOMPurify from "dompurify";
+import { motion } from "framer-motion";
 import parse from "html-react-parser";
 import { useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -16,26 +17,27 @@ import {
 } from "styles/globalStyles";
 import { useInboxSlice } from "../Inbox/slice";
 import { customDateFormat } from "../Inbox/types";
-import Editor from "./editor";
+import Editor from "./components/editor/editor";
+import EmailDetailsSummary from "./components/summary";
 import { emailDetailSaga } from "./saga";
 import { EmailDetailselectors } from "./selectors";
 import { emailDetailActions, emailDetailReducer, sliceKey } from "./slice";
-import EmailDetailsSummary from "./summary";
 import { EmailHeader, timeDifference } from "./types";
 
 interface Props {}
-
 const Container = styled.div`
   padding: 20px;
+  padding-bottom: 0;
   width: 100%;
   min-height: 100vh;
   background-color: #f9f9f9;
 `;
+
 const Wrapper = styled.div`
-  padding: 20px;
   ${COLUMN_CENTER}
   min-height:100vh;
   background-color: #f9f9f9;
+  position: relative;
 `;
 const Header = styled.h2`
   font-size: 24px;
@@ -105,7 +107,14 @@ const SendToAndDate = styled.div`
 const AvatarAndInfo = styled.div`
   ${ROW_JUSTIFY_START__ALIGN_CENTER}
 `;
-
+const EditorContainer = styled(motion.div)`
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  background: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+`;
 export function EmailDetail(props: Props) {
   useInboxSlice();
   useInjectReducer({ key: sliceKey, reducer: emailDetailReducer });
@@ -120,6 +129,7 @@ export function EmailDetail(props: Props) {
       dispatch(emailDetailActions.getEmailData(id));
     }
   }, [id, dispatch]);
+
   useEffect(() => {
     if (id) {
       dispatch(emailDetailActions.markAsRead(id));
@@ -137,7 +147,6 @@ export function EmailDetail(props: Props) {
       return "";
     }
   };
-
   if (emailDetailStatus === Status.LOADING) {
     return (
       <Container>
@@ -173,16 +182,12 @@ export function EmailDetail(props: Props) {
       </Container>
     );
   }
-
   if (!email) {
     return <div>Loading...</div>;
   }
 
   const renderEmailContent = () => {
     const renderPart = (part: any) => {
-      // if (part.mimeType === "text/plain") {
-      //   return <PlainText>{decodeBase64(part.body.data)}</PlainText>;
-      // }
       if (part.mimeType === "text/html") {
         return (
           <div>{parse(DOMPurify.sanitize(decodeBase64(part.body.data)))}</div>
@@ -265,8 +270,20 @@ export function EmailDetail(props: Props) {
         </EmailInfo>
         <EmailContent>{renderEmailContent()}</EmailContent>
       </Container>
-      <EmailDetailsSummary></EmailDetailsSummary>
-      <Editor />
+      <EditorContainer
+        initial={{ y: "100%", opacity: 1 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{
+          delay: 0.7,
+          type: "spring",
+          stiffness: 50,
+          damping: 20,
+          duration: 0.3,
+        }}
+      >
+        <EmailDetailsSummary />
+        <Editor />
+      </EditorContainer>
     </Wrapper>
   );
 }

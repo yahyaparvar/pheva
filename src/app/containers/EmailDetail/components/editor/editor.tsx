@@ -92,6 +92,7 @@ const RichTextEditorContainer = styled.div`
     font-size: 16px;
     line-height: 1.5;
     min-height: 200px;
+    max-height: 300px;
   }
 
   .ql-snow .ql-code-block-container {

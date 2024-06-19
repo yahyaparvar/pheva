@@ -49,6 +49,20 @@ export interface EmailDetails {
 export interface EmailDetailState {
   emailDetail: EmailDetails | undefined;
   status: Status;
+  summary: {
+    status: Status;
+    streamText: string[];
+  };
+  answer: {
+    negative: {
+      status: Status;
+      streamText: string[];
+    };
+    positive: {
+      status: Status;
+      streamText: string[];
+    };
+  };
 }
 export function timeDifference(givenDate: string) {
   const now = new Date();

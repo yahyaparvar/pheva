@@ -6,8 +6,8 @@ import axiosInstance from "service/apiClient";
 import { Inboxselectors } from "../Inbox/selectors";
 import { InboxActions } from "../Inbox/slice";
 import { Email } from "../Inbox/types";
-import { emailDetailActions } from "./slice";
 import { EmailDetailselectors } from "./selectors";
+import { emailDetailActions } from "./slice";
 import { EmailDetails } from "./types";
 
 export function* getEmailData(action: PayloadAction<string>) {
@@ -58,7 +58,46 @@ export function* markAsRead(action: PayloadAction<string>) {
   }
 }
 
+export function* getSummary(action: PayloadAction<string>) {
+  try {
+    yield put(emailDetailActions.setSummaryStatus(Status.LOADING));
+    yield put(emailDetailActions.clearSummaryResponse());
+
+    const responseStream: Response = yield call(fetch, "http://localhost:8000/ai/emailsDetails/summary", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt: action.payload }),
+    });
+
+    const reader = responseStream?.body?.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      const { value, done: readerDone } = yield reader?.read()!;
+      if (readerDone) {
+        done = true;
+        break;
+      }
+      const chunk = decoder.decode(value, { stream: true });
+      if (chunk.includes("##END##")) {
+        yield put(emailDetailActions.setSummary(chunk.replace("##END##", "")));
+        done = true;
+      } else {
+        yield put(emailDetailActions.setSummary(chunk));
+      }
+    }
+
+    yield put(emailDetailActions.setSummaryStatus(Status.SUCCESS));
+  } catch (error) {
+    yield put(emailDetailActions.setSummaryStatus(Status.ERROR));
+  }
+}
+
 export function* emailDetailSaga() {
   yield takeLatest(emailDetailActions.getEmailData.type, getEmailData);
   yield takeLatest(emailDetailActions.markAsRead.type, markAsRead);
+  yield takeLatest(emailDetailActions.getSummary.type, getSummary);
 }

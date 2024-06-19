@@ -11,6 +11,20 @@ import { emailDetailSaga } from "./saga";
 export const initialState: ContainerState = {
   emailDetail: undefined,
   status: Status.INITIAL,
+  summary: {
+    status: Status.INITIAL,
+    streamText: [],
+  },
+  answer: {
+    negative: {
+      status: Status.INITIAL,
+      streamText: [],
+    },
+    positive: {
+      status: Status.INITIAL,
+      streamText: [],
+    },
+  },
 };
 
 const emailDetailSlice = createSlice({
@@ -25,9 +39,17 @@ const emailDetailSlice = createSlice({
     setStatus(state, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
-    markAsRead(state,action:PayloadAction<string>){
-      
-    }
+    markAsRead(state, action: PayloadAction<string>) {},
+    getSummary(state, action: PayloadAction<string>) {},
+    setSummary(state, action: PayloadAction<string>) {
+      state.summary.streamText = [...state.summary.streamText, action.payload];
+    },
+    setSummaryStatus(state, action: PayloadAction<Status>) {
+      state.summary.status = action.payload;
+    },
+    clearSummaryResponse(state) {
+      state.summary.streamText = [];
+    },
   },
 });
 
