@@ -12,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
   --text:#FFFFFF;
   --dark-gray: #1E1E1E;
   --dark-gray-hover: #4A4A4A;
+  --bright-blue:#4a90e2;
 }
 .DARK {
     --text: #e5e7eb;

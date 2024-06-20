@@ -174,7 +174,7 @@ const RichTextEditorContainer = styled.div`
   }
 
   .ql-toolbar .ql-formats button.ql-active {
-    background-color: #4a90e2;
+    background-color: var(--bright-blue);
   }
   .ql-stroke {
     stroke: var(--text) !important;

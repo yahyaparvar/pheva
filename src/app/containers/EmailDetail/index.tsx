@@ -28,17 +28,16 @@ import { EmailHeader, timeDifference } from "./types";
 
 interface Props {}
 const Container = styled.div`
-  padding: 20px;
   padding-bottom: 0;
   width: 100%;
   min-height: 100vh;
-  background-color: #f9f9f9;
+  background-color: var(--background);
 `;
 
 const Wrapper = styled.div`
   ${COLUMN_CENTER}
   min-height:100vh;
-  background-color: #f9f9f9;
+  background-color: var(--background);
   position: relative;
 `;
 const Header = styled.h2`
@@ -49,14 +48,15 @@ const Header = styled.h2`
 const EmailInfo = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 `;
 const EmailTitle = styled.h3`
   font-size: 20px;
-  color: #2a2a2a;
+  color: var(--text);
   font-weight: 600;
-  margin: 10px 0;
-  margin-left: 63px;
+  margin: 7px 0;
+  margin-top: 4px;
+  margin-left: 48px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -64,11 +64,11 @@ const EmailTitle = styled.h3`
 `;
 
 const EmailField = styled.p`
-  font-size: 16px;
+  font-size: 13px;
   margin: 4px 0;
-  color: #666;
+  color: var(--text);
   strong {
-    color: #666;
+    color: var(--text);
     margin-right: 12px;
   }
 `;
@@ -86,22 +86,15 @@ const EmailPartContainer = styled.div`
   width: 100%;
   * {
     box-sizing: unset !important;
-    color: black;
+    color: unset;
   }
-`;
-
-const PlainText = styled.pre`
-  background-color: #eee;
-  padding: 10px;
-  border-radius: 5px;
-  white-space: pre-wrap;
 `;
 
 const ProfileImage = styled.img`
   border-radius: 50%;
   margin-right: 15px;
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
 `;
 const SendToAndDate = styled.div`
   ${ROW_ALIGN_CENTER__SPACE_B}
@@ -116,6 +109,11 @@ const EditorContainer = styled(motion.div)`
   position: sticky;
   bottom: 0;
   left: 0;
+`;
+const EmailHeaderDiv = styled.div`
+  box-sizing: border-box;
+  background: var(--dark-gray);
+  padding: 5px 20px 3px 20px;
 `;
 export function EmailDetail(props: Props) {
   useInboxSlice();
@@ -231,58 +229,60 @@ export function EmailDetail(props: Props) {
   return (
     <Wrapper>
       <Container>
-        <EmailTitle>
-          {
-            email.payload.headers.find(
-              (header: EmailHeader) => header.name === "Subject"
-            )?.value
-          }
-        </EmailTitle>
-        <EmailInfo>
-          <ProfileImage
-            src={"https://lh3.googleusercontent.com/a/default-user=s80-p"}
-            alt="Profile"
-          />
-          <div style={{ width: "100%" }}>
-            <EmailField>
-              <strong>
+        <EmailHeaderDiv>
+          <EmailTitle>
+            {
+              email.payload.headers.find(
+                (header: EmailHeader) => header.name === "Subject"
+              )?.value
+            }
+          </EmailTitle>
+          <EmailInfo>
+            <ProfileImage
+              src={"https://lh3.googleusercontent.com/a/default-user=s80-p"}
+              alt="Profile"
+            />
+            <div style={{ width: "100%" }}>
+              <EmailField>
+                <strong>
+                  {
+                    email.payload.headers
+                      .find((header: EmailHeader) => header.name === "From")
+                      ?.value.split(/<(.+)>/)[0]
+                  }
+                </strong>
+                {`<`}
                 {
                   email.payload.headers
                     .find((header: EmailHeader) => header.name === "From")
-                    ?.value.split(/<(.+)>/)[0]
+                    ?.value.split(/<(.+)>/)[1]
                 }
-              </strong>
-              {`<`}
-              {
-                email.payload.headers
-                  .find((header: EmailHeader) => header.name === "From")
-                  ?.value.split(/<(.+)>/)[1]
-              }
-              {`>`}
-            </EmailField>
-            <SendToAndDate>
-              <EmailField>
-                To {"<"}
-                {storage.read(LocalStorageKeys.USER_INFO)?.email}
-                {">"}
+                {`>`}
               </EmailField>
-              <EmailField style={{ marginRight: "24px" }}>
-                {customDateFormat(
-                  email.payload.headers.find(
-                    (header: EmailHeader) => header.name === "Date"
-                  )?.value as string
-                )}{" "}
-                {"("}
-                {timeDifference(
-                  email.payload.headers.find(
-                    (header: EmailHeader) => header.name === "Date"
-                  )?.value as string
-                )}
-                {")"}
-              </EmailField>
-            </SendToAndDate>
-          </div>
-        </EmailInfo>
+              <SendToAndDate>
+                <EmailField>
+                  To {"<"}
+                  {storage.read(LocalStorageKeys.USER_INFO)?.email}
+                  {">"}
+                </EmailField>
+                <EmailField style={{ marginRight: "24px" }}>
+                  {customDateFormat(
+                    email.payload.headers.find(
+                      (header: EmailHeader) => header.name === "Date"
+                    )?.value as string
+                  )}{" "}
+                  {"("}
+                  {timeDifference(
+                    email.payload.headers.find(
+                      (header: EmailHeader) => header.name === "Date"
+                    )?.value as string
+                  )}
+                  {")"}
+                </EmailField>
+              </SendToAndDate>
+            </div>
+          </EmailInfo>
+        </EmailHeaderDiv>
         <EmailContent>{renderEmailContent()}</EmailContent>
       </Container>
       <EditorContainer
