@@ -103,3 +103,40 @@ const EmailDetailSummary: React.FC = () => {
 };
 
 export default EmailDetailSummary;
+//
+//
+//
+//
+//
+// key={index}
+// initial={{ opacity: 0, filter: "blur(10px)" }}
+// animate={{ opacity: 1, filter: "blur(0px)" }}
+// transition={{ duration: 0.5, delay: index * 0.1 }}
+// style={{
+//  display: "inline-block"
+// display: "inline-block",
+// hyphens: "auto",
+// overflowWrap: "break-word",
+// whiteSpace: "pre-wrap",
+// wordBreak: "break-word",
+// }}
+//
+//
+//
+// key={index}
+// initial={{ opacity: 0, scale: 0.5 }}
+// animate={{ opacity: 1, scale: 1 }}
+// transition={{
+//   type: "spring",
+//   stiffness: 300,
+//   damping: 20,
+//   delay: index * 0.1,
+// }}
+// style={{
+//  display: "inline-block"
+// display: "inline-block",
+// hyphens: "auto",
+// overflowWrap: "break-word",
+// whiteSpace: "pre-wrap",
+// wordBreak: "break-word",
+// }}
