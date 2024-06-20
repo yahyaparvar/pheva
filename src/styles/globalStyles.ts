@@ -7,7 +7,11 @@ const GlobalStyle = createGlobalStyle`
   --white: #fff;
   --font: "Inter", "Rubik";
   --persian-font: "Rubik";
-  --sidebar:#34363a
+  --sidebar:#34363a;
+  --background:#2C2C2C;
+  --text:#FFFFFF;
+  --dark-gray: #1E1E1E;
+  --dark-gray-hover: #4A4A4A;
 }
 .DARK {
     --text: #e5e7eb;

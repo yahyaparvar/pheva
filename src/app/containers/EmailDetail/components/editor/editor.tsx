@@ -76,8 +76,8 @@ const RichTextEditorContainer = styled.div`
   width: 100%;
 
   .ql-toolbar {
-    background-color: #f3f3f3;
-    border: 1px solid #ddd;
+    background-color: var(--dark-gray);
+    border: none !important;
     border-radius: 4px 4px 0 0;
     display: flex;
     position: sticky;
@@ -88,7 +88,7 @@ const RichTextEditorContainer = styled.div`
 
   .ql-container {
     position: relative;
-    border: 1px solid #ddd;
+    border: none !important;
     border-radius: 0 0 4px 4px;
   }
 
@@ -98,12 +98,11 @@ const RichTextEditorContainer = styled.div`
     line-height: 1.5;
     min-height: 200px;
     max-height: 300px;
-    background-color: white;
+    background-color: var(--background);
   }
 
   .ql-snow .ql-code-block-container {
-    background-color: #f5f5f5;
-    border-left: 4px solid #ddd;
+    border-left: 4px solid transparent;
     padding: 10px;
     font-family: monospace;
   }
@@ -116,7 +115,7 @@ const RichTextEditorContainer = styled.div`
   .ql-toolbar .ql-picker {
     height: 100%;
     display: flex;
-    border: none;
+    border: none !important;
     background: none;
     cursor: pointer;
     transition:
@@ -130,8 +129,8 @@ const RichTextEditorContainer = styled.div`
       color 0.3s;
     border-radius: 3px;
     &:hover {
-      background-color: #ddd;
-      color: #000;
+      background-color: var(--dark-gray-hover);
+      color: var(--text) !important;
     }
   }
   .ql-picker-label {
@@ -140,8 +139,7 @@ const RichTextEditorContainer = styled.div`
 
   .ql-toolbar .ql-picker-options {
     padding: 0px;
-    background-color: #f3f3f3;
-    border: 1px solid #ddd;
+    background-color: var(--dark-gray);
     border-radius: 0 0 4px 4px;
   }
 
@@ -151,13 +149,12 @@ const RichTextEditorContainer = styled.div`
       background-color 0.3s,
       color 0.3s;
     &:hover {
-      background-color: #ddd;
-      color: #000;
+      background-color: var(--dark-gray-hover);
     }
   }
 
   .ql-toolbar .ql-formats button {
-    border: none;
+    border: none !important;
     background: none;
     width: 30px;
     height: 30px;
@@ -168,8 +165,7 @@ const RichTextEditorContainer = styled.div`
       color 0.3s;
     border-radius: 3px;
     &:hover {
-      background-color: #ddd;
-      color: #000;
+      background-color: var(--dark-gray-hover);
     }
 
     &:focus {
@@ -178,9 +174,31 @@ const RichTextEditorContainer = styled.div`
   }
 
   .ql-toolbar .ql-formats button.ql-active {
-    background-color: #ccc;
-    color: #000;
+    background-color: #4a90e2;
   }
+  .ql-stroke {
+    stroke: var(--text) !important;
+  }
+
+  .ql-fill {
+    fill: var(--text) !important;
+  }
+
+  .ql-picker {
+    color: var(--text) !important;
+  }
+
+  .ql-picker-options .ql-picker-item {
+    color: var(--text) !important;
+  }
+  /* .ql-stroke:hover,
+  .ql-fill:hover,
+  .ql-picker:hover,
+  .ql-picker-options .ql-picker-item:hover {
+    stroke: var(--dark-gray-hover) !important;
+    fill: var(--dark-gray-hover) !important;
+    color: var(--dark-gray-hover) !important;
+  } */
 `;
 
 const RichTextEditor = () => {
