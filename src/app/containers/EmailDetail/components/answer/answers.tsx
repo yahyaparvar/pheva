@@ -2,9 +2,10 @@ import { Status } from "app/types";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
-import { ROW_ALIGN_START__JUSTIFY_CENTER } from "styles/globalStyles";
+import styled, { css } from "styled-components";
+import { ROW } from "styles/globalStyles";
 import { EmailDetailselectors } from "../../selectors";
+
 export const Answers = () => {
   const negativeAnswerStreamText = useSelector(
     EmailDetailselectors.negativeAnswer
@@ -30,12 +31,18 @@ export const Answers = () => {
       setShowPopup(true);
     }
   }, [positiveAnswerStatus, negativeAnswerStatus]);
+
   return (
-    <AnswersWrapper ref={popupRef}>
+    <AnswersWrapper
+      ref={popupRef}
+      isEmpty={
+        positiveAnswerStatus === Status.INITIAL &&
+        negativeAnswerStatus === Status.INITIAL
+      }
+    >
       <AnimatePresence>
         {positiveAnswerStatus !== Status.INITIAL && showPopup && (
           <Popup
-            style={{ height: "100%" }}
             key="popup"
             initial={{ opacity: 0, scale: 0.8, x: -100 }}
             animate={{
@@ -60,8 +67,8 @@ export const Answers = () => {
             {positiveAnswerStreamText.map((chunk, index) => (
               <ResponseChunk
                 key={index}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, filter: "blur(10px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 {chunk}
@@ -73,7 +80,6 @@ export const Answers = () => {
       <AnimatePresence>
         {negativeAnswerStatus !== Status.INITIAL && showPopup && (
           <Popup
-            style={{ height: "100%" }}
             key="popup2"
             initial={{ opacity: 0, scale: 0.8, x: -100 }}
             animate={{
@@ -98,8 +104,8 @@ export const Answers = () => {
             {negativeAnswerStreamText.map((chunk, index) => (
               <ResponseChunk
                 key={index}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, filter: "blur(10px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 {chunk}
@@ -112,14 +118,21 @@ export const Answers = () => {
   );
 };
 
-const AnswersWrapper = styled.div`
-  ${ROW_ALIGN_START__JUSTIFY_CENTER}
-  gap:24px;
-  width: 100%;
+const AnswersWrapper = styled.div<{ isEmpty: boolean }>`
+  ${ROW}
+  justify-content:center;
   padding: 10px;
-  position: static;
+  ${({ isEmpty }) =>
+    isEmpty &&
+    css`
+      display: none;
+    `}
+  position: relative;
   background: white;
+  gap: 24px;
+  overflow: hidden;
 `;
+
 const ResponseChunk = styled(motion.div)`
   display: inline-block;
   hyphens: auto;
@@ -131,7 +144,8 @@ const ResponseChunk = styled(motion.div)`
 `;
 
 const Popup = styled(motion.div)`
-  width: 80%;
+  flex: 1 1 auto;
+  width: 100%;
   max-width: 500px;
   background: white;
   border: 1px solid #ddd;
@@ -139,5 +153,6 @@ const Popup = styled(motion.div)`
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  height: 100%;
+  overflow-y: auto;
+  margin-bottom: 10px;
 `;

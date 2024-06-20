@@ -57,7 +57,7 @@ const StyledSidebar = styled.div<SidebarProps>`
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
   overflow-y: auto;
   padding: 8px;
-  background-color: #1f1f1f;
+  background-color: #34363a;
   ${UNSELECTABLE}
 `;
 

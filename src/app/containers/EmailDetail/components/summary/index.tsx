@@ -1,3 +1,4 @@
+import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import { Button } from "app/components/buttons";
 import { Status } from "app/types";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,7 +8,6 @@ import styled from "styled-components";
 import { useOnClickOutside } from "usehooks-ts";
 import { EmailDetailselectors } from "../../selectors";
 import { emailDetailActions, useemailDetailSlice } from "../../slice";
-
 const Container = styled(motion.div)``;
 
 const SummaryAndButtonWrapper = styled.div`
@@ -59,12 +59,11 @@ const EmailDetailSummary: React.FC = () => {
   useOnClickOutside(popupRef, handleClosePopup);
 
   return (
-    <Container
-
-    >
+    <Container>
       <SummaryAndButtonWrapper>
         <Button
           loading={summaryStatus === Status.LOADING}
+          rightIcon={<TipsAndUpdatesIcon />}
           disabled={summaryStatus === Status.LOADING}
           onClick={
             summaryStatus === Status.INITIAL || summaryStatus === Status.SUCCESS

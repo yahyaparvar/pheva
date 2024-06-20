@@ -60,10 +60,12 @@ const ButtonBase = styled.button<ButtonProps>`
 const IconWrapper = styled.span<{ position: "left" | "right" }>`
   display: inline-flex;
   align-items: center;
-  width: 16px;
-  height: 16px;
   margin-right: ${({ position }) => (position === "left" ? "0.5rem" : "0")};
   margin-left: ${({ position }) => (position === "right" ? "0.5rem" : "0")};
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 `;
 
 const spinnerAnimation = keyframes`
@@ -75,8 +77,8 @@ const Spinner = styled.div`
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top: 2px solid white;
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   animation: ${spinnerAnimation} 0.7s linear infinite;
 `;
 
@@ -101,10 +103,12 @@ export const Button: React.FC<ButtonProps> = ({
         </IconWrapper>
       )}
       {children}
-      {rightIcon && (
-        <IconWrapper position="right">
-          {loading ? <Spinner /> : rightIcon}
-        </IconWrapper>
+      {!loading && rightIcon ? (
+        <IconWrapper position="right">{rightIcon}</IconWrapper>
+      ) : loading && !leftIcon ? (
+        <IconWrapper position="right">{<Spinner />}</IconWrapper>
+      ) : (
+        ""
       )}
     </ButtonBase>
   );

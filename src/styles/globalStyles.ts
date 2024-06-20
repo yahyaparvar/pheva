@@ -7,16 +7,7 @@ const GlobalStyle = createGlobalStyle`
   --white: #fff;
   --font: "Inter", "Rubik";
   --persian-font: "Rubik";
-  --border: #E2E8F0;
-  --title: #0E172A;
-  --background-secondary: rgb(248 250 252/1);
-  --button: #007ACC;
-  --button-text: #fff;
-  --background-color: #fff;
-  --dark-gray: #333;
-  --table-header: #585858;
-  --black: #000;
-  --light-gray: #f1f1f1;
+  --sidebar:#34363a
 }
 .DARK {
     --text: #e5e7eb;
@@ -98,7 +89,7 @@ html {
   overflow: hidden;
 }
 *{
-  /* color: var(--text); */
+  color: var(--text);
 /* &::-webkit-scrollbar {
     display: none;
   }

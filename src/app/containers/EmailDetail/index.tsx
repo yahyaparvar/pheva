@@ -137,6 +137,19 @@ export function EmailDetail(props: Props) {
       dispatch(emailDetailActions.markAsRead(id));
     }
   }, [id, dispatch, emailDetailStatus]);
+  useEffect(() => {
+    if (id) {
+      dispatch(emailDetailActions.getEmailData(id));
+    }
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(emailDetailActions.clearSummaryResponse());
+      dispatch(emailDetailActions.clearPositiveAnswerResponse());
+      dispatch(emailDetailActions.clearNegativeAnswerResponse());
+    };
+  }, []);
 
   const decodeBase64 = (str: string | undefined): string => {
     if (!str) return "";
@@ -287,11 +300,9 @@ export function EmailDetail(props: Props) {
           initial={{ y: "100%", opacity: 1 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{
-            delay: 2.5,
-            type: "spring",
-            stiffness: 50,
-            damping: 20,
-            duration: 0.2,
+            delay: 2,
+            type: "tween",
+            duration: 0.3,
           }}
         >
           <EmailDetailsSummary />
@@ -299,7 +310,6 @@ export function EmailDetail(props: Props) {
         </AiActions>
         <Answers />
         <Editor />
-        
       </EditorContainer>
     </Wrapper>
   );

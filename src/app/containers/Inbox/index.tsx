@@ -1,3 +1,4 @@
+import RepeatIcon from "@mui/icons-material/Repeat";
 import { Button } from "app/components/buttons";
 import history from "app/router/history";
 import { AppPages, Status } from "app/types";
@@ -118,21 +119,7 @@ export function Inbox(props: Props) {
               loading={emailsSummariesStatus === Status.LOADING}
               rightIcon={
                 emailsSummariesStatus === Status.SUCCESS ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
-                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
-                  </svg>
+                  <RepeatIcon />
                 ) : (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

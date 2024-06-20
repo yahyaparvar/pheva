@@ -1,4 +1,6 @@
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import { Button } from "app/components/buttons";
+import { Status } from "app/types";
 import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -41,7 +43,13 @@ const AnswerButton: React.FC = () => {
 
   return (
     <Container>
-      <Button onClick={handleSendPrompt}>Answer</Button>
+      <Button
+        rightIcon={<AutoFixHighIcon />}
+        loading={negativeAnswerStatus === Status.LOADING}
+        onClick={handleSendPrompt}
+      >
+        Answer
+      </Button>
     </Container>
   );
 };
