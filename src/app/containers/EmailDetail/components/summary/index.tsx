@@ -8,10 +8,7 @@ import { useOnClickOutside } from "usehooks-ts";
 import { EmailDetailselectors } from "../../selectors";
 import { emailDetailActions, useemailDetailSlice } from "../../slice";
 
-const Container = styled.div`
-  padding: 20px;
-  width: 100%;
-`;
+const Container = styled(motion.div)``;
 
 const SummaryAndButtonWrapper = styled.div`
   position: relative;
@@ -62,7 +59,9 @@ const EmailDetailSummary: React.FC = () => {
   useOnClickOutside(popupRef, handleClosePopup);
 
   return (
-    <Container>
+    <Container
+
+    >
       <SummaryAndButtonWrapper>
         <Button
           loading={summaryStatus === Status.LOADING}

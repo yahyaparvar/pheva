@@ -74,15 +74,20 @@ const formats = [
 
 const RichTextEditorContainer = styled.div`
   width: 100%;
+
   .ql-toolbar {
     background-color: #f3f3f3;
     border: 1px solid #ddd;
     border-radius: 4px 4px 0 0;
     display: flex;
+    position: sticky;
+    top: 24px;
+    z-index: 1003;
     cursor: pointer;
   }
 
   .ql-container {
+    position: relative;
     border: 1px solid #ddd;
     border-radius: 0 0 4px 4px;
   }
@@ -93,6 +98,7 @@ const RichTextEditorContainer = styled.div`
     line-height: 1.5;
     min-height: 200px;
     max-height: 300px;
+    background-color: white;
   }
 
   .ql-snow .ql-code-block-container {

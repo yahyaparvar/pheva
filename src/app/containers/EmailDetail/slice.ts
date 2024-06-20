@@ -13,18 +13,15 @@ export const initialState: ContainerState = {
   status: Status.INITIAL,
   summary: {
     status: Status.INITIAL,
-    controller:new AbortController(),
     streamText: [],
   },
   answer: {
     negative: {
       status: Status.INITIAL,
-      controller:new AbortController(),
       streamText: [],
     },
     positive: {
       status: Status.INITIAL,
-      controller:new AbortController(),
       streamText: [],
     },
   },
@@ -54,6 +51,34 @@ const emailDetailSlice = createSlice({
       state.summary.streamText = [];
       state.summary.status = Status.INITIAL;
     },
+    getNegativeAnswer(state) {},
+    setNegativeAnswer(state, action: PayloadAction<string>) {
+      state.answer.negative.streamText = [
+        ...state.answer.negative.streamText,
+        action.payload,
+      ];
+    },
+    setNegativeAnswerStatus(state, action: PayloadAction<Status>) {
+      state.answer.negative.status = action.payload;
+    },
+    clearNegativeAnswerResponse(state) {
+      state.answer.negative.streamText = [];
+      state.answer.negative.status = Status.INITIAL;
+    },
+    getPositiveAnswer(state) {},
+    setPositiveAnswer(state, action: PayloadAction<string>) {
+      state.answer.positive.streamText = [
+        ...state.answer.positive.streamText,
+        action.payload,
+      ];
+    },
+    setPositiveAnswerStatus(state, action: PayloadAction<Status>) {
+      state.answer.positive.status = action.payload;
+    },
+    clearPositiveAnswerResponse(state) {
+      state.answer.positive.streamText = [];
+      state.answer.positive.status = Status.INITIAL;
+    }
   },
 });
 

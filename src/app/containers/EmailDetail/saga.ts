@@ -59,11 +59,6 @@ export function* markAsRead(action: PayloadAction<string>) {
 }
 
 function* getSummary(action: PayloadAction<string>) {
-  const status: Status = yield select(EmailDetailselectors.summaryStatus);
-  const abortController = new AbortController();
-  const { signal } = abortController;
-  // abortController.abort();
-
   try {
     yield put(emailDetailActions.clearSummaryResponse());
     yield put(emailDetailActions.setSummaryStatus(Status.LOADING));
@@ -77,7 +72,6 @@ function* getSummary(action: PayloadAction<string>) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt: action.payload }),
-        signal: signal,
       }
     );
 
@@ -107,8 +101,101 @@ function* getSummary(action: PayloadAction<string>) {
   }
 }
 
+export function* getNegativeAnswer() {
+  try {
+    yield put(emailDetailActions.clearNegativeAnswerResponse());
+    yield put(emailDetailActions.setNegativeAnswerStatus(Status.LOADING));
+    const responseStream: Response = yield call(
+      fetch,
+      "http://localhost:8000/ai/emailsDetails/negativeAnswer",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: "Please write a negative answer" }),
+      }
+    );
+    const reader = responseStream?.body?.getReader();
+    const decoder = new TextDecoder();
+    let done = false; // Set to true when the stream is done
+
+    while (!done) {
+      const { value, done: readerDone } = yield reader?.read()!;
+      if (readerDone) {
+        done = true;
+        break;
+      }
+      const chunk = decoder.decode(value, { stream: true });
+      if (chunk.includes("##END##")) {
+        yield put(
+          emailDetailActions.setNegativeAnswer(chunk.replace("##END##", ""))
+        );
+        done = true;
+      } else {
+        yield put(emailDetailActions.setNegativeAnswer(chunk));
+      }
+    }
+
+    yield put(emailDetailActions.setNegativeAnswerStatus(Status.SUCCESS));
+  } catch (error) {
+    console.error("Failed to get negative answer", error);
+    yield put(emailDetailActions.setNegativeAnswerStatus(Status.ERROR));
+  }
+}
+
+export function* getPositiveAnswer() {
+  try {
+    yield put(emailDetailActions.clearPositiveAnswerResponse());
+    yield put(emailDetailActions.setPositiveAnswerStatus(Status.LOADING));
+    const responseStream: Response = yield call(
+      fetch,
+      "http://localhost:8000/ai/emailsDetails/positiveAnswer",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: "Please write a positive answer" }),
+      }
+    );
+    const reader = responseStream?.body?.getReader();
+    const decoder = new TextDecoder();
+    let done = false; // Set to true when the stream is done
+
+    while (!done) {
+      const { value, done: readerDone } = yield reader?.read()!;
+      if (readerDone) {
+        done = true;
+        break;
+      }
+      const chunk = decoder.decode(value, { stream: true });
+      if (chunk.includes("##END##")) {
+        yield put(
+          emailDetailActions.setPositiveAnswer(chunk.replace("##END##", ""))
+        );
+        done = true;
+      } else {
+        yield put(emailDetailActions.setPositiveAnswer(chunk));
+      }
+    }
+
+    yield put(emailDetailActions.setPositiveAnswerStatus(Status.SUCCESS));
+  } catch (error) {
+    console.error("Failed to get positive answer", error);
+    yield put(emailDetailActions.setPositiveAnswerStatus(Status.ERROR));
+  }
+}
 export function* emailDetailSaga() {
   yield takeLatest(emailDetailActions.getEmailData.type, getEmailData);
   yield takeLatest(emailDetailActions.markAsRead.type, markAsRead);
   yield takeLatest(emailDetailActions.getSummary.type, getSummary);
+  yield takeLatest(
+    emailDetailActions.getNegativeAnswer.type,
+    getNegativeAnswer
+  );
+  yield takeLatest(
+    emailDetailActions.getPositiveAnswer.type,
+    getPositiveAnswer
+  );
 }

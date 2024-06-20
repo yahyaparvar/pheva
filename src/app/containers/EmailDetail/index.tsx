@@ -13,10 +13,12 @@ import styled from "styled-components";
 import {
   COLUMN_CENTER,
   ROW_ALIGN_CENTER__SPACE_B,
-  ROW_JUSTIFY_START__ALIGN_CENTER,
+  ROW_ALIGN_START__JUSTIFY_START,
 } from "styles/globalStyles";
 import { useInboxSlice } from "../Inbox/slice";
 import { customDateFormat } from "../Inbox/types";
+import { Answers } from "./components/answer/answers";
+import AnswerButton from "./components/answer/button";
 import Editor from "./components/editor/editor";
 import EmailDetailsSummary from "./components/summary";
 import { emailDetailSaga } from "./saga";
@@ -104,15 +106,16 @@ const ProfileImage = styled.img`
 const SendToAndDate = styled.div`
   ${ROW_ALIGN_CENTER__SPACE_B}
 `;
-const AvatarAndInfo = styled.div`
-  ${ROW_JUSTIFY_START__ALIGN_CENTER}
+const AiActions = styled(motion.div)`
+  ${ROW_ALIGN_START__JUSTIFY_START}
+  gap:8px;
+  padding: 14px;
 `;
 const EditorContainer = styled(motion.div)`
   width: 100%;
   position: sticky;
   bottom: 0;
   left: 0;
-  background: white;
 `;
 export function EmailDetail(props: Props) {
   useInboxSlice();
@@ -276,12 +279,27 @@ export function EmailDetail(props: Props) {
           delay: 0.7,
           type: "spring",
           stiffness: 50,
-          damping: 20,
+          damping: 15,
           duration: 0.3,
         }}
       >
-        <EmailDetailsSummary />
+        <AiActions
+          initial={{ y: "100%", opacity: 1 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            delay: 2.5,
+            type: "spring",
+            stiffness: 50,
+            damping: 20,
+            duration: 0.2,
+          }}
+        >
+          <EmailDetailsSummary />
+          <AnswerButton />
+        </AiActions>
+        <Answers />
         <Editor />
+        
       </EditorContainer>
     </Wrapper>
   );
