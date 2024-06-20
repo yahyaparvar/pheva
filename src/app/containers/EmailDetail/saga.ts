@@ -60,6 +60,10 @@ export function* markAsRead(action: PayloadAction<string>) {
 
 function* getSummary(action: PayloadAction<string>) {
   const status: Status = yield select(EmailDetailselectors.summaryStatus);
+  const abortController = new AbortController();
+  const { signal } = abortController;
+  // abortController.abort();
+
   try {
     yield put(emailDetailActions.clearSummaryResponse());
     yield put(emailDetailActions.setSummaryStatus(Status.LOADING));
@@ -73,6 +77,7 @@ function* getSummary(action: PayloadAction<string>) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt: action.payload }),
+        signal: signal,
       }
     );
 
@@ -97,6 +102,7 @@ function* getSummary(action: PayloadAction<string>) {
 
     yield put(emailDetailActions.setSummaryStatus(Status.SUCCESS));
   } catch (error) {
+    console.error("Failed to get summary", error);
     yield put(emailDetailActions.setSummaryStatus(Status.ERROR));
   }
 }

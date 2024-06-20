@@ -51,15 +51,18 @@ export interface EmailDetailState {
   status: Status;
   summary: {
     status: Status;
+    controller: AbortController;
     streamText: string[];
   };
   answer: {
     negative: {
       status: Status;
+      controller: AbortController;
       streamText: string[];
     };
     positive: {
       status: Status;
+      controller: AbortController;
       streamText: string[];
     };
   };

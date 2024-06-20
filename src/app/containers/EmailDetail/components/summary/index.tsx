@@ -46,15 +46,17 @@ const EmailDetailSummary: React.FC = () => {
   const summaryStreamText = useSelector(EmailDetailselectors.summaryStreamText);
   const summaryStatus = useSelector(EmailDetailselectors.summaryStatus);
   const dispatch = useDispatch();
-
   const popupRef = useRef(null);
+  const [showPopup, setShowPopup] = React.useState(false);
 
   const handleSendPrompt = async () => {
+    setShowPopup(true);
     dispatch(emailDetailActions.getSummary());
   };
 
   const handleClosePopup = () => {
     dispatch(emailDetailActions.clearSummaryResponse());
+    setShowPopup(false);
   };
 
   useOnClickOutside(popupRef, handleClosePopup);
@@ -68,14 +70,12 @@ const EmailDetailSummary: React.FC = () => {
           onClick={
             summaryStatus === Status.INITIAL || summaryStatus === Status.SUCCESS
               ? handleSendPrompt
-              : () => {
-                  dispatch(emailDetailActions.clearSummaryResponse());
-                }
+              : () => {}
           }
         >
           Summarize
         </Button>
-        {summaryStatus !== Status.INITIAL && (
+        {summaryStatus !== Status.INITIAL && showPopup && (
           <AnimatePresence>
             <Popup
               ref={popupRef}

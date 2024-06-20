@@ -13,15 +13,18 @@ export const initialState: ContainerState = {
   status: Status.INITIAL,
   summary: {
     status: Status.INITIAL,
+    controller:new AbortController(),
     streamText: [],
   },
   answer: {
     negative: {
       status: Status.INITIAL,
+      controller:new AbortController(),
       streamText: [],
     },
     positive: {
       status: Status.INITIAL,
+      controller:new AbortController(),
       streamText: [],
     },
   },
