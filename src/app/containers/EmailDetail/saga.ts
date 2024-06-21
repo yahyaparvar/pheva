@@ -59,6 +59,9 @@ export function* markAsRead(action: PayloadAction<string>) {
 }
 
 function* getSummary(action: PayloadAction<string>) {
+  const emailRawText: string = yield select(EmailDetailselectors.textFromHTML);
+  console.log(emailRawText);
+
   try {
     yield put(emailDetailActions.clearSummaryResponse());
     yield put(emailDetailActions.setSummaryStatus(Status.LOADING));
@@ -71,7 +74,7 @@ function* getSummary(action: PayloadAction<string>) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt: action.payload }),
+        body: JSON.stringify({ prompt: emailRawText }),
       }
     );
 
@@ -102,6 +105,7 @@ function* getSummary(action: PayloadAction<string>) {
 }
 
 export function* getNegativeAnswer() {
+  const emailRawText: string = yield select(EmailDetailselectors.textFromHTML);
   try {
     yield put(emailDetailActions.clearNegativeAnswerResponse());
     yield put(emailDetailActions.setNegativeAnswerStatus(Status.LOADING));
@@ -113,7 +117,7 @@ export function* getNegativeAnswer() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt: "Please write a negative answer" }),
+        body: JSON.stringify({ prompt: emailRawText }),
       }
     );
     const reader = responseStream?.body?.getReader();
@@ -145,6 +149,7 @@ export function* getNegativeAnswer() {
 }
 
 export function* getPositiveAnswer() {
+  const emailRawText: string = yield select(EmailDetailselectors.textFromHTML);
   try {
     yield put(emailDetailActions.clearPositiveAnswerResponse());
     yield put(emailDetailActions.setPositiveAnswerStatus(Status.LOADING));
@@ -156,7 +161,7 @@ export function* getPositiveAnswer() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt: "Please write a positive answer" }),
+        body: JSON.stringify({ prompt: emailRawText }),
       }
     );
     const reader = responseStream?.body?.getReader();
