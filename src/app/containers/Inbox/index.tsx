@@ -251,7 +251,7 @@ const NextPrevButton = styled.div<{ disabled?: "true" | "false" }>`
 const FixedTableHeader = styled.th`
   ${ROW_JUSTIFY_END__ALIGN_CENTER}
   position: sticky;
-  background-color: var(--table-header);
+  background-color: var(--dark-gray);
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   z-index: 1;

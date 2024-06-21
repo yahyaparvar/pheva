@@ -85,8 +85,7 @@ const EmailPartContainer = styled.div`
   margin-bottom: 10px;
   width: 100%;
   * {
-    box-sizing: unset !important;
-    color: unset;
+    color: #a2a2a2;
   }
 `;
 
@@ -163,24 +162,24 @@ export function EmailDetail(props: Props) {
   if (emailDetailStatus === Status.LOADING) {
     return (
       <Container>
-        <Skeleton height={40} width={700} style={{ marginBottom: 10 }} />
-        <EmailInfo>
+        <Skeleton height={20} width={700} style={{ margin: "20px 0 0 70px" }} />
+        <EmailInfo style={{ padding: "0px 20px 20px 20px" }}>
           <Skeleton
             circle={true}
-            height={50}
-            width={50}
+            height={35}
+            width={35}
             style={{ marginRight: 15 }}
           />
           <div style={{ width: "100%" }}>
             <EmailField>
-              <Skeleton height={20} width={150} />
+              <Skeleton height={15} width={150} />
             </EmailField>
             <SendToAndDate>
               <EmailField>
-                <Skeleton height={20} width={300} />
+                <Skeleton height={15} width={300} />
               </EmailField>
               <EmailField>
-                <Skeleton height={20} width={200} />
+                <Skeleton height={15} width={200} />
               </EmailField>
             </SendToAndDate>
           </div>
@@ -289,11 +288,11 @@ export function EmailDetail(props: Props) {
         initial={{ y: "100%", opacity: 1 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{
-          delay: 0.7,
-          type: "spring",
+          delay: 0.4,
+          type: "just",
           stiffness: 50,
           damping: 15,
-          duration: 0.3,
+          duration: 0.5,
         }}
       >
         <AiActions

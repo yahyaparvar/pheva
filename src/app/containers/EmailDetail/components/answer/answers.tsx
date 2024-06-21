@@ -42,7 +42,7 @@ export const Answers = () => {
     >
       <AnimatePresence>
         {positiveAnswerStatus !== Status.INITIAL && showPopup && (
-          <Popup
+          <PositivePopup
             key="popup"
             initial={{ opacity: 0, scale: 0.8, x: -100 }}
             animate={{
@@ -74,12 +74,12 @@ export const Answers = () => {
                 {chunk}
               </ResponseChunk>
             ))}
-          </Popup>
+          </PositivePopup>
         )}
       </AnimatePresence>
       <AnimatePresence>
         {negativeAnswerStatus !== Status.INITIAL && showPopup && (
-          <Popup
+          <NegativePopup
             key="popup2"
             initial={{ opacity: 0, scale: 0.8, x: -100 }}
             animate={{
@@ -111,7 +111,7 @@ export const Answers = () => {
                 {chunk}
               </ResponseChunk>
             ))}
-          </Popup>
+          </NegativePopup>
         )}
       </AnimatePresence>
     </AnswersWrapper>
@@ -121,14 +121,14 @@ export const Answers = () => {
 const AnswersWrapper = styled.div<{ isEmpty: boolean }>`
   ${ROW}
   justify-content:center;
-  padding: 10px;
+  padding: 15px 10px;
   ${({ isEmpty }) =>
     isEmpty &&
     css`
       display: none;
     `}
   position: relative;
-  background: white;
+  background: var(--dark-gray);
   gap: 24px;
   overflow: hidden;
 `;
@@ -143,16 +143,72 @@ const ResponseChunk = styled(motion.div)`
   text-align: justify;
 `;
 
-const Popup = styled(motion.div)`
+const NegativePopup = styled(motion.div)`
+  position: relative;
   flex: 1 1 auto;
   width: 100%;
   max-width: 500px;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--dark-gray);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   overflow-y: auto;
-  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 14px; /* Same border-radius as Popup plus border width */
+    background: linear-gradient(to right, #d32f2f, #bc6413);
+    z-index: -1;
+    padding: 6px; /* Border width */
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  &:hover {
+    background-color: var(--dark-gray-hover);
+  }
+`;
+const PositivePopup = styled(motion.div)`
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 500px;
+  background: var(--dark-gray);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow-y: auto;
+  cursor: pointer;
+
+  transition: background 0.2s;
+  &:before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 14px; /* Same border-radius as Popup plus border width */
+    background: linear-gradient(to right, #139ebc, #1ecd3a);
+    z-index: -1;
+    padding: 6px; /* Border width */
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  &:hover {
+    background-color: var(--dark-gray-hover);
+  }
 `;

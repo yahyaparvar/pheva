@@ -13,6 +13,10 @@ const GlobalStyle = createGlobalStyle`
   --dark-gray: #1E1E1E;
   --dark-gray-hover: #4A4A4A;
   --bright-blue:#4a90e2;
+  --skeleton-base: #202020;
+  --skeleton-highlight: #444;
+  --error:#d32f2f;
+  --success:#388e3c
 }
 .DARK {
     --text: #e5e7eb;
@@ -92,6 +96,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  background-color:var(--background) ;
 }
 *{
   color: var(--text);
