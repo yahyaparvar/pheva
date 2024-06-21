@@ -16,7 +16,8 @@ const GlobalStyle = createGlobalStyle`
   --skeleton-base: #202020;
   --skeleton-highlight: #444;
   --error:#d32f2f;
-  --success:#388e3c
+  --success:#388e3c;
+  --button:#139EBC;
 }
 .DARK {
     --text: #e5e7eb;

@@ -5,7 +5,7 @@ import { UNSELECTABLE } from "styles/globalStyles";
 
 const buttonStyles = {
   primary: css`
-    background-color: #3b82f6;
+    background-color: var(--button);
     color: white;
     &:hover {
       background-color: #2563eb;
