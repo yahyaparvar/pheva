@@ -30,7 +30,7 @@ const Popup = styled(motion.div)`
   left: 100%;
   width: 500px;
   background: var(--dark-gray);
-  border: 1px solid var(--bright-blue);
+  border: 2px solid var(--bright-blue);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

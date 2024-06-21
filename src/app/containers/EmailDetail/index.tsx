@@ -159,6 +159,12 @@ export function EmailDetail(props: Props) {
       return "";
     }
   };
+  const extractTextFromHTML = (html: string): string => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    const textContent = tmp.textContent || tmp.innerText || "";
+    return textContent.replace(/\s+/g, " ").trim();
+  };
   if (emailDetailStatus === Status.LOADING) {
     return (
       <Container>
@@ -201,11 +207,20 @@ export function EmailDetail(props: Props) {
   const renderEmailContent = () => {
     const renderPart = (part: any) => {
       if (part.mimeType === "text/html") {
+        dispatch(
+          emailDetailActions.setTextFromHTML(
+            DOMPurify.sanitize(decodeBase64(part.body.data))
+          )
+        );
+
         return (
           <div>{parse(DOMPurify.sanitize(decodeBase64(part.body.data)))}</div>
         );
       }
       if (part.parts) {
+        dispatch(
+          emailDetailActions.setTextFromHTML(decodeBase64(part.body.data))
+        );
         return part.parts.map((subPart: any, index: number) => (
           <div key={index}>{renderPart(subPart)}</div>
         ));
@@ -285,10 +300,10 @@ export function EmailDetail(props: Props) {
         <EmailContent>{renderEmailContent()}</EmailContent>
       </Container>
       <EditorContainer
-        initial={{ y: "100%", opacity: 1 }}
+        initial={{ y: "100%" }}
         animate={{ y: 0, opacity: 1 }}
         transition={{
-          delay: 0.4,
+          delay: 1,
           type: "just",
           stiffness: 50,
           damping: 15,

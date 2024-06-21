@@ -49,6 +49,7 @@ export interface EmailDetails {
 export interface EmailDetailState {
   emailDetail: EmailDetails | undefined;
   status: Status;
+  textFromHTML: string;
   summary: {
     status: Status;
     streamText: string[];
@@ -87,4 +88,10 @@ export function timeDifference(givenDate: string) {
 
   return "just now";
 }
+export const extractTextFromHTML = (html: string): string => {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  const textContent = tmp.textContent || tmp.innerText || "";
+  return textContent.replace(/\s+/g, " ").trim();
+};
 export type ContainerState = EmailDetailState;

@@ -6,6 +6,8 @@ import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import he from "he";
 import { useEffect, useMemo } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Column, useTable } from "react-table";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
@@ -28,6 +30,7 @@ const triggerConfetti = () => {
     origin: { y: 0.7, x: 0.6 },
   });
 };
+
 export function Inbox(props: Props) {
   useInjectReducer({ key: sliceKey, reducer: InboxReducer });
   useInjectSaga({ key: sliceKey, saga: inboxSaga });
@@ -46,7 +49,7 @@ export function Inbox(props: Props) {
     if (emailsStatus !== Status.SUCCESS) {
       dispatch(InboxActions.getEmails());
     }
-  }, [dispatch]);
+  }, [dispatch, emailsStatus]);
 
   useEffect(() => {
     if (isShowAiAnimation) {
@@ -55,7 +58,7 @@ export function Inbox(props: Props) {
         dispatch(InboxActions.setShowAiAnimation(false));
       }, 500);
     }
-  }, [isShowAiAnimation]);
+  }, [isShowAiAnimation, dispatch]);
 
   const columns: Column<Email>[] = useMemo(
     () => [
@@ -96,20 +99,18 @@ export function Inbox(props: Props) {
   return (
     <>
       <TableContainer
-        initial={{ opacity: 0, y: 0, rotate: 0 }} // Initial rotation
+        initial={{ opacity: 0, y: 0, rotate: 0 }}
         animate={{
           opacity: 1,
           y: 0,
           scale: isShowAiAnimation ? 1.1 : 1,
-          // rotate: isShowAiAnimation ? [0, 10, -10, 10, -10, 0] : 0, // Rotate effect
           transition: {
             duration: 0.5,
             type: "spring",
             stiffness: 100,
-            // rotate: { duration: 0.5 }, // Adjust duration and ease for rotate effect
           },
         }}
-        exit={{ opacity: 0, y: 20, rotate: 0 }} // Exit rotation
+        exit={{ opacity: 0, y: 20, rotate: 0 }}
       >
         {emailsStatus === Status.INITIAL ? (
           <></>
@@ -184,35 +185,55 @@ export function Inbox(props: Props) {
           {...getTableProps()}
         >
           <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              const isUnread = row.original.labels.includes("UNREAD");
-              return (
-                <StyledTr
-                  isUnread={isUnread}
-                  onClick={() => {
-                    history.push(AppPages.EmailDetail + `/${row.original.id}`);
-                  }}
-                  {...row.getRowProps()}
-                >
-                  <StyledTdHover />
-                  {row.cells.map((cell) => cell.render("Cell"))}
-                  <StyledTdHover>
-                    {emailsSummariesStatus === Status.SUCCESS ? (
-                      <RowMouseHover className={row.id}>
-                        {
-                          emailsSummaries.find((emailSummary) => {
-                            return emailSummary.id === row.original.id;
-                          })?.summary
-                        }
-                      </RowMouseHover>
-                    ) : (
-                      <></>
-                    )}
-                  </StyledTdHover>
-                </StyledTr>
-              );
-            })}
+            {emailsStatus === Status.LOADING
+              ? Array(26)
+                  .fill(null)
+                  .map((_, index) => (
+                    <StyledTr key={index} isUnread={false}>
+                      <StyledTdHover />
+                      <StyledTdSender>
+                        <Skeleton width={"80%"} />
+                      </StyledTdSender>
+                      <StyledTdSubjectSnippet>
+                        <Skeleton width={"885px"} />
+                      </StyledTdSubjectSnippet>
+                      <StyledTdDate>
+                        <Skeleton width={"100%"} />
+                      </StyledTdDate>
+                      <StyledTdHover />
+                    </StyledTr>
+                  ))
+              : rows.map((row) => {
+                  prepareRow(row);
+                  const isUnread = row.original.labels.includes("UNREAD");
+                  return (
+                    <StyledTr
+                      isUnread={isUnread}
+                      onClick={() => {
+                        history.push(
+                          AppPages.EmailDetail + `/${row.original.id}`
+                        );
+                      }}
+                      {...row.getRowProps()}
+                    >
+                      <StyledTdHover />
+                      {row.cells.map((cell) => cell.render("Cell"))}
+                      <StyledTdHover>
+                        {emailsSummariesStatus === Status.SUCCESS ? (
+                          <RowMouseHover className={row.id}>
+                            {
+                              emailsSummaries.find((emailSummary) => {
+                                return emailSummary.id === row.original.id;
+                              })?.summary
+                            }
+                          </RowMouseHover>
+                        ) : (
+                          <></>
+                        )}
+                      </StyledTdHover>
+                    </StyledTr>
+                  );
+                })}
           </tbody>
         </StyledTable>
       </TableContainer>
@@ -223,8 +244,6 @@ export function Inbox(props: Props) {
 // Styled component for the grid container
 const TableContainer = styled(motion.div)`
   height: 100%;
-  padding: 16px;
-  padding-top: 40px;
   padding-bottom: 50px;
   position: relative;
   width: 100%;
@@ -255,7 +274,7 @@ const FixedTableHeader = styled.th`
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   z-index: 1;
-  top: -40px; /* Offset the parent's padding */
+  top: 0px; /* Offset the parent's padding */
   left: 0;
   width: 100%;
   padding: 7px;
@@ -322,6 +341,7 @@ const StyledTdSubjectSnippet = styled.td`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  width: 100%;
   .subject {
     font-weight: bold;
   }

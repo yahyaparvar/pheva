@@ -2,7 +2,7 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { createSlice } from "store/toolkit";
-import { ContainerState, EmailDetails } from "./types";
+import { ContainerState, EmailDetails, extractTextFromHTML } from "./types";
 
 import { Status } from "app/types";
 import { emailDetailSaga } from "./saga";
@@ -11,6 +11,7 @@ import { emailDetailSaga } from "./saga";
 export const initialState: ContainerState = {
   emailDetail: undefined,
   status: Status.INITIAL,
+  textFromHTML: "",
   summary: {
     status: Status.INITIAL,
     streamText: [],
@@ -78,7 +79,10 @@ const emailDetailSlice = createSlice({
     clearPositiveAnswerResponse(state) {
       state.answer.positive.streamText = [];
       state.answer.positive.status = Status.INITIAL;
-    }
+    },
+    setTextFromHTML(state, action: PayloadAction<string>) {
+      state.textFromHTML = extractTextFromHTML(action.payload);
+    },
   },
 });
 
