@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { ROW } from "styles/globalStyles";
 import { EmailDetailselectors } from "../../selectors";
+import { arrayToString } from "../../types";
 
 export const Answers = () => {
   const negativeAnswerStreamText = useSelector(
@@ -22,16 +23,53 @@ export const Answers = () => {
   const dispatch = useDispatch();
   const popupRef = useRef(null);
   const [showPopup, setShowPopup] = React.useState(false);
+  const [showPositiveAsText, setShowPositiveAsText] = React.useState<
+    number | boolean
+  >(1);
+  const [showNegativeAsText, setShowNegativeAsText] = React.useState<
+    number | boolean
+  >(1);
 
   useEffect(() => {
+    let positiveInterval: NodeJS.Timeout;
+    let negativeInterval: NodeJS.Timeout;
     if (
       positiveAnswerStatus !== Status.INITIAL &&
       negativeAnswerStatus !== Status.INITIAL
     ) {
       setShowPopup(true);
     }
+    if (positiveAnswerStatus === Status.SUCCESS) {
+      positiveInterval = setInterval(() => {
+        setShowPositiveAsText((prev) => {
+          if (typeof prev === "number" && prev > 0) {
+            return prev - 0.1;
+          } else {
+            clearInterval(positiveInterval!);
+            return true;
+          }
+        });
+      }, 100);
+    }
+    if (negativeAnswerStatus === Status.SUCCESS) {
+      console.log(showNegativeAsText);
+      negativeInterval = setInterval(() => {
+        console.log(showNegativeAsText);
+        setShowNegativeAsText((prev) => {
+          if (typeof prev === "number" && prev > 0) {
+            return prev - 0.1;
+          } else {
+            clearInterval(negativeInterval!);
+            return true;
+          }
+        });
+      }, 100);
+    }
+    return;
   }, [positiveAnswerStatus, negativeAnswerStatus]);
-
+  useEffect(() => {
+    // console.log(showNegativeAsText);
+  }, [showPositiveAsText]);
   return (
     <AnswersWrapper
       ref={popupRef}
@@ -44,6 +82,9 @@ export const Answers = () => {
         {positiveAnswerStatus !== Status.INITIAL && showPopup && (
           <PositivePopup
             key="popup"
+            onClick={() => {
+              setShowPopup(false);
+            }}
             initial={{ opacity: 0, scale: 0.8, x: -100 }}
             animate={{
               opacity: 1,
@@ -64,16 +105,24 @@ export const Answers = () => {
               },
             }}
           >
-            {positiveAnswerStreamText.map((chunk, index) => (
-              <ResponseChunk
-                key={index}
-                initial={{ opacity: 0, filter: "blur(10px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                {chunk}
-              </ResponseChunk>
-            ))}
+            {positiveAnswerStatus === Status.SUCCESS &&
+            showPositiveAsText === true
+              ? arrayToString(positiveAnswerStreamText)
+              : positiveAnswerStreamText.map((chunk, index) => (
+                  <ResponseChunk
+                    key={index}
+                    initial={{ opacity: 0, filter: "blur(10px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    onAnimationComplete={() => {
+                      if (typeof showPositiveAsText === "number") {
+                        setShowPositiveAsText((prev: any) => prev + 0.1);
+                      }
+                    }}
+                  >
+                    {chunk}
+                  </ResponseChunk>
+                ))}
           </PositivePopup>
         )}
       </AnimatePresence>
@@ -81,6 +130,9 @@ export const Answers = () => {
         {negativeAnswerStatus !== Status.INITIAL && showPopup && (
           <NegativePopup
             key="popup2"
+            onClick={() => {
+              setShowPopup(false);
+            }}
             initial={{ opacity: 0, scale: 0.8, x: -100 }}
             animate={{
               opacity: 1,
@@ -101,16 +153,24 @@ export const Answers = () => {
               },
             }}
           >
-            {negativeAnswerStreamText.map((chunk, index) => (
-              <ResponseChunk
-                key={index}
-                initial={{ opacity: 0, filter: "blur(10px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                {chunk}
-              </ResponseChunk>
-            ))}
+            {negativeAnswerStatus === Status.SUCCESS &&
+            showNegativeAsText === true
+              ? arrayToString(negativeAnswerStreamText)
+              : negativeAnswerStreamText.map((chunk, index) => (
+                  <ResponseChunk
+                    key={index}
+                    initial={{ opacity: 0, filter: "blur(10px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    onAnimationComplete={() => {
+                      if (typeof showNegativeAsText === "number") {
+                        setShowNegativeAsText((prev: any) => prev + 0.1);
+                      }
+                    }}
+                  >
+                    {chunk}
+                  </ResponseChunk>
+                ))}
           </NegativePopup>
         )}
       </AnimatePresence>
@@ -144,6 +204,7 @@ const ResponseChunk = styled(motion.div)`
 `;
 
 const NegativePopup = styled(motion.div)`
+  line-height: 23px;
   position: relative;
   flex: 1 1 auto;
   width: 100%;
@@ -178,6 +239,7 @@ const NegativePopup = styled(motion.div)`
   }
 `;
 const PositivePopup = styled(motion.div)`
+  line-height: 23px;
   position: relative;
   flex: 1 1 auto;
   width: 100%;

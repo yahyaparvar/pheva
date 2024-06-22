@@ -50,6 +50,7 @@ export interface EmailDetailState {
   emailDetail: EmailDetails | undefined;
   status: Status;
   textFromHTML: string;
+  md: string;
   summary: {
     status: Status;
     streamText: string[];
@@ -94,4 +95,7 @@ export const extractTextFromHTML = (html: string): string => {
   const textContent = tmp.textContent || tmp.innerText || "";
   return textContent.replace(/\s+/g, " ").trim();
 };
+export function arrayToString(arr: string[]) {
+  return arr.filter(Boolean).join("");
+}
 export type ContainerState = EmailDetailState;

@@ -127,18 +127,13 @@ export function EmailDetail(props: Props) {
     if (id) {
       dispatch(emailDetailActions.getEmailData(id));
     }
-  }, [id, dispatch]);
+  }, [id]);
 
   useEffect(() => {
     if (id) {
       dispatch(emailDetailActions.markAsRead(id));
     }
   }, [id, dispatch, emailDetailStatus]);
-  useEffect(() => {
-    if (id) {
-      dispatch(emailDetailActions.getEmailData(id));
-    }
-  }, [id, dispatch]);
 
   useEffect(() => {
     return () => {

@@ -11,6 +11,7 @@ import { emailDetailSaga } from "./saga";
 export const initialState: ContainerState = {
   emailDetail: undefined,
   status: Status.INITIAL,
+  md: "",
   textFromHTML: "",
   summary: {
     status: Status.INITIAL,
@@ -82,6 +83,9 @@ const emailDetailSlice = createSlice({
     },
     setTextFromHTML(state, action: PayloadAction<string>) {
       state.textFromHTML = extractTextFromHTML(action.payload);
+    },
+    setEmailMd(state, action: PayloadAction<string>) {
+      state.md = action.payload;
     },
   },
 });

@@ -26,6 +26,7 @@ const domains = {
     initialState.answer.positive.status,
   textFromHTML: (state: RootState) =>
     state.emailDetail?.textFromHTML || initialState.textFromHTML,
+  md:(state:RootState) => state.emailDetail?.md || initialState.md
 };
 export const EmailDetailselectors = {
   root: createSelector([domains.root], (state) => state),
@@ -35,6 +36,7 @@ export const EmailDetailselectors = {
     [domains.summaryStreamText],
     (state) => state
   ),
+  md: createSelector([domains.md], (state) => state),
   summaryStatus: createSelector([domains.summaryStatus], (state) => state),
   negativeAnswer: createSelector([domains.negativeAnswer], (state) => state),
   positiveAnswer: createSelector([domains.positiveAnswer], (state) => state),

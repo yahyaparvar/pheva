@@ -1,7 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { EmailDetailselectors } from "../../selectors";
+import { emailDetailActions } from "../../slice";
 
 // Define custom icons
 const customIcons = {
@@ -202,14 +205,18 @@ const RichTextEditorContainer = styled.div`
 `;
 
 const RichTextEditor = () => {
-  const [value, setValue] = useState("");
+  const mdValue = useSelector(EmailDetailselectors.md);
+  const dispatch = useDispatch();
+  const setValue = (value: string) => {
+    dispatch(emailDetailActions.setEmailMd(value));
+  };
   const quillRef = useRef<any>(null);
 
   return (
     <RichTextEditorContainer>
       <ReactQuill
         ref={quillRef}
-        value={value}
+        value={mdValue}
         onChange={setValue}
         modules={modules}
         formats={formats}
