@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { ROW } from "styles/globalStyles";
 import { EmailDetailselectors } from "../../selectors";
+import { emailDetailActions } from "../../slice";
 import { arrayToString } from "../../types";
 
 export const Answers = () => {
@@ -67,14 +68,11 @@ export const Answers = () => {
     }
     return;
   }, [positiveAnswerStatus, negativeAnswerStatus]);
-  useEffect(() => {
-    // console.log(showNegativeAsText);
-  }, [showPositiveAsText]);
   return (
     <AnswersWrapper
       ref={popupRef}
       isEmpty={
-        positiveAnswerStatus === Status.INITIAL &&
+        positiveAnswerStatus === Status.INITIAL ||
         negativeAnswerStatus === Status.INITIAL
       }
     >
@@ -83,7 +81,15 @@ export const Answers = () => {
           <PositivePopup
             key="popup"
             onClick={() => {
-              setShowPopup(false);
+              if (positiveAnswerStatus === Status.SUCCESS) {
+                setShowPopup(false);
+                dispatch(
+                  emailDetailActions.setEmailMd(
+                    `<p>${arrayToString(positiveAnswerStreamText)}</p>`
+                  )
+                );
+                dispatch(emailDetailActions.clearPositiveAnswerResponse());
+              }
             }}
             initial={{ opacity: 0, scale: 0.8, x: -100 }}
             animate={{
@@ -131,7 +137,15 @@ export const Answers = () => {
           <NegativePopup
             key="popup2"
             onClick={() => {
-              setShowPopup(false);
+              if (negativeAnswerStatus === Status.SUCCESS) {
+                setShowPopup(false);
+                dispatch(
+                  emailDetailActions.setEmailMd(
+                    `<p>${arrayToString(negativeAnswerStreamText)}</p>`
+                  )
+                );
+                dispatch(emailDetailActions.clearNegativeAnswerResponse());
+              }
             }}
             initial={{ opacity: 0, scale: 0.8, x: -100 }}
             animate={{
@@ -199,12 +213,14 @@ const ResponseChunk = styled(motion.div)`
   overflow-wrap: break-word;
   white-space: pre-wrap;
   word-break: break-word;
-  margin-bottom: 5px;
   text-align: justify;
 `;
 
 const NegativePopup = styled(motion.div)`
-  line-height: 23px;
+  line-height: 26.5px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
   position: relative;
   flex: 1 1 auto;
   width: 100%;
@@ -239,7 +255,9 @@ const NegativePopup = styled(motion.div)`
   }
 `;
 const PositivePopup = styled(motion.div)`
-  line-height: 23px;
+  line-height: 26.5px;
+  word-break: break-word;
+  white-space: pre-wrap;
   position: relative;
   flex: 1 1 auto;
   width: 100%;

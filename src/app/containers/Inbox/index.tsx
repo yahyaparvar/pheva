@@ -46,10 +46,10 @@ export function Inbox(props: Props) {
   const isShowAiAnimation = useSelector(Inboxselectors.showAiAnimation);
 
   useEffect(() => {
-    if (emailsStatus !== Status.SUCCESS) {
+    if (emailsStatus !== Status.SUCCESS && emailsStatus !== Status.LOADING) {
       dispatch(InboxActions.getEmails());
     }
-  }, [dispatch, emailsStatus]);
+  }, [emailsStatus]);
 
   useEffect(() => {
     if (isShowAiAnimation) {

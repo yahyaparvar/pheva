@@ -3,12 +3,13 @@ import { Status } from "app/types";
 import { AxiosResponse } from "axios";
 import { call, put, select, takeLatest } from "redux-saga/effects";
 import axiosInstance from "service/apiClient";
+import { LocalStorageKeys, storage } from "store/storage";
 import { Inboxselectors } from "../Inbox/selectors";
 import { InboxActions } from "../Inbox/slice";
 import { Email } from "../Inbox/types";
 import { EmailDetailselectors } from "./selectors";
 import { emailDetailActions } from "./slice";
-import { EmailDetails } from "./types";
+import { EmailDetails, EmailHeader } from "./types";
 
 export function* getEmailData(action: PayloadAction<string>) {
   try {
@@ -191,10 +192,59 @@ export function* getPositiveAnswer() {
     yield put(emailDetailActions.setPositiveAnswerStatus(Status.ERROR));
   }
 }
+
+export function* replyToEmail(action: PayloadAction<string>) {
+  try {
+    const emailDetails: EmailDetails = yield select(
+      EmailDetailselectors.emailDetail
+    );
+
+    const toHeader = emailDetails.payload.headers.find(
+      (header: EmailHeader) => header.name === "From"
+    );
+    const subjectHeader = emailDetails.payload.headers.find(
+      (header: EmailHeader) => header.name === "Subject"
+    );
+
+    if (!toHeader || !subjectHeader) {
+      console.error("Required email headers missing");
+      return;
+    }
+
+    const toEmail = toHeader.value.split(/<(.+)>/)[1];
+    const fromEmail = storage.read(LocalStorageKeys.USER_INFO)?.email;
+    const subject = `Re: ${subjectHeader.value}`;
+
+    if (!fromEmail) {
+      console.error("Sender email not found in local storage");
+      return;
+    }
+
+    const response: AxiosResponse = yield call(
+      axiosInstance.post,
+      `emails/send`,
+      {
+        to: toEmail,
+        from: fromEmail,
+        subject: subject,
+        message: action.payload,
+      }
+    );
+
+    if (response.status === 200) {
+      console.log("Email sent successfully");
+    } else {
+      console.error("Failed to send email", response);
+    }
+  } catch (error) {
+    console.error("Error in replyToEmail saga", error);
+  }
+}
 export function* emailDetailSaga() {
   yield takeLatest(emailDetailActions.getEmailData.type, getEmailData);
   yield takeLatest(emailDetailActions.markAsRead.type, markAsRead);
   yield takeLatest(emailDetailActions.getSummary.type, getSummary);
+  yield takeLatest(emailDetailActions.replyToEmail.type, replyToEmail);
   yield takeLatest(
     emailDetailActions.getNegativeAnswer.type,
     getNegativeAnswer

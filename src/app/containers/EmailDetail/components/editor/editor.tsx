@@ -1,11 +1,14 @@
+import { Button } from "app/components/buttons";
+import juice from "juice";
 import { useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import TurndownService from "turndown";
 import { EmailDetailselectors } from "../../selectors";
 import { emailDetailActions } from "../../slice";
-
+const turndownService = new TurndownService();
 // Define custom icons
 const customIcons = {
   codeBlock: `
@@ -203,7 +206,10 @@ const RichTextEditorContainer = styled.div`
     color: var(--dark-gray-hover) !important;
   } */
 `;
-
+const SendButtonContainer = styled.div`
+  padding: 20px;
+  background: var(--background);
+`;
 const RichTextEditor = () => {
   const mdValue = useSelector(EmailDetailselectors.md);
   const dispatch = useDispatch();
@@ -211,6 +217,11 @@ const RichTextEditor = () => {
     dispatch(emailDetailActions.setEmailMd(value));
   };
   const quillRef = useRef<any>(null);
+
+  const sendEmail = () => {
+    const inlinedHtml = juice(mdValue, { applyStyleTags: true });
+    dispatch(emailDetailActions.replyToEmail(inlinedHtml));
+  };
 
   return (
     <RichTextEditorContainer>
@@ -221,6 +232,9 @@ const RichTextEditor = () => {
         modules={modules}
         formats={formats}
       />
+      <SendButtonContainer>
+        <Button onClick={sendEmail}>Send</Button>
+      </SendButtonContainer>
     </RichTextEditorContainer>
   );
 };

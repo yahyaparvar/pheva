@@ -201,36 +201,28 @@ export function EmailDetail(props: Props) {
 
   const renderEmailContent = () => {
     const renderPart = (part: any) => {
+      const decodedData = decodeBase64(part.body.data);
       if (part.mimeType === "text/html") {
-        dispatch(
-          emailDetailActions.setTextFromHTML(
-            DOMPurify.sanitize(decodeBase64(part.body.data))
-          )
-        );
-
-        return (
-          <div>{parse(DOMPurify.sanitize(decodeBase64(part.body.data)))}</div>
-        );
+        const sanitizedHtml = DOMPurify.sanitize(decodedData);
+        dispatch(emailDetailActions.setTextFromHTML(sanitizedHtml));
+        return <div>{parse(sanitizedHtml)}</div>;
       }
       if (part.parts) {
-        dispatch(
-          emailDetailActions.setTextFromHTML(decodeBase64(part.body.data))
-        );
         return part.parts.map((subPart: any, index: number) => (
           <div key={index}>{renderPart(subPart)}</div>
         ));
       }
       return null;
     };
-
     if (email.payload.parts) {
-      return email.payload.parts.map((part, index) => (
+      return email.payload.parts.map((part: any, index: number) => (
         <EmailPartContainer key={index}>{renderPart(part)}</EmailPartContainer>
       ));
     } else if (email.payload.body && email.payload.body.data) {
-      return (
-        <EmailPartContainer>{renderPart(email.payload)}</EmailPartContainer>
-      );
+      const decodedData = decodeBase64(email.payload.body.data);
+      const sanitizedHtml = DOMPurify.sanitize(decodedData);
+      dispatch(emailDetailActions.setTextFromHTML(sanitizedHtml));
+      return <EmailPartContainer>{parse(sanitizedHtml)}</EmailPartContainer>;
     }
     return <div>No content available</div>;
   };
