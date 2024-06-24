@@ -5,10 +5,9 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import TurndownService from "turndown";
 import { EmailDetailselectors } from "../../selectors";
 import { emailDetailActions } from "../../slice";
-const turndownService = new TurndownService();
+import { RichTextEditorContainer } from "./styles";
 // Define custom icons
 const customIcons = {
   codeBlock: `
@@ -20,203 +19,67 @@ const customIcons = {
 
 // Register the custom icon with Quill
 const icons = ReactQuill.Quill.import("ui/icons");
-icons["code-block"] = customIcons.codeBlock;
 
-const modules = {
-  toolbar: {
-    container: [
-      [{ header: "1" }, { header: "2" }],
-      [{ size: [] }, { font: [] }],
-      [
-        "bold",
-        "italic",
-        "underline",
-        "strike",
-        "blockquote",
-        "link",
-        "code",
-        "code-block",
-      ],
-      [
-        { align: [] },
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
-      ["image"],
-      [{ color: [] }, { background: [] }],
-      ["clean"],
-    ],
-    handlers: {
-      "code-block": function () {
-        //@ts-ignore
-        this.quill.format("code-block", !this.quill.getFormat()["code-block"]);
-      },
-    },
-  },
-};
-
-const formats = [
-  "header",
-  "font",
-  "size",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-  "image",
-  "align",
-  "color",
-  "background",
-  "code",
-  "code-block",
-];
-
-const RichTextEditorContainer = styled.div`
-  width: 100%;
-
-  .ql-toolbar {
-    background-color: var(--dark-gray);
-    border: none !important;
-    border-radius: 4px 4px 0 0;
-    display: flex;
-    position: sticky;
-    top: 24px;
-    z-index: 1003;
-    cursor: pointer;
-  }
-
-  .ql-container {
-    position: relative;
-    border: none !important;
-    border-radius: 0 0 4px 4px;
-  }
-
-  .ql-editor {
-    padding: 15px;
-    font-size: 16px;
-    line-height: 1.5;
-    min-height: 200px;
-    max-height: 300px;
-    background-color: var(--background);
-  }
-
-  .ql-snow .ql-code-block-container {
-    border-left: 4px solid transparent;
-    padding: 10px;
-    font-family: monospace;
-  }
-
-  .ql-toolbar .ql-formats {
-    display: flex;
-    align-items: center;
-  }
-
-  .ql-toolbar .ql-picker {
-    height: 100%;
-    display: flex;
-    border: none !important;
-    background: none;
-    cursor: pointer;
-    transition:
-      background-color 0.3s,
-      color 0.3s;
-  }
-
-  .ql-toolbar .ql-picker-label {
-    transition:
-      background-color 0.3s,
-      color 0.3s;
-    border-radius: 3px;
-    &:hover {
-      background-color: var(--dark-gray-hover);
-      color: var(--text) !important;
-    }
-  }
-  .ql-picker-label {
-    padding-top: 3px;
-  }
-
-  .ql-toolbar .ql-picker-options {
-    padding: 0px;
-    background-color: var(--dark-gray);
-    border-radius: 0 0 4px 4px;
-  }
-
-  .ql-toolbar .ql-picker-item {
-    padding: 8px;
-    transition:
-      background-color 0.3s,
-      color 0.3s;
-    &:hover {
-      background-color: var(--dark-gray-hover);
-    }
-  }
-
-  .ql-toolbar .ql-formats button {
-    border: none !important;
-    background: none;
-    width: 30px;
-    height: 30px;
-    padding: 3px;
-    cursor: pointer;
-    transition:
-      background-color 0.3s,
-      color 0.3s;
-    border-radius: 3px;
-    &:hover {
-      background-color: var(--dark-gray-hover);
-    }
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  .ql-toolbar .ql-formats button.ql-active {
-    background-color: var(--bright-blue);
-  }
-  .ql-stroke {
-    stroke: var(--text) !important;
-  }
-
-  .ql-fill {
-    fill: var(--text) !important;
-  }
-
-  .ql-picker {
-    color: var(--text) !important;
-  }
-
-  .ql-picker-options .ql-picker-item {
-    color: var(--text) !important;
-  }
-  /* .ql-stroke:hover,
-  .ql-fill:hover,
-  .ql-picker:hover,
-  .ql-picker-options .ql-picker-item:hover {
-    stroke: var(--dark-gray-hover) !important;
-    fill: var(--dark-gray-hover) !important;
-    color: var(--dark-gray-hover) !important;
-  } */
-`;
 const SendButtonContainer = styled.div`
   padding: 20px;
   background: var(--background);
 `;
 const RichTextEditor = () => {
+  const quillRef = useRef<any>(null);
+  const alignClass = ReactQuill.Quill.import("attributors/style/align");
+  const backgroundClass = ReactQuill.Quill.import(
+    "attributors/style/background"
+  );
+  const colorClass = ReactQuill.Quill.import("attributors/style/color");
+  const directionClass = ReactQuill.Quill.import("attributors/style/direction");
+  const fontClass = ReactQuill.Quill.import("attributors/style/font");
+  const Size = ReactQuill.Quill.import("attributors/style/size");
+  Size.whitelist = ["16px", "11px", "24px", "40px"];
+  ReactQuill.Quill.register(Size, true);
+  ReactQuill.Quill.register(alignClass, true);
+  ReactQuill.Quill.register(backgroundClass, true);
+  ReactQuill.Quill.register(colorClass, true);
+  ReactQuill.Quill.register(directionClass, true);
+  ReactQuill.Quill.register(fontClass, true);
+  icons["code-block"] = customIcons.codeBlock;
+  const modules = {
+    toolbar: {
+      container: [
+        [{ header: "1" }, { header: "2" }],
+
+        [{ size: ["16px", "11px", "24px", "40px"] }, { font: [] }],
+        ["bold", "italic", "underline", "strike", "link", "code"],
+        [{ align: [] }, { list: "ordered" }, { list: "bullet" }],
+        ["image"],
+        [{ color: [] }, { background: [] }],
+        ["clean"],
+      ],
+    },
+  };
+
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "list",
+    "bullet",
+    "link",
+    "image",
+    "align",
+    "color",
+    "background",
+    "code",
+  ];
   const mdValue = useSelector(EmailDetailselectors.md);
   const dispatch = useDispatch();
-  const setValue = (value: string) => {
+  //@ts-ignore
+  const setValue = (value: string, anyios, arbitroz, deltos) => {
     dispatch(emailDetailActions.setEmailMd(value));
   };
-  const quillRef = useRef<any>(null);
 
   const sendEmail = () => {
     const inlinedHtml = juice(mdValue, { applyStyleTags: true });
