@@ -76,16 +76,19 @@ const EmailField = styled.p`
 const EmailContent = styled.div`
   margin-top: 20px;
   width: 100%;
-  padding: 0 80px;
+  padding: 0 120px;
   margin: 0 auto;
+  margin-top: 24px;
 `;
 
 const EmailPartContainer = styled.div`
   ${COLUMN_CENTER}
   margin-bottom: 10px;
   width: 100%;
+  border-radius: 8px;
+  background-color: #f1f1f1;
   * {
-    color: #a2a2a2;
+    color:unset ;
   }
 `;
 

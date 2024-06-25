@@ -2,6 +2,9 @@ import styled from "styled-components";
 
 export const RichTextEditorContainer = styled.div`
   width: 100%;
+  .ql-snow .ql-tooltip.ql-editing input[type="text"] {
+    color: blue;
+  }
   .ql-editor .ql-size-small {
     font-size: 11px;
   }

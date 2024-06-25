@@ -77,7 +77,7 @@ const RichTextEditor = () => {
   const mdValue = useSelector(EmailDetailselectors.md);
   const dispatch = useDispatch();
   //@ts-ignore
-  const setValue = (value: string, anyios, arbitroz, deltos) => {
+  const setValue = (value: string,) => {
     dispatch(emailDetailActions.setEmailMd(value));
   };
 
