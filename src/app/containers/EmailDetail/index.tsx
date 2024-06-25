@@ -11,6 +11,7 @@ import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { LocalStorageKeys, storage } from "store/storage";
 import styled from "styled-components";
 import {
+  COLUMN_ALIGN_START__JUSTIFY_CENTER,
   COLUMN_CENTER,
   ROW_ALIGN_CENTER__SPACE_B,
   ROW_ALIGN_START__JUSTIFY_START,
@@ -39,10 +40,6 @@ const Wrapper = styled.div`
   min-height:100vh;
   background-color: var(--background);
   position: relative;
-`;
-const Header = styled.h2`
-  font-size: 24px;
-  color: #333;
 `;
 
 const EmailInfo = styled.div`
@@ -74,21 +71,27 @@ const EmailField = styled.p`
 `;
 
 const EmailContent = styled.div`
-  margin-top: 20px;
-  width: 100%;
-  padding: 0 120px;
+  box-sizing: border-box !important;
+  width: 97%;
   margin: 0 auto;
   margin-top: 24px;
+  background-color: #747171;
+  padding: 12px;
+  border-radius: 8px;
+  * {
+    color: unset;
+  }
 `;
 
 const EmailPartContainer = styled.div`
   ${COLUMN_CENTER}
   margin-bottom: 10px;
   width: 100%;
-  border-radius: 8px;
-  * {
-    color: unset;
-  }
+`;
+const EmailPartTextContainer = styled.div`
+  ${COLUMN_ALIGN_START__JUSTIFY_CENTER}
+  margin-bottom: 10px;
+  width: 100%;
 `;
 
 const ProfileImage = styled.img`
@@ -115,6 +118,19 @@ const EmailHeaderDiv = styled.div`
   box-sizing: border-box;
   background: var(--dark-gray);
   padding: 5px 20px 3px 20px;
+`;
+
+const ThreadInfo = styled.div`
+  ${ROW_ALIGN_CENTER__SPACE_B}
+`;
+const ThreadImageAndEmail = styled.div`
+  ${ROW_ALIGN_START__JUSTIFY_START}
+`;
+const ThreadDivider = styled.div`
+  height: 1px;
+  width: 100%;
+  margin-bottom: 24px;
+  background-color: var(--background);
 `;
 export function EmailDetail(props: Props) {
   useInboxSlice();
@@ -157,12 +173,6 @@ export function EmailDetail(props: Props) {
       return "";
     }
   };
-  const extractTextFromHTML = (html: string): string => {
-    const tmp = document.createElement("div");
-    tmp.innerHTML = html;
-    const textContent = tmp.textContent || tmp.innerText || "";
-    return textContent.replace(/\s+/g, " ").trim();
-  };
   if (emailDetailStatus === Status.LOADING) {
     return (
       <Container>
@@ -188,7 +198,7 @@ export function EmailDetail(props: Props) {
             </SendToAndDate>
           </div>
         </EmailInfo>
-        <EmailContent style={{ width: "100%", background: "transparent" }}>
+        <EmailContent style={{ background: "transparent" }}>
           <Skeleton
             height={"100vh"}
             width={"100%"}
@@ -225,7 +235,9 @@ export function EmailDetail(props: Props) {
       const decodedData = decodeBase64(email.payload.body.data);
       const sanitizedHtml = DOMPurify.sanitize(decodedData);
       dispatch(emailDetailActions.setTextFromHTML(sanitizedHtml));
-      return <EmailPartContainer>{parse(sanitizedHtml)}</EmailPartContainer>;
+      return (
+        <EmailPartTextContainer>{parse(sanitizedHtml)}</EmailPartTextContainer>
+      );
     }
     return <div>No content available</div>;
   };
@@ -234,6 +246,44 @@ export function EmailDetail(props: Props) {
       threadMessages &&
       threadMessages.map((threadEmail, index) => (
         <EmailContent key={index}>
+          {index !== 0 && <ThreadDivider />}
+          <ThreadInfo>
+            <ThreadImageAndEmail>
+              <ProfileImage
+                src={
+                  threadEmail.payload.headers.find(
+                    (header: EmailHeader) => header.name === "From"
+                  )?.value === storage.read(LocalStorageKeys.USER_INFO)?.email
+                    ? storage.read(LocalStorageKeys.USER_INFO).picture
+                    : "https://lh3.googleusercontent.com/a/default-user=s80-p"
+                }
+                alt="Profile"
+              />
+              <EmailField>
+                <strong>
+                  {
+                    threadEmail.payload.headers.find(
+                      (header: EmailHeader) => header.name === "From"
+                    )?.value
+                  }
+                </strong>
+              </EmailField>
+            </ThreadImageAndEmail>
+            <EmailField style={{ marginRight: "24px" }}>
+              {customDateFormat(
+                email.payload.headers.find(
+                  (header: EmailHeader) => header.name === "Date"
+                )?.value as string
+              )}{" "}
+              {"("}
+              {timeDifference(
+                email.payload.headers.find(
+                  (header: EmailHeader) => header.name === "Date"
+                )?.value as string
+              )}
+              {")"}
+            </EmailField>
+          </ThreadInfo>
           {threadEmail.payload.parts ? (
             threadEmail.payload.parts.map((part: any, partIndex: number) => (
               <EmailPartContainer key={partIndex}>
@@ -241,11 +291,11 @@ export function EmailDetail(props: Props) {
               </EmailPartContainer>
             ))
           ) : threadEmail.payload.body && threadEmail.payload.body.data ? (
-            <EmailPartContainer>
+            <EmailPartTextContainer>
               {parse(
                 DOMPurify.sanitize(decodeBase64(threadEmail.payload.body.data))
               )}
-            </EmailPartContainer>
+            </EmailPartTextContainer>
           ) : (
             <div>No content available</div>
           )}
@@ -312,8 +362,10 @@ export function EmailDetail(props: Props) {
           </EmailInfo>
         </EmailHeaderDiv>
         <EmailContent>{renderEmailContent()}</EmailContent>
-        {threadMessages && (
+        {threadMessages && threadMessages?.length > 0 ? (
           <EmailContent>{renderEmailThreadContent()}</EmailContent>
+        ) : (
+          ""
         )}
       </Container>
       <EditorContainer
