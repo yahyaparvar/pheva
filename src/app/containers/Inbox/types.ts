@@ -8,6 +8,7 @@ export interface Email {
   subject: string;
   date: string;
   labels: string[];
+  threadLength?: number;
 }
 export interface EmailSummary {
   id: string;

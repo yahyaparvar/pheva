@@ -45,9 +45,11 @@ export interface EmailDetails {
   sizeEstimate: number;
   historyId: string;
   internalDate: string;
+  threadMessages: EmailDetails[];
 }
 export interface EmailDetailState {
   emailDetail: EmailDetails | undefined;
+  
   status: Status;
   textFromHTML: string;
   md: string;

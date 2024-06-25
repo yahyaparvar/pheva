@@ -81,7 +81,7 @@ const RichTextEditor = () => {
     dispatch(emailDetailActions.setEmailMd(value));
   };
 
-  const sendEmail = () => {
+  const replyToEmail = () => {
     const inlinedHtml = juice(mdValue, { applyStyleTags: true });
     dispatch(emailDetailActions.replyToEmail(inlinedHtml));
   };
@@ -96,7 +96,7 @@ const RichTextEditor = () => {
         formats={formats}
       />
       <SendButtonContainer>
-        <Button onClick={sendEmail}>Send</Button>
+        <Button onClick={replyToEmail}>Send</Button>
       </SendButtonContainer>
     </RichTextEditorContainer>
   );

@@ -65,7 +65,14 @@ export function Inbox(props: Props) {
       {
         Header: "Sender",
         accessor: "sender",
-        Cell: ({ value }) => <StyledTdSender>{value}</StyledTdSender>,
+        Cell: ({ value, row }) => (
+          <StyledTdSender>
+            {value}
+            {row.original.threadLength &&
+              row.original.threadLength > 1 &&
+              ", me " + row.original.threadLength}
+          </StyledTdSender>
+        ),
       },
       {
         Header: "Subject-Snippet",

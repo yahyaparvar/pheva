@@ -87,9 +87,7 @@ const emailDetailSlice = createSlice({
     setEmailMd(state, action: PayloadAction<string>) {
       state.md = action.payload;
     },
-    replyToEmail(state,action:PayloadAction<string>){
-
-    }
+    replyToEmail(state, action: PayloadAction<string>) {},
   },
 });
 

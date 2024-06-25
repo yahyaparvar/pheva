@@ -17,7 +17,12 @@ export function* getEmailData(action: PayloadAction<string>) {
     const response: AxiosResponse = yield axiosInstance.get(
       `emails/email/${action.payload}`
     );
-    yield put(emailDetailActions.setEmailData(response.data.emailDetails));
+    yield put(
+      emailDetailActions.setEmailData({
+        ...response.data.emailDetails,
+        threadMessages: response.data.threadMessages,
+      })
+    );
     yield put(emailDetailActions.setStatus(Status.SUCCESS));
   } catch (error) {
     yield put(emailDetailActions.setStatus(Status.ERROR));
@@ -222,12 +227,14 @@ export function* replyToEmail(action: PayloadAction<string>) {
 
     const response: AxiosResponse = yield call(
       axiosInstance.post,
-      `emails/send`,
+      `emails/send/reply`,
       {
         to: toEmail,
         from: fromEmail,
         subject: subject,
         message: action.payload,
+        threadId: emailDetails.threadId,
+        messageId: emailDetails.id,
       }
     );
 

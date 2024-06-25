@@ -86,9 +86,8 @@ const EmailPartContainer = styled.div`
   margin-bottom: 10px;
   width: 100%;
   border-radius: 8px;
-  background-color: #f1f1f1;
   * {
-    color:unset ;
+    color: unset;
   }
 `;
 
@@ -124,6 +123,7 @@ export function EmailDetail(props: Props) {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const email = useSelector(EmailDetailselectors.emailDetail);
+  const threadMessages = useSelector(EmailDetailselectors.threadMessages);
   const emailDetailStatus = useSelector(EmailDetailselectors.status);
 
   useEffect(() => {
@@ -202,21 +202,21 @@ export function EmailDetail(props: Props) {
     return <div>Loading...</div>;
   }
 
+  const renderPart = (part: any) => {
+    const decodedData = decodeBase64(part.body.data);
+    if (part.mimeType === "text/html") {
+      const sanitizedHtml = DOMPurify.sanitize(decodedData);
+      dispatch(emailDetailActions.setTextFromHTML(sanitizedHtml));
+      return <div>{parse(sanitizedHtml)}</div>;
+    }
+    if (part.parts) {
+      return part.parts.map((subPart: any, index: number) => (
+        <div key={index}>{renderPart(subPart)}</div>
+      ));
+    }
+    return null;
+  };
   const renderEmailContent = () => {
-    const renderPart = (part: any) => {
-      const decodedData = decodeBase64(part.body.data);
-      if (part.mimeType === "text/html") {
-        const sanitizedHtml = DOMPurify.sanitize(decodedData);
-        dispatch(emailDetailActions.setTextFromHTML(sanitizedHtml));
-        return <div>{parse(sanitizedHtml)}</div>;
-      }
-      if (part.parts) {
-        return part.parts.map((subPart: any, index: number) => (
-          <div key={index}>{renderPart(subPart)}</div>
-        ));
-      }
-      return null;
-    };
     if (email.payload.parts) {
       return email.payload.parts.map((part: any, index: number) => (
         <EmailPartContainer key={index}>{renderPart(part)}</EmailPartContainer>
@@ -228,6 +228,30 @@ export function EmailDetail(props: Props) {
       return <EmailPartContainer>{parse(sanitizedHtml)}</EmailPartContainer>;
     }
     return <div>No content available</div>;
+  };
+  const renderEmailThreadContent = () => {
+    return (
+      threadMessages &&
+      threadMessages.map((threadEmail, index) => (
+        <EmailContent key={index}>
+          {threadEmail.payload.parts ? (
+            threadEmail.payload.parts.map((part: any, partIndex: number) => (
+              <EmailPartContainer key={partIndex}>
+                {renderPart(part)}
+              </EmailPartContainer>
+            ))
+          ) : threadEmail.payload.body && threadEmail.payload.body.data ? (
+            <EmailPartContainer>
+              {parse(
+                DOMPurify.sanitize(decodeBase64(threadEmail.payload.body.data))
+              )}
+            </EmailPartContainer>
+          ) : (
+            <div>No content available</div>
+          )}
+        </EmailContent>
+      ))
+    );
   };
 
   return (
@@ -288,6 +312,9 @@ export function EmailDetail(props: Props) {
           </EmailInfo>
         </EmailHeaderDiv>
         <EmailContent>{renderEmailContent()}</EmailContent>
+        {threadMessages && (
+          <EmailContent>{renderEmailThreadContent()}</EmailContent>
+        )}
       </Container>
       <EditorContainer
         initial={{ y: "100%" }}
