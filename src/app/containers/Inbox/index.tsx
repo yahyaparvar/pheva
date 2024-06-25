@@ -106,7 +106,11 @@ export function Inbox(props: Props) {
   return (
     <>
       <TableContainer
-        initial={{ opacity: 0, y: 0, rotate: 0 }}
+        initial={{
+          opacity: emailsStatus === Status.SUCCESS ? 1 : 0,
+          y: 0,
+          rotate: 0,
+        }}
         animate={{
           opacity: 1,
           y: 0,

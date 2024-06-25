@@ -1,6 +1,5 @@
 import { Status } from "app/types";
 import DOMPurify from "dompurify";
-import { motion } from "framer-motion";
 import parse from "html-react-parser";
 import { useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -9,13 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { LocalStorageKeys, storage } from "store/storage";
-import styled from "styled-components";
-import {
-  COLUMN_ALIGN_START__JUSTIFY_CENTER,
-  COLUMN_CENTER,
-  ROW_ALIGN_CENTER__SPACE_B,
-  ROW_ALIGN_START__JUSTIFY_START,
-} from "styles/globalStyles";
 import { useInboxSlice } from "../Inbox/slice";
 import { customDateFormat } from "../Inbox/types";
 import { Answers } from "./components/answer/answers";
@@ -25,113 +17,28 @@ import EmailDetailsSummary from "./components/summary";
 import { emailDetailSaga } from "./saga";
 import { EmailDetailselectors } from "./selectors";
 import { emailDetailActions, emailDetailReducer, sliceKey } from "./slice";
-import { EmailHeader, timeDifference } from "./types";
+import {
+  AiActions,
+  Container,
+  EditorContainer,
+  EmailContent,
+  EmailField,
+  EmailHeaderDiv,
+  EmailInfo,
+  EmailPartContainer,
+  EmailPartTextContainer,
+  EmailTitle,
+  ProfileImage,
+  SendToAndDate,
+  ThreadDivider,
+  ThreadImageAndEmail,
+  ThreadInfo,
+  Wrapper,
+} from "./styles";
+import { EmailHeader, decodeBase64, timeDifference } from "./types";
 
 interface Props {}
-const Container = styled.div`
-  padding-bottom: 0;
-  width: 100%;
-  min-height: 100vh;
-  background-color: var(--background);
-`;
 
-const Wrapper = styled.div`
-  ${COLUMN_CENTER}
-  min-height:100vh;
-  background-color: var(--background);
-  position: relative;
-`;
-
-const EmailInfo = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-`;
-const EmailTitle = styled.h3`
-  font-size: 20px;
-  color: var(--text);
-  font-weight: 600;
-  margin: 7px 0;
-  margin-top: 4px;
-  margin-left: 48px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 700px;
-`;
-
-const EmailField = styled.p`
-  font-size: 13px;
-  margin: 4px 0;
-  color: var(--text);
-  strong {
-    color: var(--text);
-    margin-right: 12px;
-  }
-`;
-
-const EmailContent = styled.div`
-  box-sizing: border-box !important;
-  width: 97%;
-  margin: 0 auto;
-  margin-top: 24px;
-  background-color: #747171;
-  padding: 12px;
-  border-radius: 8px;
-  * {
-    color: unset;
-  }
-`;
-
-const EmailPartContainer = styled.div`
-  ${COLUMN_CENTER}
-  margin-bottom: 10px;
-  width: 100%;
-`;
-const EmailPartTextContainer = styled.div`
-  ${COLUMN_ALIGN_START__JUSTIFY_CENTER}
-  margin-bottom: 10px;
-  width: 100%;
-`;
-
-const ProfileImage = styled.img`
-  border-radius: 50%;
-  margin-right: 15px;
-  width: 35px;
-  height: 35px;
-`;
-const SendToAndDate = styled.div`
-  ${ROW_ALIGN_CENTER__SPACE_B}
-`;
-const AiActions = styled(motion.div)`
-  ${ROW_ALIGN_START__JUSTIFY_START}
-  gap:8px;
-  padding: 14px;
-`;
-const EditorContainer = styled(motion.div)`
-  width: 100%;
-  position: sticky;
-  bottom: 0;
-  left: 0;
-`;
-const EmailHeaderDiv = styled.div`
-  box-sizing: border-box;
-  background: var(--dark-gray);
-  padding: 5px 20px 3px 20px;
-`;
-
-const ThreadInfo = styled.div`
-  ${ROW_ALIGN_CENTER__SPACE_B}
-`;
-const ThreadImageAndEmail = styled.div`
-  ${ROW_ALIGN_START__JUSTIFY_START}
-`;
-const ThreadDivider = styled.div`
-  height: 1px;
-  width: 100%;
-  margin-bottom: 24px;
-  background-color: var(--background);
-`;
 export function EmailDetail(props: Props) {
   useInboxSlice();
   useInjectReducer({ key: sliceKey, reducer: emailDetailReducer });
@@ -162,17 +69,6 @@ export function EmailDetail(props: Props) {
     };
   }, []);
 
-  const decodeBase64 = (str: string | undefined): string => {
-    if (!str) return "";
-    try {
-      return decodeURIComponent(
-        escape(window.atob(str.replace(/-/g, "+").replace(/_/g, "/")))
-      );
-    } catch (e) {
-      console.error("Failed to decode base64 string:", e);
-      return "";
-    }
-  };
   if (emailDetailStatus === Status.LOADING) {
     return (
       <Container>
@@ -307,7 +203,7 @@ export function EmailDetail(props: Props) {
   return (
     <Wrapper>
       <Container>
-        <EmailHeaderDiv>
+      <EmailHeaderDiv>
           <EmailTitle>
             {
               email.payload.headers.find(

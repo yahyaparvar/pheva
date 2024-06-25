@@ -49,7 +49,7 @@ export interface EmailDetails {
 }
 export interface EmailDetailState {
   emailDetail: EmailDetails | undefined;
-  replySendStatus:Status
+  replySendStatus: Status;
   status: Status;
   textFromHTML: string;
   md: string;
@@ -100,4 +100,16 @@ export const extractTextFromHTML = (html: string): string => {
 export function arrayToString(arr: string[]) {
   return arr.filter(Boolean).join("");
 }
+
+export const decodeBase64 = (str: string | undefined): string => {
+  if (!str) return "";
+  try {
+    return decodeURIComponent(
+      escape(window.atob(str.replace(/-/g, "+").replace(/_/g, "/")))
+    );
+  } catch (e) {
+    console.error("Failed to decode base64 string:", e);
+    return "";
+  }
+};
 export type ContainerState = EmailDetailState;
