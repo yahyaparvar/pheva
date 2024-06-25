@@ -271,13 +271,13 @@ export function EmailDetail(props: Props) {
             </ThreadImageAndEmail>
             <EmailField style={{ marginRight: "24px" }}>
               {customDateFormat(
-                email.payload.headers.find(
+                threadEmail.payload.headers.find(
                   (header: EmailHeader) => header.name === "Date"
                 )?.value as string
               )}{" "}
               {"("}
               {timeDifference(
-                email.payload.headers.find(
+                threadEmail.payload.headers.find(
                   (header: EmailHeader) => header.name === "Date"
                 )?.value as string
               )}

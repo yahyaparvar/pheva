@@ -49,7 +49,7 @@ export interface EmailDetails {
 }
 export interface EmailDetailState {
   emailDetail: EmailDetails | undefined;
-  
+  replySendStatus:Status
   status: Status;
   textFromHTML: string;
   md: string;

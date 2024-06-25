@@ -28,6 +28,7 @@ const domains = {
     state.emailDetail?.textFromHTML || initialState.textFromHTML,
   md:(state:RootState) => state.emailDetail?.md || initialState.md,
   threadMessages:(state:RootState) => state.emailDetail?.emailDetail?.threadMessages || initialState.emailDetail?.threadMessages,
+  replySendStatus:(state:RootState) => state.emailDetail?.replySendStatus || initialState.replySendStatus,
 
 };
 export const EmailDetailselectors = {
@@ -52,4 +53,5 @@ export const EmailDetailselectors = {
   ),
   textFromHTML: createSelector([domains.textFromHTML], (state) => state),
   threadMessages:createSelector([domains.threadMessages], (state) => state),
+  replySendStatus:createSelector([domains.replySendStatus], (state) => state),
 };

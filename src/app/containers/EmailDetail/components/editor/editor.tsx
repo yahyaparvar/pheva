@@ -1,4 +1,5 @@
 import { Button } from "app/components/buttons";
+import { Status } from "app/types";
 import juice from "juice";
 import { useRef } from "react";
 import ReactQuill from "react-quill";
@@ -26,6 +27,7 @@ const SendButtonContainer = styled.div`
 `;
 const RichTextEditor = () => {
   const quillRef = useRef<any>(null);
+  const replySendStatus = useSelector(EmailDetailselectors.replySendStatus);
   const alignClass = ReactQuill.Quill.import("attributors/style/align");
   const backgroundClass = ReactQuill.Quill.import(
     "attributors/style/background"
@@ -77,7 +79,7 @@ const RichTextEditor = () => {
   const mdValue = useSelector(EmailDetailselectors.md);
   const dispatch = useDispatch();
   //@ts-ignore
-  const setValue = (value: string,) => {
+  const setValue = (value: string) => {
     dispatch(emailDetailActions.setEmailMd(value));
   };
 
@@ -96,7 +98,22 @@ const RichTextEditor = () => {
         formats={formats}
       />
       <SendButtonContainer>
-        <Button onClick={replyToEmail}>Send</Button>
+        <Button
+          rightIcon={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="size-6"
+            >
+              <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+            </svg>
+          }
+          loading={replySendStatus === Status.LOADING}
+          onClick={replyToEmail}
+        >
+          Send
+        </Button>
       </SendButtonContainer>
     </RichTextEditorContainer>
   );

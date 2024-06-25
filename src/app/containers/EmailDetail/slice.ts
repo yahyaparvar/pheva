@@ -10,6 +10,7 @@ import { emailDetailSaga } from "./saga";
 // The initial state of the EmailDetail container
 export const initialState: ContainerState = {
   emailDetail: undefined,
+  replySendStatus: Status.INITIAL,
   status: Status.INITIAL,
   md: "",
   textFromHTML: "",
@@ -76,6 +77,9 @@ const emailDetailSlice = createSlice({
     },
     setPositiveAnswerStatus(state, action: PayloadAction<Status>) {
       state.answer.positive.status = action.payload;
+    },
+    setReplySendStatus(state, action: PayloadAction<Status>) {
+      state.replySendStatus = action.payload;
     },
     clearPositiveAnswerResponse(state) {
       state.answer.positive.streamText = [];

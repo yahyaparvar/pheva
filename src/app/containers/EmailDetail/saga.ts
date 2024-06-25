@@ -1,7 +1,8 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "app/types";
 import { AxiosResponse } from "axios";
-import { call, put, select, takeLatest } from "redux-saga/effects";
+import { toast } from "react-toastify";
+import { call, delay, put, select, takeLatest } from "redux-saga/effects";
 import axiosInstance from "service/apiClient";
 import { LocalStorageKeys, storage } from "store/storage";
 import { Inboxselectors } from "../Inbox/selectors";
@@ -199,6 +200,8 @@ export function* getPositiveAnswer() {
 }
 
 export function* replyToEmail(action: PayloadAction<string>) {
+  yield put(emailDetailActions.setReplySendStatus(Status.LOADING));
+
   try {
     const emailDetails: EmailDetails = yield select(
       EmailDetailselectors.emailDetail
@@ -239,12 +242,16 @@ export function* replyToEmail(action: PayloadAction<string>) {
     );
 
     if (response.status === 200) {
-      console.log("Email sent successfully");
+      yield put(emailDetailActions.setReplySendStatus(Status.LOADING));
+      toast.success("Email sent!");
+      yield put(emailDetailActions.setReplySendStatus(Status.SUCCESS));
+      yield delay(3000);
+      window.location.reload();
     } else {
-      console.error("Failed to send email", response);
+      yield put(emailDetailActions.setReplySendStatus(Status.ERROR));
     }
   } catch (error) {
-    console.error("Error in replyToEmail saga", error);
+    yield put(emailDetailActions.setReplySendStatus(Status.ERROR));
   }
 }
 export function* emailDetailSaga() {
