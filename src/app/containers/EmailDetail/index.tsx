@@ -203,7 +203,7 @@ export function EmailDetail(props: Props) {
   return (
     <Wrapper>
       <Container>
-      <EmailHeaderDiv>
+        <EmailHeaderDiv>
           <EmailTitle>
             {
               email.payload.headers.find(
@@ -225,19 +225,21 @@ export function EmailDetail(props: Props) {
                       ?.value.split(/<(.+)>/)[0]
                   }
                 </strong>
-                {`<`}
-                {
-                  email.payload.headers
-                    .find((header: EmailHeader) => header.name === "From")
-                    ?.value.split(/<(.+)>/)[1]
-                }
-                {`>`}
+
+                {`<` +
+                  email.payload.headers.find(
+                    (header: EmailHeader) => header.name === "From"
+                  )?.value +
+                  `>` || ""}
               </EmailField>
               <SendToAndDate>
                 <EmailField>
-                  To {"<"}
-                  {storage.read(LocalStorageKeys.USER_INFO)?.email}
-                  {">"}
+                  To {""}
+                  {"<" +
+                    email.payload.headers.find(
+                      (header: EmailHeader) => header.name === "To"
+                    )?.value +
+                    ">" || ""}
                 </EmailField>
                 <EmailField style={{ marginRight: "24px" }}>
                   {customDateFormat(
