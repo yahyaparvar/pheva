@@ -18,6 +18,9 @@ const GlobalStyle = createGlobalStyle`
   --error:#d32f2f;
   --success:#388e3c;
   --button:#139EBC;
+  --main-color:#7CFDBF;
+  --drop-bg-color:#4CD7F6;
+  --drop-secondary:#E17CFD;
 }
 .DARK {
     --text: #e5e7eb;

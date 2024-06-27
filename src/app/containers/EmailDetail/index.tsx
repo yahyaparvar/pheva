@@ -218,19 +218,9 @@ export function EmailDetail(props: Props) {
             />
             <div style={{ width: "100%" }}>
               <EmailField>
-                <strong>
-                  {
-                    email.payload.headers
-                      .find((header: EmailHeader) => header.name === "From")
-                      ?.value.split(/<(.+)>/)[0]
-                  }
-                </strong>
-
-                {`<` +
-                  email.payload.headers.find(
-                    (header: EmailHeader) => header.name === "From"
-                  )?.value +
-                  `>` || ""}
+                {email.payload.headers.find(
+                  (header: EmailHeader) => header.name === "From"
+                )?.value || ""}
               </EmailField>
               <SendToAndDate>
                 <EmailField>

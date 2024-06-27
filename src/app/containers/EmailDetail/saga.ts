@@ -245,6 +245,7 @@ export function* replyToEmail(action: PayloadAction<string>) {
       yield put(emailDetailActions.setReplySendStatus(Status.LOADING));
       toast.success("Email sent!");
       yield put(emailDetailActions.setReplySendStatus(Status.SUCCESS));
+      yield put(emailDetailActions.setEmailMd(""))
       yield delay(3000);
       window.location.reload();
     } else {

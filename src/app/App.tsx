@@ -12,6 +12,7 @@ import { Inbox } from "./containers/Inbox/Loadable";
 import { Login } from "./containers/Login";
 import { NotFoundPage } from "./containers/NotFound";
 import { Sent } from "./containers/Sent/Loadable";
+import { Spam } from "./containers/Spam/Loadable";
 import MainLayout from "./layout";
 import { CustomRouter } from "./router";
 import history from "./router/history";
@@ -72,6 +73,14 @@ function App() {
               element={
                 <Auth>
                   <Calendar />
+                </Auth>
+              }
+            />
+            <Route
+              path={AppPages.Spam}
+              element={
+                <Auth>
+                  <Spam />
                 </Auth>
               }
             />
