@@ -3,13 +3,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 
 import MotionBox from "app/components/animated";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import DoughnutChart from "./components/chart";
 import BackDrop from "./components/radiants";
 import { homeSaga } from "./saga";
-import { selectHome } from "./selectors";
-import { homeReducer, sliceKey } from "./slice";
+import { homeSelectors } from "./selectors";
+import { homeActions, homeReducer, sliceKey } from "./slice";
 import {
   BackDropContainer,
   Box,
@@ -43,9 +46,22 @@ export function Home(props: Props) {
   useInjectReducer({ key: sliceKey, reducer: homeReducer });
   useInjectSaga({ key: sliceKey, saga: homeSaga });
   const { t } = useTranslation();
-  const home = useSelector(selectHome);
   const dispatch = useDispatch();
-
+  const unreadEmails = useSelector(homeSelectors.unreadEmails);
+  const events = useSelector(homeSelectors.events);
+  const defaultEvents =
+    events && events.filter((event) => event.eventType === "default");
+  const outOfOfficeEvents =
+    events && events.filter((event) => event.eventType === "outOfOffice");
+  const focusTimeEvents =
+    events && events.filter((event) => event.eventType === "focusTime");
+  const workEvents =
+    events && events.filter((event) => event.eventType === "workingLocation");
+  useEffect(() => {
+    dispatch(homeActions.getUnreadEmails());
+    dispatch(homeActions.getEvents());
+    return () => {};
+  }, []);
   return (
     <MotionBox>
       <Wrapper>
@@ -93,7 +109,9 @@ export function Home(props: Props) {
                   <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
                 </svg>
               </BoxIcon>
-              <BoxNumber>{12}</BoxNumber>
+              <BoxNumber>
+                {unreadEmails ? unreadEmails : <Skeleton width={50}></Skeleton>}
+              </BoxNumber>
               <BoxInfoAndToolTip>
                 <BoxInfo>Unread Emails</BoxInfo>
                 <BoxToolTip>
@@ -114,7 +132,7 @@ export function Home(props: Props) {
                   <ReactTooltip
                     id="email-tooltip"
                     place="top"
-                    content="An overview of your usage statistics within the app. Unread emails and today's events"
+                    content="Today's Unread Emails"
                     style={{ maxWidth: "200px" }}
                   />
                 </BoxToolTip>
@@ -139,7 +157,17 @@ export function Home(props: Props) {
                   />
                 </svg>
               </BoxIcon>
-              <BoxNumber>{12}</BoxNumber>
+              <BoxNumber>
+                {events !== undefined ? (
+                  events.length === 0 ? (
+                    "0"
+                  ) : (
+                    events.length
+                  )
+                ) : (
+                  <Skeleton width={50}></Skeleton>
+                )}
+              </BoxNumber>
               <BoxInfoAndToolTip>
                 <BoxInfo>Events</BoxInfo>
                 <BoxToolTip>
@@ -160,7 +188,7 @@ export function Home(props: Props) {
                   <ReactTooltip
                     id="events-tooltip"
                     place="top"
-                    content="An overview of your usage statistics within the app. Unread emails and today's events"
+                    content="Todays Events"
                     style={{ maxWidth: "200px" }}
                   />
                 </BoxToolTip>
@@ -184,7 +212,7 @@ export function Home(props: Props) {
                   />
                 </svg>
               </BoxIcon>
-              <BoxNumber>{12}</BoxNumber>
+              <BoxNumber>{0}</BoxNumber>
               <BoxInfoAndToolTip>
                 <BoxInfo>Monthly visit</BoxInfo>
                 <BoxToolTip>
@@ -205,7 +233,7 @@ export function Home(props: Props) {
                   <ReactTooltip
                     id="visit-tooltip"
                     place="top"
-                    content="An overview of your usage statistics within the app. Unread emails and today's events"
+                    content="Each time you load this page the number goes up (to be added)"
                     style={{ maxWidth: "200px" }}
                   />
                 </BoxToolTip>
@@ -246,54 +274,62 @@ export function Home(props: Props) {
                   <ReactTooltip
                     id="avg-tooltip"
                     place="top"
-                    content="An overview of your usage statistics within the app. Unread emails and today's events"
+                    content="Your tasks"
                     style={{ maxWidth: "200px" }}
                   />
                 </BoxToolTip>
               </BoxInfoAndToolTip>
             </Box>
           </BoxContainer>
-          <ChartBox>
-            <ChartTitle>Event Types</ChartTitle>
-            <ChartDivider />
-            <ChartAndTable>
-              <TableAndRows>
-                <ChartTableContainer>
-                  <div>type</div>
-                  <div>count</div>
-                </ChartTableContainer>
-                <TableRow>
-                  <TableRowTitleWrapper>
-                    <TableRowColorDiv background="#E17CFD"></TableRowColorDiv>
-                    <div>Default</div>
-                  </TableRowTitleWrapper>
-                  <Count>4</Count>
-                </TableRow>
-                <TableRow>
-                  <TableRowTitleWrapper>
-                    <TableRowColorDiv background="#4CD7F6"></TableRowColorDiv>
-                    <div>Out</div>
-                  </TableRowTitleWrapper>
-                  <Count>4</Count>
-                </TableRow>
-                <TableRow>
-                  <TableRowTitleWrapper>
-                    <TableRowColorDiv background="#FFABAB"></TableRowColorDiv>
-                    <div>Focus</div>
-                  </TableRowTitleWrapper>
-                  <Count>4</Count>
-                </TableRow>
-                <TableRow>
-                  <TableRowTitleWrapper>
-                    <TableRowColorDiv background="#9B59B6"></TableRowColorDiv>
-                    <div>Work</div>
-                  </TableRowTitleWrapper>
-                  <Count>4</Count>
-                </TableRow>
-              </TableAndRows>
-              <DoughnutChart />
-            </ChartAndTable>
-          </ChartBox>
+          {events !== undefined && events.length > 0 ? (
+            <ChartBox>
+              <ChartTitle>Event Types</ChartTitle>
+              <ChartDivider />
+              <ChartAndTable>
+                <TableAndRows>
+                  <ChartTableContainer>
+                    <div>type</div>
+                    <div>count</div>
+                  </ChartTableContainer>
+                  <TableRow>
+                    <TableRowTitleWrapper>
+                      <TableRowColorDiv background="#E17CFD"></TableRowColorDiv>
+                      <div>Default</div>
+                    </TableRowTitleWrapper>
+                    <Count>{defaultEvents?.length}</Count>
+                  </TableRow>
+                  <TableRow>
+                    <TableRowTitleWrapper>
+                      <TableRowColorDiv background="#4CD7F6"></TableRowColorDiv>
+                      <div>Out</div>
+                    </TableRowTitleWrapper>
+                    <Count>{outOfOfficeEvents?.length}</Count>
+                  </TableRow>
+                  <TableRow>
+                    <TableRowTitleWrapper>
+                      <TableRowColorDiv background="#FFABAB"></TableRowColorDiv>
+                      <div>Focus</div>
+                    </TableRowTitleWrapper>
+                    <Count>{focusTimeEvents?.length}</Count>
+                  </TableRow>
+                  <TableRow>
+                    <TableRowTitleWrapper>
+                      <TableRowColorDiv background="#9B59B6"></TableRowColorDiv>
+                      <div>Work</div>
+                    </TableRowTitleWrapper>
+                    <Count>{workEvents?.length}</Count>
+                  </TableRow>
+                </TableAndRows>
+                <DoughnutChart />
+              </ChartAndTable>
+            </ChartBox>
+          ) : (
+            <Skeleton
+              width={400}
+              height={300}
+              style={{ borderRadius: "32px" }}
+            />
+          )}
         </Container>
       </Wrapper>
     </MotionBox>

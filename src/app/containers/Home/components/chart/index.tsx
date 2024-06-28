@@ -1,9 +1,20 @@
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { homeSelectors } from "../../selectors";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const DoughnutChart = () => {
+  const events = useSelector(homeSelectors.events);
+  const defaultEvents =
+    events && events.filter((event) => event.eventType === "default");
+  const outOfOfficeEvents =
+    events && events.filter((event) => event.eventType === "outOfOffice");
+  const focusTimeEvents =
+    events && events.filter((event) => event.eventType === "focusTime");
+  const workEvents =
+    events && events.filter((event) => event.eventType === "workingLocation");
   const data = {
     labels: [
       "Work Meetings",
@@ -13,7 +24,12 @@ const DoughnutChart = () => {
     ],
     datasets: [
       {
-        data: [50, 30, 10, 10], // Example data
+        data: [
+          defaultEvents?.length,
+          outOfOfficeEvents?.length,
+          focusTimeEvents?.length,
+          workEvents?.length,
+        ], // Example data
         backgroundColor: ["#E17CFD", "#4CD7F6", "#FFABAB", "#9B59B6"],
         hoverBackgroundColor: ["#E17CFD", "#4CD7F6", "#FFABAB", "#9B59B6"],
         borderWidth: 0, // Remove the white border
