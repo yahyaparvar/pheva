@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { PayloadAction } from "@reduxjs/toolkit";
-import { Themes } from "app/types";
+import history from "app/router/history";
+import { AppPages, Themes } from "app/types";
 import { parseJwt } from "config/parseJwt";
 import { createSlice } from "store/toolkit";
 import { useInjectReducer, useInjectSaga } from "./redux-injectors";
@@ -62,6 +63,10 @@ const globalSlice = createSlice({
     },
     setTheme(state, action: PayloadAction<string>) {
       state.theme = action.payload;
+    },
+    logOut() {
+      storage.clear();
+      history.replace(AppPages.Login);
     },
     getAndSetTheme() {},
   },
