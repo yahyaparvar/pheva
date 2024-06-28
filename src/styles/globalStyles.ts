@@ -243,6 +243,11 @@ export const ROW_ALIGN_START__SPACE_B = css`
   justify-content:space-between;
   align-items: flex-start;
 `;
+export const ROW_ALIGN_CENTER__SPACE_AROUND = css`
+  ${ROW}
+  justify-content:space-around;
+  align-items: center;
+`;
 export const ROW_ALIGN_CENTER__SPACE_B = css`
   ${ROW}
   justify-content:space-between;

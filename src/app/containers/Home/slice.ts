@@ -14,6 +14,7 @@ const homeSlice = createSlice({
   initialState,
   reducers: {
     someAction(state, action: PayloadAction<any>) {},
+    getUnreadEmails(){}
   },
 });
 
