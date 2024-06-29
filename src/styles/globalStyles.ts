@@ -112,6 +112,12 @@ html {
  box-sizing:border-box;
  font-family : var(--font),sans-serif,system-ui, -apple-system,'Helvetica Neue',"Rubik";
 }
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition:
+    background-color 600000s 0s,
+    color 600000s 0s;
+}
 `;
 //COLUMN
 

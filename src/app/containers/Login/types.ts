@@ -4,7 +4,12 @@ import { toast } from "react-toastify";
 import axiosInstance from "service/apiClient";
 
 /* --- STATE --- */
-export interface LoginState {}
+export interface LoginState {
+  work: string;
+  name: string;
+  from: string;
+  step: number;
+}
 
 export type ContainerState = LoginState;
 

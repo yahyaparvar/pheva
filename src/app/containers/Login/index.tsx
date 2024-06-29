@@ -1,8 +1,6 @@
 import { useGoogleLogin } from "@react-oauth/google";
-import MotionBox from "app/components/animated";
 import history from "app/router/history";
 import { AppPages } from "app/types";
-
 import { Helmet } from "react-helmet-async";
 import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
@@ -11,9 +9,10 @@ import axiosInstance from "service/apiClient";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { globalActions } from "store/slice";
 import styled from "styled-components";
+import background from "./background.svg";
+import { NameInput } from "./components/name";
 import { loginSaga } from "./saga";
 import { LoginReducer, sliceKey } from "./slice";
-
 interface Props {}
 
 export function Login(props: Props) {
@@ -52,27 +51,58 @@ export function Login(props: Props) {
   });
 
   return (
-    <MotionBox>
+    <>
       <Helmet>
         <title>Login</title>
         <meta name="description" content="Description of Login" />
       </Helmet>
       <Container>
-        <Title>Login</Title>
-        <GoogleButtonStyle>
-          <button onClick={() => googleLogin()}>Login with Google</button>
-        </GoogleButtonStyle>
+        <NameInput></NameInput>
+        <GoogleButton onClick={() => googleLogin()}>
+          <i className="fab fa-google"></i> Login with Google
+        </GoogleButton>
         <ToastContainer />
       </Container>
-    </MotionBox>
+    </>
   );
 }
-
-const GoogleButtonStyle = styled.div`
-  width: 225px;
+export const Background = styled.img`
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 `;
+const GoogleButton = styled.button`
+  width: 225px;
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #357ae8;
+  }
+
+  i {
+    font-size: 20px;
+  }
+`;
+
 const Container = styled.div`
   display: flex;
+  z-index: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -82,32 +112,4 @@ const Container = styled.div`
 
 const Title = styled.h2`
   margin-bottom: 20px;
-`;
-
-const StyledButton = styled.button`
-  background-color: #4285f4;
-  color: white;
-  font-size: 16px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #357ae8;
-  }
-
-  &:active {
-    background-color: #3367d6;
-  }
-
-  img {
-    width: 20px;
-    height: 20px;
-  }
 `;
