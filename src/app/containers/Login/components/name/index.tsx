@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import {
@@ -12,8 +13,14 @@ import logo from "./logo.png";
 export const NameInput = () => {
   const dispatch = useDispatch();
   const name = useSelector(Loginselectors.name);
+
   return (
-    <InputContainer>
+    <InputContainer
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <InputAndButton>
         <StyledInput
           value={name}
@@ -24,9 +31,16 @@ export const NameInput = () => {
           name="name"
           placeholder="First Name"
         />
-        <StyledButton onClick={()=>{
-          dispatch(LoginActions.nextStep())
-        }} disabled={name === ""}>Start</StyledButton>
+        <StyledButton
+          onClick={() => {
+            dispatch(LoginActions.nextStep());
+          }}
+          disabled={name === ""}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Start
+        </StyledButton>
       </InputAndButton>
       <LogoAndInfo>
         <Logo src={logo}></Logo>
@@ -39,7 +53,7 @@ export const NameInput = () => {
   );
 };
 
-const InputContainer = styled.div`
+const InputContainer = styled(motion.div)`
   display: flex;
   ${UNSELECTABLE}
   flex-direction: row;
@@ -48,6 +62,7 @@ const InputContainer = styled.div`
   margin: 20px 0;
   align-items: center;
 `;
+
 const InputAndButton = styled.div`
   ${COLUMN_ALIGN_START__JUSTIFY_START}
 `;
@@ -93,7 +108,7 @@ const StyledInput = styled.input`
   }
 `;
 
-const StyledButton = styled.button<{ disabled: boolean }>`
+const StyledButton = styled(motion.button)<{ disabled: boolean }>`
   padding: 7px 30px;
   margin-top: 16px;
   border: none;
@@ -108,7 +123,7 @@ const StyledButton = styled.button<{ disabled: boolean }>`
     `}
   cursor: pointer;
   ${UNSELECTABLE}
-  transition:0.3s ease;
+  transition: 0.3s ease;
 
   &:hover {
     background-color: #357ae8;

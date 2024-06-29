@@ -1,25 +1,50 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import history from "app/router/history";
 import { AppPages } from "app/types";
+import { AnimatePresence, motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axiosInstance from "service/apiClient";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { globalActions } from "store/slice";
 import styled from "styled-components";
-import background from "./background.svg";
+import ChangingBackground from "./components/background";
 import { NameInput } from "./components/name";
 import { loginSaga } from "./saga";
+import { Loginselectors } from "./selectors";
 import { LoginReducer, sliceKey } from "./slice";
 interface Props {}
 
 export function Login(props: Props) {
   useInjectReducer({ key: sliceKey, reducer: LoginReducer });
   useInjectSaga({ key: sliceKey, saga: loginSaga });
-
+  const step = useSelector(Loginselectors.step);
   const dispatch = useDispatch();
+
+  const renderComponents = () => {
+    switch (step) {
+      case 1:
+        return (
+          <AnimatePresence mode="wait">
+            <NameInput />
+          </AnimatePresence>
+        );
+      default:
+        return (
+          <GoogleButton
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            onClick={() => googleLogin()}
+          >
+            <i className="fab fa-google"></i> Login with Google
+          </GoogleButton>
+        );
+    }
+  };
 
   const responseMessage = async (response: any) => {
     try {
@@ -57,25 +82,15 @@ export function Login(props: Props) {
         <meta name="description" content="Description of Login" />
       </Helmet>
       <Container>
-        <NameInput></NameInput>
-        <GoogleButton onClick={() => googleLogin()}>
-          <i className="fab fa-google"></i> Login with Google
-        </GoogleButton>
+        {/* {renderComponents()} */}
+        <ChangingBackground></ChangingBackground>
         <ToastContainer />
       </Container>
     </>
   );
 }
-export const Background = styled.img`
-  position: absolute;
-  left: 0;
-  top: 0;
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-`;
-const GoogleButton = styled.button`
+
+const GoogleButton = styled(motion.button)`
   width: 225px;
   padding: 10px;
   background-color: #4285f4;
