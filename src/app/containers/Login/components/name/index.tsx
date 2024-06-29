@@ -1,17 +1,32 @@
+import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import {
   COLUMN_ALIGN_START__JUSTIFY_START,
   COLUMN_CENTER,
   UNSELECTABLE,
 } from "styles/globalStyles";
+import { Loginselectors } from "../../selectors";
+import { LoginActions } from "../../slice";
 import logo from "./logo.png";
 
 export const NameInput = () => {
+  const dispatch = useDispatch();
+  const name = useSelector(Loginselectors.name);
   return (
     <InputContainer>
       <InputAndButton>
-        <StyledInput type="text" name="name" placeholder="First Name" />
-        <StyledButton disabled={false}>Start</StyledButton>
+        <StyledInput
+          value={name}
+          onChange={(e) => {
+            dispatch(LoginActions.setName(e.target.value));
+          }}
+          type="text"
+          name="name"
+          placeholder="First Name"
+        />
+        <StyledButton onClick={()=>{
+          dispatch(LoginActions.nextStep())
+        }} disabled={name === ""}>Start</StyledButton>
       </InputAndButton>
       <LogoAndInfo>
         <Logo src={logo}></Logo>
@@ -89,13 +104,11 @@ const StyledButton = styled.button<{ disabled: boolean }>`
   ${({ disabled }) =>
     disabled &&
     css`
-      opacity: 0.7;
+      opacity: 0.2;
     `}
   cursor: pointer;
   ${UNSELECTABLE}
-  transition:
-    background-color 0.3s ease,
-    transform 0.3s ease;
+  transition:0.3s ease;
 
   &:hover {
     background-color: #357ae8;
