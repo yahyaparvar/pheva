@@ -56,7 +56,7 @@ const Info = styled.div`
 
 const StyledInput = styled.input`
   padding: 10px;
-  height: 54px;
+  height: 51px;
   border: 1px solid #555;
   border-radius: 5px;
   font-size: 16px;
@@ -80,7 +80,7 @@ const StyledInput = styled.input`
 
 const StyledButton = styled.button<{ disabled: boolean }>`
   padding: 7px 30px;
-  margin-top: 20px;
+  margin-top: 16px;
   border: none;
   border-radius: 5px;
   background-color: #4285f4;
