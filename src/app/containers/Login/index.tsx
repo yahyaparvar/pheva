@@ -10,6 +10,7 @@ import axiosInstance from "service/apiClient";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { globalActions } from "store/slice";
 import styled from "styled-components";
+import { COLUMN_CENTER } from "styles/globalStyles";
 import ChangingBackground from "./components/background";
 import { NameInput } from "./components/name";
 import { loginSaga } from "./saga";
@@ -37,7 +38,7 @@ export function Login(props: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.9 }}
             onClick={() => googleLogin()}
           >
             <i className="fab fa-google"></i> Login with Google
@@ -82,8 +83,8 @@ export function Login(props: Props) {
         <meta name="description" content="Description of Login" />
       </Helmet>
       <Container>
-        {/* {renderComponents()} */}
         <ChangingBackground></ChangingBackground>
+        <ComponentsWrapper>{renderComponents()}</ComponentsWrapper>
         <ToastContainer />
       </Container>
     </>
@@ -127,4 +128,10 @@ const Container = styled.div`
 
 const Title = styled.h2`
   margin-bottom: 20px;
+`;
+const ComponentsWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  ${COLUMN_CENTER}
 `;

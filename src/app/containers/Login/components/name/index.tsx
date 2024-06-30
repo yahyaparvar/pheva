@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import {
@@ -61,6 +61,7 @@ const InputContainer = styled(motion.div)`
   width: 100%;
   margin: 20px 0;
   align-items: center;
+  z-index: 1;
 `;
 
 const InputAndButton = styled.div`

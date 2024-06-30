@@ -1,24 +1,88 @@
-// App.tsx
-import React, { useState } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
 import styled, { css, keyframes } from "styled-components";
+import { Loginselectors } from "../../selectors";
 
-const gradient = keyframes`
-  to {
+const gradient1 = keyframes`
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+`;
+
+const gradient2 = keyframes`
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 50% 50%;
+  }
+`;
+
+const gradient3 = keyframes`
+  0% {
+    background-position: 50% 50%;
+  }
+  100% {
+    background-position: 75% 50%;
+  }
+`;
+
+const gradient4 = keyframes`
+  0% {
+    background-position: 75% 50%;
+  }
+  100% {
     background-position: 100% 50%;
   }
 `;
 
 interface BodyProps {
-  animate: boolean;
+  stage: number;
 }
 
 const Body = styled.div<BodyProps>`
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  background: linear-gradient(
+    -45deg,
+    #ee7752,
+    #ee7752,
+    #e73c7e,
+    #e73c7e,
+    #23a6d5,
+    #23a6d5,
+    #23d5ab,
+    #23d5ab,
+    #23d5ab,
+    transparent,
+    transparent,
+    transparent
+  );
   background-size: 400% 400%;
   ${(props) =>
-    props.animate &&
+    props.stage === 1 &&
     css`
-      animation: ${gradient} 2s ease forwards;
+      animation: ${gradient1} 2s ease forwards;
+    `}
+  ${(props) =>
+    props.stage === 2 &&
+    css`
+      animation: ${gradient2} 2s ease forwards;
+    `}
+  ${(props) =>
+    props.stage === 3 &&
+    css`
+      animation: ${gradient3} 2s ease forwards;
+    `}
+  ${(props) =>
+    props.stage === 4 &&
+    css`
+      animation: ${gradient4} 2s ease forwards;
     `}
   height: 100vh;
   display: flex;
@@ -41,7 +105,6 @@ const Title = styled.h1`
   margin: 0;
 `;
 
-
 const Button = styled.button`
   display: inline-block;
   padding: 0.5rem 1rem;
@@ -61,25 +124,13 @@ const Button = styled.button`
   }
 `;
 
-
-const App: React.FC = () => {
-  const [animate, setAnimate] = useState(false);
-
-  const handleAnimationStart = () => {
-    setAnimate(true);
-    // No need for setTimeout to reset animate state here, as we want it to stay after animation ends
-  };
-
+const Background: React.FC = () => {
+  const steps = useSelector(Loginselectors.step);
   return (
-    <Body animate={animate}>
-      <ContentContainer>
-        <Title>Pure CSS Gradient Background Animation</Title>
-        <Button onClick={handleAnimationStart}>
-          <i className="fas fa-play"></i> Start Animation
-        </Button>
-      </ContentContainer>
+    <Body stage={steps}>
+      <ContentContainer></ContentContainer>
     </Body>
   );
 };
 
-export default App;
+export default Background;
