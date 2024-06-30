@@ -12,6 +12,7 @@ import { globalActions } from "store/slice";
 import styled from "styled-components";
 import { COLUMN_CENTER } from "styles/globalStyles";
 import ChangingBackground from "./components/background";
+import { From } from "./components/from";
 import { NameInput } from "./components/name";
 import { Work } from "./components/work";
 import { loginSaga } from "./saga";
@@ -35,6 +36,8 @@ export function Login(props: Props) {
         );
       case 2:
         return <Work></Work>;
+      case 3:
+        return <From></From>;
       default:
         return (
           <GoogleButton

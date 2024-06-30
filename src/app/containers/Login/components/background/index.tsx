@@ -50,7 +50,7 @@ const Body = styled.div<BodyProps>`
   z-index: 0;
   background: linear-gradient(
     -45deg,
-    #ee7752,
+    #2c2c2c,
     #ee7752,
     #e73c7e,
     #e73c7e,
