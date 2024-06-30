@@ -1,8 +1,9 @@
 import { Typography } from "@mui/material";
 import { motion } from "framer-motion";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { COLUMN_CENTER } from "styles/globalStyles";
+import { Loginselectors } from "../../selectors";
 import { LoginActions } from "../../slice";
 import Content from "./content.svg";
 import Developer from "./developer.svg";
@@ -68,6 +69,7 @@ export const Work = () => {
     dispatch(LoginActions.setWork(job));
     dispatch(LoginActions.nextStep());
   };
+  const name = useSelector(Loginselectors.name);
   return (
     <Container
       initial={{ opacity: 0 }}
@@ -75,7 +77,7 @@ export const Work = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
-      <Title>What do you do Yahya?</Title>
+      <Title>What do you do {name}?</Title>
       <CardContainer>
         <Card
           whileHover={{ scale: 1.05 }}
