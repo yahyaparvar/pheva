@@ -59,9 +59,9 @@ const Body = styled.div<BodyProps>`
     #23d5ab,
     #23d5ab,
     #23d5ab,
-    transparent,
-    transparent,
-    transparent
+    #255b41,
+    #2c2c2c,
+    #2c2c2c
   );
   background-size: 400% 400%;
   ${(props) =>

@@ -13,6 +13,7 @@ import styled from "styled-components";
 import { COLUMN_CENTER } from "styles/globalStyles";
 import ChangingBackground from "./components/background";
 import { NameInput } from "./components/name";
+import { Work } from "./components/work";
 import { loginSaga } from "./saga";
 import { Loginselectors } from "./selectors";
 import { LoginReducer, sliceKey } from "./slice";
@@ -32,6 +33,8 @@ export function Login(props: Props) {
             <NameInput />
           </AnimatePresence>
         );
+      case 2:
+        return <Work></Work>;
       default:
         return (
           <GoogleButton
