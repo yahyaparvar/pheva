@@ -5,6 +5,7 @@ import { SentState } from 'app/containers/Sent/types';
 import { CalendarState } from 'app/containers/Calendar/types';
 import { EmailDetailState } from 'app/containers/EmailDetail/types';
 import { SpamState } from 'app/containers/Spam/types';
+import { TasksState } from 'app/containers/Tasks/types';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 
 import { HomeState } from "app/containers/Home/types";
@@ -26,5 +27,6 @@ export interface RootState {
   calendar?: CalendarState;
   emailDetail?: EmailDetailState;
   spam?: SpamState;
+  tasks?: TasksState;
 // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
 }
