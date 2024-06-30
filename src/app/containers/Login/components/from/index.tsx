@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useState } from "react";
 import {
   FaFileAlt,
@@ -6,10 +7,12 @@ import {
   FaQuestion,
   FaYoutube,
 } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { LoginActions } from "../../slice";
 
 // Styled components for the dropdown
-const DropdownContainer = styled.div`
+const DropdownContainer = styled(motion.div)`
   position: relative;
   width: 250px;
   margin: 20px;
@@ -18,7 +21,7 @@ const DropdownContainer = styled.div`
 const DropdownButton = styled.button`
   width: 100%;
   padding: 10px;
-  background-color: #e73c7e;
+  background-color: #e73c56;
   border: none;
   border-radius: 5px;
   color: white;
@@ -67,6 +70,7 @@ const IconWrapper = styled.span`
 
 // Dropdown component
 export const From = () => {
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -77,6 +81,8 @@ export const From = () => {
   const handleItemClick = (item: any) => {
     setSelectedItem(item.label);
     setIsOpen(false);
+    dispatch(LoginActions.setFrom(item.label));
+    dispatch(LoginActions.nextStep());
   };
 
   const items = [
@@ -88,7 +94,12 @@ export const From = () => {
   ];
 
   return (
-    <DropdownContainer>
+    <DropdownContainer
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <DropdownButton onClick={toggleDropdown}>
         {selectedItem || "How did you hear about us?"}
       </DropdownButton>

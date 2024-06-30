@@ -35,7 +35,7 @@ const gradient4 = keyframes`
     background-position: 75% 50%;
   }
   100% {
-    background-position: 100% 50%;
+    background-position: 100% 100%;
   }
 `;
 
@@ -51,7 +51,8 @@ const Body = styled.div<BodyProps>`
   background: linear-gradient(
     -45deg,
     #2c2c2c,
-    #ee7752,
+    #2c2c2c,
+    #2c2c2c,
     #e73c7e,
     #e73c7e,
     #23a6d5,

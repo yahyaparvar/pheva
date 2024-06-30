@@ -13,6 +13,7 @@ import styled from "styled-components";
 import { COLUMN_CENTER } from "styles/globalStyles";
 import ChangingBackground from "./components/background";
 import { From } from "./components/from";
+import { Google } from "./components/google";
 import { NameInput } from "./components/name";
 import { Work } from "./components/work";
 import { loginSaga } from "./saga";
@@ -25,7 +26,11 @@ export function Login(props: Props) {
   useInjectSaga({ key: sliceKey, saga: loginSaga });
   const step = useSelector(Loginselectors.step);
   const dispatch = useDispatch();
-
+  const GoogleStaticButton = (
+    <GoogleButton onClick={() => googleLogin()}>
+      <i className="fab fa-google"></i> Login with Google
+    </GoogleButton>
+  );
   const renderComponents = () => {
     switch (step) {
       case 1:
@@ -39,17 +44,7 @@ export function Login(props: Props) {
       case 3:
         return <From></From>;
       default:
-        return (
-          <GoogleButton
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.9 }}
-            onClick={() => googleLogin()}
-          >
-            <i className="fab fa-google"></i> Login with Google
-          </GoogleButton>
-        );
+        return <Google>{GoogleStaticButton}</Google>;
     }
   };
 
@@ -100,7 +95,7 @@ export function Login(props: Props) {
 const GoogleButton = styled(motion.button)`
   width: 225px;
   padding: 10px;
-  background-color: #4285f4;
+  background-color: #23a6d5;
   color: white;
   border: none;
   border-radius: 5px;
