@@ -18,7 +18,7 @@ import { NameInput } from "./components/name";
 import { Work } from "./components/work";
 import { loginSaga } from "./saga";
 import { Loginselectors } from "./selectors";
-import { LoginReducer, sliceKey } from "./slice";
+import { LoginActions, LoginReducer, sliceKey } from "./slice";
 interface Props {}
 
 export function Login(props: Props) {
@@ -58,6 +58,9 @@ export function Login(props: Props) {
       const token = result.data;
       dispatch(globalActions.setLoggedIn(token));
       history.push(AppPages.RootPage);
+
+      dispatch(LoginActions.saveLoginData());
+      dispatch(LoginActions.clearLoginData());
     } catch (error) {
       console.error("Error during authentication", error);
       toast.error("Login Failed!");

@@ -47,7 +47,7 @@ export const SidebarItem: React.FC<SidebarItemProps & { active: boolean }> = ({
     });
   }, []);
   return (
-    <>
+    <Wrapper>
       <StyledSidebarItem onClick={handleItemClick} active={active}>
         <SideBarItemIcon>{icon}</SideBarItemIcon>
         {label}
@@ -64,9 +64,10 @@ export const SidebarItem: React.FC<SidebarItemProps & { active: boolean }> = ({
             {sub.label}
           </StyledSubItem>
         ))}
-    </>
+    </Wrapper>
   );
 };
+const Wrapper = styled.div``;
 const StyledSidebarItem = styled.div<{ active: boolean }>`
   ${ROW_JUSTIFY_START__ALIGN_CENTER}
   padding: 4px 8px;

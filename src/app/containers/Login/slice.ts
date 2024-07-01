@@ -4,6 +4,7 @@ import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { createSlice } from "store/toolkit";
 import { ContainerState } from "./types";
 
+import { LocalStorageKeys, storage } from "store/storage";
 import { loginSaga } from "./saga";
 
 // The initial state of the Login container
@@ -32,6 +33,20 @@ const loginSlice = createSlice({
     },
     prevStep(state) {
       state.step -= 1;
+    },
+    clearLoginData(state) {
+      state.step = 0;
+      state.from = "";
+      state.name = "";
+      state.work = "";
+    },
+    saveLoginData(state) {
+      const data = {
+        from: state.from,
+        loginName: state.name,
+        job: state.work,
+      };
+      storage.write(LocalStorageKeys.LOGIN_INFO, data);
     },
   },
 });
