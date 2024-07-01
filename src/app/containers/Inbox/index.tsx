@@ -167,7 +167,7 @@ export function Inbox(props: Props) {
                 )
               }
               onClick={() => {
-                if (emailsStatus !== Status.SUCCESS) {
+                if (emailsStatus === Status.SUCCESS) {
                   dispatch(InboxActions.fetchEmailSummaries());
                 } else {
                 }
