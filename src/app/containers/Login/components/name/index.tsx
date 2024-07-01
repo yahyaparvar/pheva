@@ -9,6 +9,7 @@ import {
 import { Loginselectors } from "../../selectors";
 import { LoginActions } from "../../slice";
 import logo from "./logo.png";
+import LazyImageComponent from "app/components/image/lazyImage";
 
 export const NameInput = () => {
   const dispatch = useDispatch();
@@ -68,7 +69,7 @@ const InputAndButton = styled.div`
   ${COLUMN_ALIGN_START__JUSTIFY_START}
 `;
 
-const Logo = styled.img`
+const Logo = styled(LazyImageComponent)`
   height: auto;
   width: 200px;
 `;

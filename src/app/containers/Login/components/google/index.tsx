@@ -1,3 +1,4 @@
+import LazyImageComponent from "app/components/image/lazyImage";
 import { motion } from "framer-motion";
 import { FC, ReactNode } from "react";
 import styled from "styled-components";
@@ -21,7 +22,7 @@ const Wrapper = styled(motion.div)`
   height: 100%;
   ${COLUMN_CENTER}
 `;
-const DoneImage = styled.img`
+const DoneImage = styled(LazyImageComponent)`
   position: absolute;
   left: 32px;
   top: 64px;
