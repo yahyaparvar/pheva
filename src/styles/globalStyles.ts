@@ -96,7 +96,6 @@ html {
   margin: 0;
   width: 100vw;
   min-height: 100vh;
-  background-color: var(--background-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;

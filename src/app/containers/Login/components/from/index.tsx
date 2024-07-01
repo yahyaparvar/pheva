@@ -66,6 +66,7 @@ const DropdownItem = styled.li`
 
 const IconWrapper = styled.span`
   margin-right: 10px;
+  height: fit-content;
 `;
 
 // Dropdown component

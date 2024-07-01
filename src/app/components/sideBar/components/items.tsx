@@ -122,7 +122,7 @@ export const items: SidebarItemProps[] = [
   { label: "Calendar (Beta)", to: AppPages.Calendar, icon: CalendarIcon },
   {
     label: "Tasks (Soon)",
-    to: AppPages.HomePage,
+    to: AppPages.Tasks,
     icon: TaskIcon,
   },
 ];

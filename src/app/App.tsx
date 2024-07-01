@@ -13,6 +13,7 @@ import { Login } from "./containers/Login";
 import { NotFoundPage } from "./containers/NotFound";
 import { Sent } from "./containers/Sent/Loadable";
 import { Spam } from "./containers/Spam/Loadable";
+import { Tasks } from "./containers/Tasks/Loadable";
 import MainLayout from "./layout";
 import { CustomRouter } from "./router";
 import history from "./router/history";
@@ -81,6 +82,14 @@ function App() {
               element={
                 <Auth>
                   <Spam />
+                </Auth>
+              }
+            />
+            <Route
+              path={AppPages.Tasks}
+              element={
+                <Auth>
+                  <Tasks />
                 </Auth>
               }
             />
