@@ -5,12 +5,14 @@ import { AppPages, Status } from "app/types";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import he from "he";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Joyride from "react-joyride";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Column, useTable } from "react-table";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
+import { LocalStorageKeys, storage } from "store/storage";
 import styled, { css } from "styled-components";
 import {
   ROW_JUSTIFY_END__ALIGN_CENTER,
@@ -44,7 +46,22 @@ export function Inbox(props: Props) {
   const emailsSummaries = useSelector(Inboxselectors.emailsSummaries);
   const lastPageTokens = useSelector(Inboxselectors.lastPageTokens);
   const isShowAiAnimation = useSelector(Inboxselectors.showAiAnimation);
-
+  const [run, setRun] = useState(false);
+  useEffect(() => {
+    if (storage.read(LocalStorageKeys.NOT_FIRST_TIME)) {
+      setRun(false);
+    } else {
+      setRun(true);
+      // storage.write(LocalStorageKeys.NOT_FIRST_TIME, "TRUE");
+    }
+  }, []);
+  const steps = [
+    {
+      target: ".summary-info",
+      content: "Summarize your emails with AI. Usually takes about 30 seconds!",
+      disableBeacon: true,
+    },
+  ];
   useEffect(() => {
     if (emailsStatus !== Status.SUCCESS && emailsStatus !== Status.LOADING) {
       dispatch(InboxActions.getEmails());
@@ -105,6 +122,7 @@ export function Inbox(props: Props) {
 
   return (
     <>
+      <Joyride steps={steps} run={run} scrollToFirstStep />
       <TableContainer
         initial={{
           opacity: emailsStatus === Status.SUCCESS ? 1 : 0,
@@ -128,6 +146,7 @@ export function Inbox(props: Props) {
         ) : (
           <FixedTableHeader>
             <Button
+              className="summary-info"
               loading={emailsSummariesStatus === Status.LOADING}
               rightIcon={
                 emailsSummariesStatus === Status.SUCCESS ? (
@@ -148,7 +167,11 @@ export function Inbox(props: Props) {
                 )
               }
               onClick={() => {
-                dispatch(InboxActions.fetchEmailSummaries());
+                if (emailsStatus !== Status.SUCCESS) {
+                  dispatch(InboxActions.fetchEmailSummaries());
+                } else {
+
+                }
               }}
             >
               Summarize with AI

@@ -3,6 +3,7 @@ export enum LocalStorageKeys {
   THEME = "THEME",
   LOGIN_INFO = "LOGIN_INFO",
   LANG = "LANG",
+  NOT_FIRST_TIME = "NOT_FIRST_TIME",
 }
 
 export enum SessionStorageKeys {

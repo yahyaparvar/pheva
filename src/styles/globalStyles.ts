@@ -91,6 +91,16 @@ const GlobalStyle = createGlobalStyle`
   --font:"Rubik" !important;
   direction:rtl ;
 }
+.summary-info{
+  div {
+    color:black !important;
+  }
+}
+.react-joyride__tooltip{
+  div {
+    color:black !important;
+  }
+}
 body,
 html {
   margin: 0;
