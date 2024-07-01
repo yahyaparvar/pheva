@@ -52,7 +52,7 @@ export function Inbox(props: Props) {
       setRun(false);
     } else {
       setRun(true);
-      // storage.write(LocalStorageKeys.NOT_FIRST_TIME, "TRUE");
+      storage.write(LocalStorageKeys.NOT_FIRST_TIME, "TRUE");
     }
   }, []);
   const steps = [
@@ -170,7 +170,6 @@ export function Inbox(props: Props) {
                 if (emailsStatus !== Status.SUCCESS) {
                   dispatch(InboxActions.fetchEmailSummaries());
                 } else {
-
                 }
               }}
             >
