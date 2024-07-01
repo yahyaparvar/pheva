@@ -11,7 +11,7 @@ export const fetchEmails = async (
   pageToken?: string
 ): Promise<EmailResponse> => {
   const response = await axiosInstance.get(
-    `http://localhost:8000/emails/inbox?pageToken=${pageToken || ""}`
+    `https://pheva-backend.vercel.app/emails/inbox?pageToken=${pageToken || ""}`
   );
   return {
     emails: response.data.emails,
@@ -22,7 +22,7 @@ export const getEmailSummaryAPI = async (
   prompt?: Email[]
 ): Promise<EmailResponse> => {
   const response = await axiosInstance.post(
-    `http://localhost:8000/ai/emails/summary`,
+    `https://pheva-backend.vercel.app/ai/emails/summary`,
     { prompt, name: storage.read(LocalStorageKeys.USER_INFO).name }
   );
   return response.data.emails;

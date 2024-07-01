@@ -75,7 +75,7 @@ function* getSummary(action: PayloadAction<string>) {
 
     const responseStream: Response = yield call(
       fetch,
-      "http://localhost:8000/ai/emailsDetails/summary",
+      "https://pheva-backend.vercel.app/ai/emailsDetails/summary",
       {
         method: "POST",
         headers: {
@@ -118,7 +118,7 @@ export function* getNegativeAnswer() {
     yield put(emailDetailActions.setNegativeAnswerStatus(Status.LOADING));
     const responseStream: Response = yield call(
       fetch,
-      "http://localhost:8000/ai/emailsDetails/negativeAnswer",
+      "https://pheva-backend.vercel.app/ai/emailsDetails/negativeAnswer",
       {
         method: "POST",
         headers: {
@@ -162,7 +162,7 @@ export function* getPositiveAnswer() {
     yield put(emailDetailActions.setPositiveAnswerStatus(Status.LOADING));
     const responseStream: Response = yield call(
       fetch,
-      "http://localhost:8000/ai/emailsDetails/positiveAnswer",
+      "https://pheva-backend.vercel.app/ai/emailsDetails/positiveAnswer",
       {
         method: "POST",
         headers: {
@@ -245,7 +245,7 @@ export function* replyToEmail(action: PayloadAction<string>) {
       yield put(emailDetailActions.setReplySendStatus(Status.LOADING));
       toast.success("Email sent!");
       yield put(emailDetailActions.setReplySendStatus(Status.SUCCESS));
-      yield put(emailDetailActions.setEmailMd(""))
+      yield put(emailDetailActions.setEmailMd(""));
       yield delay(3000);
       window.location.reload();
     } else {

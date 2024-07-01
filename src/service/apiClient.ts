@@ -9,7 +9,7 @@ import axios, {
 import { LocalStorageKeys, storage } from "store/storage";
 
 export const AuthBaseUrl = `https://auth.base.url`;
-export const baseURL = `http://localhost:8000/`;
+export const baseURL = `https://pheva-backend.vercel.app/`;
 
 interface ErrorResponse {
   message: string;
