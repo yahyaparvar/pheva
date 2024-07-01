@@ -1,3 +1,5 @@
+import history from "app/router/history";
+import { AppPages } from "app/types";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -59,6 +61,10 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    if (error.response?.status === 401 || error.response?.status === 500) {
+      storage.clear();
+      history.push(AppPages.Login);
+    }
     return Promise.reject(error);
   }
 );
