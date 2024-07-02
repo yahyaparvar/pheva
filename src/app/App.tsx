@@ -1,6 +1,6 @@
-import React, { ReactElement, useLayoutEffect } from "react";
+import React, { ReactElement, useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { globalSelectors } from "store/selector";
 import { globalActions, useglobalSlice } from "store/slice";
 import styled from "styled-components";
@@ -8,6 +8,7 @@ import {
   COLUMN_ALIGN_START__JUSTIFY_START,
   COLUMN_CENTER,
 } from "styles/globalStyles";
+import { initGA } from "./analytics";
 import { Calendar } from "./containers/Calendar/Loadable";
 import { EmailDetail } from "./containers/EmailDetail/Loadable";
 import { Home } from "./containers/Home";
@@ -27,7 +28,6 @@ interface RequireAuthProps {
 }
 
 const Auth: React.FC<RequireAuthProps> = ({ children }) => {
-  const location = useLocation();
   const isLoggedIn = useSelector(globalSelectors.isLoggedIn);
   if (!isLoggedIn) {
     history.push(AppPages.Login);
@@ -37,6 +37,9 @@ const Auth: React.FC<RequireAuthProps> = ({ children }) => {
 };
 
 function App() {
+  useEffect(() => {
+    initGA();
+  }, []);
   useglobalSlice();
   const dispatch = useDispatch();
   useLayoutEffect(() => {

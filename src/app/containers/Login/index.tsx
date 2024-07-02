@@ -2,6 +2,8 @@ import { useGoogleLogin } from "@react-oauth/google";
 import history from "app/router/history";
 import { AppPages } from "app/types";
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
+import ReactGA from "react-ga4";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
@@ -9,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axiosInstance from "service/apiClient";
 import { useInjectReducer, useInjectSaga } from "store/redux-injectors";
 import { globalActions } from "store/slice";
+import { LocalStorageKeys, storage } from "store/storage";
 import styled from "styled-components";
 import { COLUMN_CENTER } from "styles/globalStyles";
 import ChangingBackground from "./components/background";
@@ -26,6 +29,11 @@ export function Login(props: Props) {
   useInjectSaga({ key: sliceKey, saga: loginSaga });
   const step = useSelector(Loginselectors.step);
   const dispatch = useDispatch();
+  useEffect(() => {
+    if (storage.read(LocalStorageKeys.USER_INFO)) {
+      history.push(AppPages.RootPage);
+    }
+  }, []);
   const GoogleStaticButton = (
     <GoogleButton onClick={() => googleLogin()}>
       <i className="fab fa-google"></i> Login with Google
@@ -60,6 +68,11 @@ export function Login(props: Props) {
       history.push(AppPages.RootPage);
 
       dispatch(LoginActions.saveLoginData());
+      ReactGA.event({
+        category: "User",
+        action: "Account creation",
+        label: `${storage.read(LocalStorageKeys.USER_INFO)?.name} created his/her profile`,
+      });
       dispatch(LoginActions.clearLoginData());
     } catch (error) {
       console.error("Error during authentication", error);
