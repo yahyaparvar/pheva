@@ -64,6 +64,9 @@ export function Home(props: Props) {
   }, []);
   return (
     <MotionBox>
+      <a href="/privacy-policy.pdf" target="_blank" rel="noopener noreferrer">
+        privacy & policy
+      </a>
       <Wrapper>
         <Helmet>
           <title>Home</title>
