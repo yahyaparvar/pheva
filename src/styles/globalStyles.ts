@@ -27,7 +27,6 @@ const GlobalStyle = createGlobalStyle`
     --border: #374151;
     --title: #ffffff;
     --background-secondary: #1f2937;
-    --background-color: #111827;
 }
 .DRACULA{
   --text: #f8f8f2;
@@ -36,7 +35,6 @@ const GlobalStyle = createGlobalStyle`
   --background-secondary: #282a36;
   --button: #bd93f9;
   --button-text: #f8f8f2;
-  --background-color: #282a36;
 }
 .SOLAR{
   --text: #657b83;
@@ -45,7 +43,6 @@ const GlobalStyle = createGlobalStyle`
   --background-secondary: #fdf6e3;
   --button: #cb4b16;
   --button-text: #fdf6e3;
-  --background-color: #002b36;
 }
 .NORD{
   --text: #d8dee9;
@@ -54,7 +51,6 @@ const GlobalStyle = createGlobalStyle`
   --background-secondary: #2e3440;
   --button: #88c0d0;
   --button-text: #2e3440;
-  --background-color: #3b4252;
 }
 .DISCORD{
   --text: #b9bbbe;
@@ -63,7 +59,6 @@ const GlobalStyle = createGlobalStyle`
   --background-secondary: #36393f;
   --button: #7289da;
   --button-text: #ffffff;
-  --background-color: #2f3136;
 }
 .MIDNIGHT{
   --text: #c3c3c3;
@@ -72,7 +67,6 @@ const GlobalStyle = createGlobalStyle`
   --background-secondary: #292b2f;
   --button: #00bcd4; /* Cyan accent color */
   --button-text: #ffffff;
-  --background-color: #1e1e1e;
 }
 .LOCA{
   --text: #d8dee9;
@@ -81,7 +75,6 @@ const GlobalStyle = createGlobalStyle`
   --background-secondary: #3d4754;
   --button: #4caf50;
   --button-text: #ffffff;
-  --background-color: #282c34;
 }
 .fa{
   --font:"Rubik" !important;

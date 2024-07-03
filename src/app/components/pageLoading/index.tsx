@@ -1,4 +1,6 @@
+import { Wrapper } from "./wrapper";
+
 const PageLoading = (props: any) => {
-  return <></>;
+  return <Wrapper></Wrapper>;
 };
 export { PageLoading };
