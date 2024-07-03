@@ -126,13 +126,13 @@ const Wrapper = styled.main`
   min-height: 100vh;
   margin: 0 auto;
   ${COLUMN_ALIGN_START__JUSTIFY_START}
-  @media (max-width: 1127px) {
+  @media (max-width: 1000px) {
     display: none;
   }
 `;
 const MobileView = styled.div`
   display: none;
-  @media (max-width: 1127px) {
+  @media (max-width: 1000px) {
     ${COLUMN_CENTER}
     width:100vw;
     height: 100vh;

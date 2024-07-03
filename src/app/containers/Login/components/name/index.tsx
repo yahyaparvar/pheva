@@ -1,3 +1,4 @@
+import LazyImageComponent from "app/components/image/lazyImage";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
@@ -9,7 +10,6 @@ import {
 import { Loginselectors } from "../../selectors";
 import { LoginActions } from "../../slice";
 import logo from "./logo.png";
-import LazyImageComponent from "app/components/image/lazyImage";
 
 export const NameInput = () => {
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ export const NameInput = () => {
         <Logo src={logo}></Logo>
         <Info>
           Pheva is an AI powered virtual assistance which helps you manage your
-          daily work. Powered by <br /> OpenAI GPT 3.5
+          daily work. Powered by <br /> OpenAI GPT 3.5 Turbo
         </Info>
       </LogoAndInfo>
     </InputContainer>

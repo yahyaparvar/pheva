@@ -27,6 +27,7 @@ interface RefreshTokenResponse {
 
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL,
+  timeout: 60000, 
 });
 
 axiosInstance.interceptors.request.use(
