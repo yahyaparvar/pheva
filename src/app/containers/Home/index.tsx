@@ -340,6 +340,13 @@ export function Home(props: Props) {
           )}
         </Container>
       </Wrapper>
+      <div style={{ height: 24 }}></div>
+      <a
+        style={{ padding: "24px", marginTop: "24px" }}
+        href={AppPages.PrivacyPolicy}
+      >
+        Our Privacy Policy
+      </a>
     </MotionBox>
   );
 }
