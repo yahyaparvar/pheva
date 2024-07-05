@@ -15,6 +15,7 @@ import { Home } from "./containers/Home";
 import { Inbox } from "./containers/Inbox/Loadable";
 import { Login } from "./containers/Login";
 import { NotFoundPage } from "./containers/NotFound";
+import PrivacyPolicy from "./containers/Privacy";
 import { Sent } from "./containers/Sent/Loadable";
 import { Spam } from "./containers/Spam/Loadable";
 import { Tasks } from "./containers/Tasks/Loadable";
@@ -109,6 +110,10 @@ function App() {
                 }
               />
             </Route>
+            <Route
+              path={`${AppPages.PrivacyPolicy}`}
+              element={<PrivacyPolicy />}
+            />
             <Route path={AppPages.Login} element={<Login />}></Route>
             <Route path={AppPages.NotFoundPage} element={<NotFoundPage />} />
           </Routes>

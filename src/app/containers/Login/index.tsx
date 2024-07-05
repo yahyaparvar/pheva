@@ -1,4 +1,5 @@
 import { useGoogleLogin } from "@react-oauth/google";
+import PrivacyPolicyBottomSheet from "app/components/privacy";
 import history from "app/router/history";
 import { AppPages } from "app/types";
 import { AnimatePresence, motion } from "framer-motion";
@@ -103,6 +104,7 @@ export function Login(props: Props) {
         <ChangingBackground></ChangingBackground>
         <ComponentsWrapper>{renderComponents()}</ComponentsWrapper>
         <ToastContainer />
+        <PrivacyPolicyBottomSheet></PrivacyPolicyBottomSheet>
       </Container>
     </>
   );

@@ -101,7 +101,7 @@ html {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+  overflow-x: hidden;
   background-color:var(--background) ;
 }
 *{

@@ -10,6 +10,7 @@ export enum AppPages {
   EmailDetail = "/emailDetail",
   Spam = '/spam',
   Tasks = '/tasks',
+  PrivacyPolicy = '/privacy-policy',
   // [INSERT NEW PAGE PATH ABOVE] < Needed for generating containers seamlessly
 }
 export enum Themes {

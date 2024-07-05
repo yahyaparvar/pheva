@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 
 import MotionBox from "app/components/animated";
+import { AppPages } from "app/types";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Skeleton from "react-loading-skeleton";
@@ -64,6 +65,13 @@ export function Home(props: Props) {
   }, []);
   return (
     <MotionBox>
+      <div style={{ height: 24 }}></div>
+      <a
+        style={{ padding: "24px", marginTop: "24px" }}
+        href={AppPages.PrivacyPolicy}
+      >
+        Please read our Privacy Policy
+      </a>
       <Wrapper>
         <Helmet>
           <title>Home</title>
