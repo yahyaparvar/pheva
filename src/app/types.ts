@@ -8,7 +8,7 @@ export enum AppPages {
   NotFoundPage = "*",
   AboutMe = "/aboutMe",
   Calendar = "/calendar",
-  EmailDetail = "/emailDetail",
+  EmailDetail = "/dashboard/emailDetail",
   Spam = "/spam",
   Tasks = "/tasks",
   PrivacyPolicy = "/privacy-policy",
