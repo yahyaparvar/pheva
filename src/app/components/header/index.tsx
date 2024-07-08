@@ -1,3 +1,4 @@
+import { AppPages } from "app/types";
 import styled from "styled-components";
 import {
   COLUMN_CENTER,
@@ -5,6 +6,7 @@ import {
   ROW_CENTER,
 } from "styles/globalStyles";
 import { Button } from "../buttons/landing";
+import history from "app/router/history";
 
 export const Header = () => {
   return (
@@ -35,11 +37,11 @@ export const Header = () => {
           </Item>
         </ItemContainer>
         <LoginButtonContainer>
-          <Item href="https://pheva.vercel.app">Login</Item>
+          <Item href={AppPages.RootPage}>Login</Item>
           <Button
             onClick={(e) => {
               e.preventDefault();
-              window.open("https://pheva.vercel.app", "_blank");
+              history.push(AppPages.RootPage)
             }}
             variant="secondary"
             rightIcon={

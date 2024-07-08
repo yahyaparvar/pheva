@@ -1,4 +1,6 @@
 import { Button } from "app/components/buttons/landing";
+import history from "app/router/history";
+import { AppPages } from "app/types";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import {
@@ -29,7 +31,7 @@ export const Hero = () => {
           <Button
             onClick={(e) => {
               e.preventDefault();
-              window.open("https://pheva.vercel.app", "_blank");
+              history.push(AppPages.RootPage);
             }}
             size="large"
             rightIcon={

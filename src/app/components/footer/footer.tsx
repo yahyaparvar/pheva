@@ -1,3 +1,4 @@
+import { AppPages } from "app/types";
 import styled from "styled-components";
 
 const Footer = styled.div`
@@ -91,14 +92,10 @@ const FooterComponent = () => {
         <FooterNavGroup role="list">
           <FooterNavTitle>Product</FooterNavTitle>
           <li>
-            <FooterListLink href="https://pheva.vercel.app">
-              Editor
-            </FooterListLink>
+            <FooterListLink href={AppPages.RootPage}>Editor</FooterListLink>
           </li>
           <li>
-            <FooterListLink href="https://pheva.vercel.app">
-              Content AI
-            </FooterListLink>
+            <FooterListLink href={AppPages.RootPage}>Content AI</FooterListLink>
           </li>
           <li>
             <FooterListLink href="https://github.com/yahyaparvar/pheva">
@@ -150,15 +147,15 @@ const FooterComponent = () => {
           </li>
 
           <li>
-            <FooterListLink href="https://github.com/yahyaparvar/pheva-landing?tab=MIT-1-ov-file#readme" target="_blank">
+            <FooterListLink
+              href="https://github.com/yahyaparvar/pheva-landing?tab=MIT-1-ov-file#readme"
+              target="_blank"
+            >
               MIT license
             </FooterListLink>
           </li>
           <li>
-            <FooterListLink
-              href="https://pheva.vercel.app/privacy-policy"
-              target="_blank"
-            >
+            <FooterListLink href="/privacy-policy">
               Privacy Policy
             </FooterListLink>
           </li>

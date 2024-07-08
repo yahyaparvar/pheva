@@ -8,7 +8,7 @@ const GlobalStyle = createGlobalStyle`
   --font: "Inter", "Rubik";
   --persian-font: "Rubik";
   --sidebar:#34363a;
-  --background:#2C2C2C;
+  --background:#1a1919;
   --text:#FFFFFF;
   --dark-gray: #1E1E1E;
   --dark-gray-hover: #4A4A4A;

@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import { COLUMN_CENTER } from "styles/globalStyles";
 
+import history from "app/router/history";
 import { Button } from "../buttons/landing";
 import FooterComponent from "./footer";
 import backDrop from "./gradient.jpg";
+import { AppPages } from "app/types";
 export const Footer = () => {
   return (
     <Wrapper>
@@ -14,7 +16,7 @@ export const Footer = () => {
           size="large"
           onClick={(e) => {
             e.preventDefault();
-            window.open("https://pheva.vercel.app", "_blank");
+            history.push(AppPages.RootPage);
           }}
           rightIcon={
             <svg
