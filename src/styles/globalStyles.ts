@@ -101,7 +101,6 @@ html {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
   background-color:var(--background) ;
 }
 *{
@@ -281,4 +280,9 @@ export const BUTTON = css`
   cursor: pointer;
 `;
 
+export const MaxWidthContainer = css`
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+`;
 export default GlobalStyle;

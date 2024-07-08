@@ -11,7 +11,8 @@ import {
 import { initGA } from "./analytics";
 import { Calendar } from "./containers/Calendar/Loadable";
 import { EmailDetail } from "./containers/EmailDetail/Loadable";
-import { Home } from "./containers/Home";
+import { Home as Dashboard } from "./containers/Home";
+import { Home } from "./containers/Home copy";
 import { Inbox } from "./containers/Inbox/Loadable";
 import { Login } from "./containers/Login";
 import { NotFoundPage } from "./containers/NotFound";
@@ -57,12 +58,12 @@ function App() {
                 index
                 element={
                   <Auth>
-                    <Home />
+                    <Dashboard />
                   </Auth>
                 }
               />
               <Route
-                path={AppPages.Inbox}
+                path={AppPages.RootPage + AppPages.Inbox}
                 element={
                   <Auth>
                     <Inbox />
@@ -70,7 +71,7 @@ function App() {
                 }
               />
               <Route
-                path={AppPages.Sent}
+                path={AppPages.RootPage + AppPages.Sent}
                 element={
                   <Auth>
                     <Sent />
@@ -78,7 +79,7 @@ function App() {
                 }
               />
               <Route
-                path={AppPages.Calendar}
+                path={AppPages.RootPage + AppPages.Calendar}
                 element={
                   <Auth>
                     <Calendar />
@@ -86,7 +87,7 @@ function App() {
                 }
               />
               <Route
-                path={AppPages.Spam}
+                path={AppPages.RootPage + AppPages.Spam}
                 element={
                   <Auth>
                     <Spam />
@@ -94,7 +95,7 @@ function App() {
                 }
               />
               <Route
-                path={AppPages.Tasks}
+                path={AppPages.RootPage + AppPages.Tasks}
                 element={
                   <Auth>
                     <Tasks />
@@ -102,7 +103,7 @@ function App() {
                 }
               />
               <Route
-                path={`${AppPages.EmailDetail}/:id`}
+                path={`${AppPages.RootPage + AppPages.EmailDetail}/:id`}
                 element={
                   <Auth>
                     <EmailDetail />
@@ -115,6 +116,7 @@ function App() {
               element={<PrivacyPolicy />}
             />
             <Route path={AppPages.Login} element={<Login />}></Route>
+            <Route path={AppPages.HomePage} element={<Home />}></Route>
             <Route path={AppPages.NotFoundPage} element={<NotFoundPage />} />
           </Routes>
         </CustomRouter>

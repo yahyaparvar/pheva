@@ -17,6 +17,7 @@ import { configureAppStore } from "store/configureStore";
 import { LocalStorageKeys, storage } from "store/storage";
 import GlobalStyle from "styles/globalStyles";
 import App from "./app/App";
+
 interface Props {
   Component: typeof App;
 }
@@ -27,30 +28,40 @@ const getThemeBeforeRedux = () => {
   if (app) {
     app.classList.add(savedTheme);
   }
-  if (savedTheme) {
-  } else {
+  if (!savedTheme) {
     storage.write(LocalStorageKeys.THEME, Themes.LIGHT);
   }
 };
+
 const store = configureAppStore({});
+
 const ConnectedApp = ({ Component }: Props) => {
-  const [isFontLoaded, setIsFontLoaded] = useState(false);
-  const openSansObserver = new FontFaceObserver("Inter", {});
-  openSansObserver.load().then(() => {
-    setIsFontLoaded(true);
-    document.body.classList.add("fontLoaded");
-  });
+  const [areFontsLoaded, setAreFontsLoaded] = useState(false);
 
   useLayoutEffect(() => {
+    const fontObservers = [
+      new FontFaceObserver("Inter"),
+      new FontFaceObserver("Rubik"),
+      new FontFaceObserver("Luxurious Script"),
+      new FontFaceObserver("Playwrite DE Grund"),
+      new FontFaceObserver("Public Sans"),
+      new FontFaceObserver("Gideon Roman"),
+    ];
+
+    Promise.all(fontObservers.map(observer => observer.load()))
+      .then(() => {
+        setAreFontsLoaded(true);
+        document.body.classList.add("fontsLoaded");
+      })
+      .catch(err => {
+        console.error("One or more fonts failed to load", err);
+      });
+
     getThemeBeforeRedux();
-    if (document.body.classList.contains("fontLoaded")) {
-      setIsFontLoaded(true);
-    } else {
-      setIsFontLoaded(false);
-    }
-  }, [isFontLoaded]);
-  const clientId =
-    "1084561252653-rp5e7io2uq9gh8e0hkcu2mc9vl67g3r1.apps.googleusercontent.com";
+  }, []);
+
+  const clientId = "1084561252653-rp5e7io2uq9gh8e0hkcu2mc9vl67g3r1.apps.googleusercontent.com";
+
   return (
     <ReduxProvider store={store}>
       <GoogleOAuthProvider clientId={clientId}>
@@ -62,7 +73,7 @@ const ConnectedApp = ({ Component }: Props) => {
             <GlobalStyle />
             <ToastContainer />
             <HelmetProvider>
-              {isFontLoaded ? <Component /> : <FontLoadingPage />}
+              {areFontsLoaded ? <Component /> : <FontLoadingPage />}
             </HelmetProvider>
           </SkeletonTheme>
         </I18nextProvider>
@@ -70,6 +81,7 @@ const ConnectedApp = ({ Component }: Props) => {
     </ReduxProvider>
   );
 };
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
