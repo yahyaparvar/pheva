@@ -104,25 +104,29 @@ export const items: SidebarItemProps[] = [
     subItems: [
       {
         label: "Inbox",
-        to: AppPages.Inbox,
+        to: AppPages.RootPage + AppPages.Inbox,
         icon: InboxIcon,
       },
       {
         label: "Sent",
-        to: AppPages.Sent,
+        to: AppPages.RootPage + AppPages.Sent,
         icon: SentIcon,
       },
       {
         label: "Spam",
-        to: AppPages.Spam,
+        to: AppPages.RootPage + AppPages.Spam,
         icon: SpamIcon,
       },
     ],
   },
-  { label: "Calendar (Beta)", to: AppPages.Calendar, icon: CalendarIcon },
+  {
+    label: "Calendar (Beta)",
+    to: AppPages.RootPage + AppPages.Calendar,
+    icon: CalendarIcon,
+  },
   {
     label: "Tasks (Soon)",
-    to: AppPages.Tasks,
+    to: AppPages.RootPage + AppPages.Tasks,
     icon: TaskIcon,
   },
 ];
