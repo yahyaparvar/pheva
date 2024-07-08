@@ -57,57 +57,92 @@ function App() {
               <Route
                 index
                 element={
-                  <Auth>
-                    <Dashboard />
-                  </Auth>
+                  <>
+                    <MobileView>
+                      <h1>Download the mobile app. (coming soon)</h1>
+                    </MobileView>
+                    <Auth>
+                      <Dashboard />
+                    </Auth>
+                  </>
                 }
               />
               <Route
                 path={AppPages.RootPage + AppPages.Inbox}
                 element={
-                  <Auth>
-                    <Inbox />
-                  </Auth>
+                  <>
+                    <MobileView>
+                      <h1>Download the mobile app. (coming soon)</h1>
+                    </MobileView>
+                    <Auth>
+                      <Inbox />
+                    </Auth>
+                  </>
                 }
               />
               <Route
                 path={AppPages.RootPage + AppPages.Sent}
                 element={
-                  <Auth>
-                    <Sent />
-                  </Auth>
+                  <>
+                    <MobileView>
+                      <h1>Download the mobile app. (coming soon)</h1>
+                    </MobileView>
+                    <Auth>
+                      <Sent />
+                    </Auth>
+                  </>
                 }
               />
               <Route
                 path={AppPages.RootPage + AppPages.Calendar}
                 element={
-                  <Auth>
-                    <Calendar />
-                  </Auth>
+                  <>
+                    <MobileView>
+                      <h1>Download the mobile app. (coming soon)</h1>
+                    </MobileView>
+                    <Auth>
+                      <Calendar />
+                    </Auth>
+                  </>
                 }
               />
               <Route
                 path={AppPages.RootPage + AppPages.Spam}
                 element={
-                  <Auth>
-                    <Spam />
-                  </Auth>
+                  <>
+                    <MobileView>
+                      <h1>Download the mobile app. (coming soon)</h1>
+                    </MobileView>
+                    <Auth>
+                      <Spam />
+                    </Auth>
+                  </>
                 }
               />
               <Route
                 path={AppPages.RootPage + AppPages.Tasks}
                 element={
-                  <Auth>
-                    <Tasks />
-                  </Auth>
+                  <>
+                    <MobileView>
+                      <h1>Download the mobile app. (coming soon)</h1>
+                    </MobileView>
+                    <Auth>
+                      <Tasks />
+                    </Auth>
+                  </>
                 }
               />
               <Route
                 path={`${AppPages.RootPage + AppPages.EmailDetail}/:id`}
                 element={
-                  <Auth>
-                    <EmailDetail />
-                  </Auth>
+                  <>
+                    <MobileView>
+                      <h1>Download the mobile app. (coming soon)</h1>
+                    </MobileView>
+                    <Auth>
+                      <EmailDetail />
+                    </Auth>
+                  </>
                 }
               />
             </Route>
@@ -121,9 +156,6 @@ function App() {
           </Routes>
         </CustomRouter>
       </Wrapper>
-      <MobileView>
-        <h1>Download the mobile app. (coming soon)</h1>
-      </MobileView>
     </>
   );
 }
@@ -133,16 +165,21 @@ const Wrapper = styled.main`
   min-height: 100vh;
   margin: 0 auto;
   ${COLUMN_ALIGN_START__JUSTIFY_START}
-  @media (max-width: 1000px) {
-    display: none;
-  }
 `;
 const MobileView = styled.div`
   display: none;
   @media (max-width: 1000px) {
+    z-index: 10000;
+    position: absolute;
+    left: 0;
+    top: 0;
     ${COLUMN_CENTER}
     width:100vw;
     height: 100vh;
+    background-color: var(--background);
+    body {
+      overflow: hidden;
+    }
   }
 `;
 
