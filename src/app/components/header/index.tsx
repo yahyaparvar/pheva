@@ -1,3 +1,4 @@
+import history from "app/router/history";
 import { AppPages } from "app/types";
 import styled from "styled-components";
 import {
@@ -6,7 +7,6 @@ import {
   ROW_CENTER,
 } from "styles/globalStyles";
 import { Button } from "../buttons/landing";
-import history from "app/router/history";
 
 export const Header = () => {
   return (
@@ -23,11 +23,8 @@ export const Header = () => {
           <Item target="_blank" href="https://github.com/yahyaparvar/pheva">
             Github
           </Item>
-          <Item target="_blank" href="https://github.com/yahyaparvar">
-            Blog
-          </Item>
-          <Item target="_blank" href="https://github.com/yahyaparvar">
-            Docs
+          <Item target="_blank" href="/privacy-policy">
+            Privacy Policy
           </Item>
           <Item
             target="_blank"
@@ -41,7 +38,7 @@ export const Header = () => {
           <Button
             onClick={(e) => {
               e.preventDefault();
-              history.push(AppPages.RootPage)
+              history.push(AppPages.RootPage);
             }}
             variant="secondary"
             rightIcon={
