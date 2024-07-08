@@ -244,7 +244,7 @@ export function Inbox(props: Props) {
                       isUnread={isUnread}
                       onClick={() => {
                         history.push(
-                          AppPages.EmailDetail + `/${row.original.id}`
+                          AppPages.RootPage +AppPages.EmailDetail + `/${row.original.id}`
                         );
                       }}
                       {...row.getRowProps()}

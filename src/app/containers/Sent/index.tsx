@@ -178,7 +178,7 @@ export function Sent(props: Props) {
                       isUnread={false}
                       onClick={() => {
                         history.push(
-                          AppPages.EmailDetail + `/${row.original.id}`
+                          AppPages.RootPage + AppPages.EmailDetail + `/${row.original.id}`
                         );
                       }}
                       {...row.getRowProps()}
