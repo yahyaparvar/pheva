@@ -144,6 +144,11 @@ const PrivacyPolicy = () => {
         impenetrable.
       </Paragraph>
 
+      <SubHeading>Use of Google Workspace APIs</SubHeading>
+      <Paragraph>
+        Our application does not use data obtained through Google Workspace APIs to develop, improve, or train generalized AI and/or ML models.
+      </Paragraph>
+
       <SubHeading>Your Rights</SubHeading>
       <Paragraph>
         Depending on your location, you may have the following rights regarding
