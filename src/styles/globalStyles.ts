@@ -104,12 +104,12 @@ html {
   background-color:var(--background) ;
 }
 *{
-  color: var(--text);
-/* &::-webkit-scrollbar {
+&::-webkit-scrollbar {
     display: none;
   }
   -ms-overflow-style: none; 
-  scrollbar-width: none; */
+  scrollbar-width: none; 
+  color: var(--text);
  box-sizing:border-box;
  font-family : var(--font),sans-serif,system-ui, -apple-system,'Helvetica Neue',"Rubik";
 }
